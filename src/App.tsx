@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import Layout from './components/Layout';
-import ProfileTab from './components/ProfileTab';
-import IbadahTab from './components/IbadahTab';
-import GivingTab from './components/GivingTab';
-import OtherTab from './components/OtherTab';
-import WartaTab from './components/WartaTab';
+import ProfileTab from './components/tabs/ProfileTab';
+import IbadahTab from './components/tabs/IbadahTab';
+import GivingTab from './components/tabs/GivingTab';
+import OtherTab from './components/tabs/OtherTab';
+import WartaTab from './components/tabs/WartaTab';
 
 function App() {
   const [activeTab, setActiveTab] = useState('profil');
 
   // Mapping judul berdasarkan ID tab
   const titles: Record<string, string> = {
-    profil: 'PROFIL',
-    warta: 'WARTA',
-    ibadah: 'IBADAH',
+    profil: 'HKBP P2B',
+    warta: 'WARTA JEMAAT',
+    ibadah: 'TATA IBADAH',
     giving: 'PERSEMBAHAN',
     other: 'LAINNYA'
   };
