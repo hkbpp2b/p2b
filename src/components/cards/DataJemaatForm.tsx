@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, DatabaseZap } from 'lucide-react';
+import { ArrowLeft, DatabaseZap, Plus, Trash2 } from 'lucide-react';
 
 interface DataJemaatFormProps {
     onBack: () => void;
@@ -7,10 +7,22 @@ interface DataJemaatFormProps {
 
 const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
     const [status, setStatus] = useState<'idle' | 'error'>('idle');
+    const [anak, setAnak] = useState<string[]>(['']);
+
+    const handleAddAnak = () => setAnak([...anak, '']);
+    const handleRemoveAnak = (index: number) => {
+        const newAnak = anak.filter((_, i) => i !== index);
+        setAnak(newAnak.length ? newAnak : ['']);
+    };
+
+    const handleAnakChange = (index: number, value: string) => {
+        const newAnak = [...anak];
+        newAnak[index] = value;
+        setAnak(newAnak);
+    };
 
     const handleSave = () => {
         setStatus('error');
-
         setTimeout(() => setStatus('idle'), 3000);
     };
 
@@ -33,19 +45,19 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
             {/* Form Start */}
             <form className="space-y-6 bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60" onSubmit={(e) => e.preventDefault()}>
 
-                {/* Input Nama */}
+                {/* 1. Nama Kepala Keluarga */}
                 <div className="space-y-3">
-                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap</label>
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap Kepala Keluarga</label>
                     <input
                         type="text"
-                        placeholder="Masukkan nama lengkap..."
+                        placeholder="Masukkan nama kepala keluarga..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-blue-500"
                     />
                 </div>
 
-                {/* Input WA */}
+                {/* 2. No WA Aktif */}
                 <div className="space-y-3">
-                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nomor WhatsApp Aktif</label>
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">No. WhatsApp Aktif</label>
                     <input
                         type="tel"
                         placeholder="0812..."
@@ -53,13 +65,61 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                     />
                 </div>
 
-                {/* Input Lingkungan */}
+                {/* 3. Nama Istri */}
                 <div className="space-y-3">
-                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Wilayah / Sektor</label>
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap Istri</label>
                     <input
                         type="text"
-                        placeholder="Contoh: Lingkungan 04"
+                        placeholder="Masukkan nama lengkap istri..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-rose-500"
+                    />
+                </div>
+
+                {/* 4. Nama Anak (Dinamis) */}
+                <div className="space-y-3">
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap Anak</label>
+                    {anak.map((nama, index) => (
+                        <div key={index} className="flex gap-2 mb-2">
+                            <input
+                                type="text"
+                                value={nama}
+                                onChange={(e) => handleAnakChange(index, e.target.value)}
+                                placeholder={`Anak ke-${index + 1}`}
+                                className="flex-1 bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
+                            />
+                            {anak.length > 1 && (
+                                <button onClick={() => handleRemoveAnak(index)} className="px-2 text-rose-600">
+                                    <Trash2 size={18} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={handleAddAnak}
+                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1 ml-2"
+                    >
+                        <Plus size={14} /> Tambah Anak
+                    </button>
+                </div>
+
+                {/* 5. Alamat */}
+                <div className="space-y-3">
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Alamat Lengkap</label>
+                    <textarea
+                        placeholder="Jl. Contoh No. 123..."
+                        rows={3}
+                        className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900 resize-none"
+                    />
+                </div>
+
+                {/* 6. Wilayah */}
+                <div className="space-y-3">
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Wilayah / Weyk</label>
+                    <input
+                        type="text"
+                        placeholder="Contoh: Weyk 04"
+                        className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
                     />
                 </div>
 
@@ -87,7 +147,6 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                         )}
                     </button>
 
-                    {/* Tombol Balik / Batal di Bawah */}
                     <button
                         type="button"
                         onClick={onBack}
@@ -98,7 +157,6 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                         </span>
                     </button>
 
-                    {/* Pesan Error */}
                     {status === 'error' && (
                         <p className="text-[9px] text-rose-600 font-black text-center uppercase tracking-widest mt-2">
                             Server tidak merespon, coba lagi nanti
@@ -106,7 +164,6 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                     )}
                 </div>
             </form>
-            {/* Form End */}
         </div>
     );
 };

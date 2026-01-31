@@ -66,10 +66,11 @@ const OtherTab = () => {
     }
 
     return (
-        <div className="space-y-8 animate-in fade-in duration-700 pb-32 pt-4">
-            <header className="px-1 text-center space-y-2">
-                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Lainnya</h2>
-                <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.3em]">Layanan Jemaat Digital</p>
+        <div className="animate-in fade-in duration-700 pb-32 pt-8 px-5 space-y-10">
+            {/* Header */}
+            <header className="text-center space-y-1">
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Layanan</h2>
+                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Layanan Jemaat Digital</p>
             </header>
 
             <div className="space-y-4 px-2">

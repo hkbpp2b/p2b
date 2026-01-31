@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, X, Loader2, ArrowUpRight, GraduationCap, History, ChevronDown } from 'lucide-react';
+import { MessageCircle, X, Loader2, GraduationCap, History } from 'lucide-react';
 
 let cachedPendetaData: any[] | null = null;
 
@@ -11,7 +11,7 @@ const PendetaCard = () => {
     const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?gid=143481815&single=true&output=tsv";
 
     const formatDriveLink = (url: string) => {
-        if (!url) return "https://api.dicebear.com/7.x/avataaars/svg?seed=neutral";
+        if (!url || url.trim() === "") return null;
         if (url.includes('drive.google.com')) {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
             const fileId = match ? match[1] : null;
@@ -19,6 +19,31 @@ const PendetaCard = () => {
         }
         return url;
     };
+
+    // LOGIKA BACK BUTTON HANDLER (Disederhanakan agar tidak bentrok dengan sistem)
+    useEffect(() => {
+        if (selected) {
+            document.body.classList.add('modal-open');
+
+            // Tambahkan state ke history hanya agar tombol back HP bisa menutup modal
+            window.history.pushState({ modalOpen: true }, "");
+
+            const handlePopState = () => {
+                // Jika user tekan tombol back di HP, tutup modal tanpa reload
+                setSelected(null);
+                document.body.classList.remove('modal-open');
+            };
+
+            window.addEventListener('popstate', handlePopState);
+
+            return () => {
+                window.removeEventListener('popstate', handlePopState);
+                document.body.classList.remove('modal-open');
+            };
+        }
+    }, [selected]);
+
+
 
     useEffect(() => {
         if (cachedPendetaData) return;
@@ -48,113 +73,110 @@ const PendetaCard = () => {
         fetchPendeta();
     }, []);
 
+    const closeDetail = () => {
+        setSelected(null);
+        document.body.classList.remove('modal-open');
+    };
+
     if (loading) return (
         <div className="flex justify-center py-20"><Loader2 className="animate-spin text-slate-900" size={32} /></div>
     );
 
     return (
-
-
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-            <div className="mb-6 text-center">
-                <h3 className="text-xl font-black text-blue-800 tracking-tighter uppercase mb-1">Pendeta Kami</h3>
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">Yang keren</p>
+        <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
+            <div className="mb-8 text-center">
+                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Pendeta Kami</h3>
             </div>
 
-            {/* GRID UTAMA - Logic: No Enter sebelum Spasi */}
-            <div className="grid grid-cols-1 gap-4 max-w-full">
+            {/* DAFTAR PENDETA - VERTIKAL RAPAT */}
+            <div className="space-y-4">
                 {pendetaList.map((pdt, i) => (
                     <div
                         key={i}
                         onClick={() => setSelected(pdt)}
-                        className="flex items-center p-5 rounded-[2rem] border border-slate-100 bg-slate-50 transition-all duration-200 cursor-pointer active:scale-95 shadow-sm"
+                        className="flex flex-col items-center py-6 px-4 rounded-[2rem] border border-slate-50 bg-slate-50/50 active:scale-95 transition-all cursor-pointer group"
                     >
-                        {/* Foto Tetap di Kiri */}
-                        <div className="flex-shrink-0 w-16 h-16">
-                            <img
-                                src={pdt.img}
-                                className="w-full h-full rounded-[1.2rem] object-cover bg-white border border-slate-100"
-                                alt="pdt"
-                            />
-                        </div>
+                        <p className="text-[14px] font-black text-blue-600 uppercase tracking-[0.2em] mb-3">
+                            {pdt.role}
+                        </p>
 
-                        {/* Container Teks */}
-                        <div className="ml-5 flex-grow min-w-0 text-left">
-                            <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-1 truncate">
-                                {pdt.role}
-                            </p>
+                        {pdt.img && (
+                            <div className="w-20 h-20 mb-3 overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-105">
+                                <img src={pdt.img} className="w-full h-full object-cover" alt="pdt" />
+                            </div>
+                        )}
 
-                            <h4 className="text-[15px] font-black text-slate-900 uppercase leading-[1.1] whitespace-pre-wrap break-words">
-                                {pdt.name}
-                            </h4>
-                        </div>
+                        <h4 className="text-[16px] font-black text-slate-900 uppercase tracking-tighter text-center leading-tight">
+                            {pdt.name}
+                        </h4>
                     </div>
                 ))}
             </div>
 
-            {/* MODAL COMPACT DENGAN VISUAL SCROLL CUE */}
+            {/* OVERLAY DESIGN BARU */}
             {selected && (
-                <div className="fixed inset-0 z-[1000] flex items-center justify-center p-6">
-                    <div className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setSelected(null)} />
+                <div className="fixed inset-0 z-[1000] flex items-end justify-center sm:items-center p-4">
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={closeDetail} />
 
-                    <div className="relative bg-white w-full max-w-sm rounded-[3rem] shadow-2xl animate-in zoom-in-95 duration-300 max-h-[80vh] overflow-hidden flex flex-col border border-slate-50">
+                    <div className="relative bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-300 max-h-[85vh] overflow-hidden flex flex-col">
 
-                        {/* Header Tetap (Foto Besar & Bio Utama) */}
-                        <div className="pt-10 pb-6 px-8 flex flex-col items-center">
-                            <button onClick={() => setSelected(null)} className="absolute top-6 right-8 text-slate-300 hover:text-slate-900"><X size={20} /></button>
-                            <img src={selected.img} className="w-32 h-32 rounded-[2.5rem] object-cover shadow-xl border-4 border-white mb-6" alt="pdt" />
-                            <div className="text-center mb-6">
-                                <h4 className="text-[18px] font-black text-slate-900 uppercase tracking-tight">{selected.name}</h4>
-                                <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em] mt-1">{selected.role}</p>
-                            </div>
-                            <div className="text-center">
-                                <p className="text-[14px] font-bold text-slate-500 italic leading-relaxed">"{selected.bio}"</p>
-                            </div>
+                        {/* Handle Bar & Close */}
+                        <div className="flex justify-center pt-4 pb-2">
+                            <div className="w-12 h-1 bg-slate-100 rounded-full" />
                         </div>
+                        <button onClick={closeDetail} className="absolute top-6 right-6 p-2 bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-colors z-50">
+                            <X size={20} strokeWidth={3} />
+                        </button>
 
-                        {/* Scrollable Detail dengan Fade Cue */}
-                        <div className="relative flex-grow overflow-hidden flex flex-col">
+                        <div className="overflow-y-auto no-scrollbar px-8 pt-4 pb-10">
+                            {/* Profil */}
+                            <div className="flex flex-col items-center mb-8">
+                                {selected.img && (
+                                    <img src={selected.img} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl mb-6" alt="pdt" />
+                                )}
+                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">{selected.role}</p>
+                                <h4 className="text-[20px] font-black text-slate-900 uppercase tracking-tighter text-center">{selected.name}</h4>
+                            </div>
 
+                            {/* Bio */}
+                            {selected.bio !== "-" && (
+                                <div className="mb-8 p-6 bg-slate-50 rounded-[2rem] text-center border border-slate-100/50">
+                                    <p className="text-[14px] font-bold text-slate-600 italic leading-relaxed">"{selected.bio}"</p>
+                                </div>
+                            )}
 
-                            <div className="overflow-y-auto px-8 py-4 no-scrollbar space-y-8 pb-10">
+                            {/* Info Lists */}
+                            <div className="space-y-6">
                                 {selected.pendidikan.length > 0 && (
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-2 text-slate-900 opacity-40">
-                                            <GraduationCap size={14} />
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Pendidikan</span>
-                                        </div>
-                                        <div className="space-y-2">
+                                    <div className="border-l-4 border-blue-600 pl-4">
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Pendidikan</span>
+                                        <div className="space-y-1">
                                             {selected.pendidikan.map((item: string, idx: number) => (
-                                                <p key={idx} className="text-[12px] font-bold text-slate-600">• {item}</p>
+                                                <p key={idx} className="text-[12px] font-black text-slate-900 leading-tight">{item}</p>
                                             ))}
                                         </div>
                                     </div>
                                 )}
                                 {selected.pelayanan.length > 0 && (
-                                    <div className="space-y-3">
-                                        <div className="flex items-center gap-2 text-slate-900 opacity-40">
-                                            <History size={14} />
-                                            <span className="text-[10px] font-black uppercase tracking-widest">Riwayat Pelayanan</span>
-                                        </div>
-                                        <div className="space-y-2">
+                                    <div className="border-l-4 border-slate-900 pl-4">
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Pelayanan</span>
+                                        <div className="space-y-1">
                                             {selected.pelayanan.map((item: string, idx: number) => (
-                                                <p key={idx} className="text-[12px] font-bold text-slate-600">• {item}</p>
+                                                <p key={idx} className="text-[12px] font-black text-slate-900 leading-tight">{item}</p>
                                             ))}
                                         </div>
                                     </div>
                                 )}
                             </div>
-                            {/* Fade effect at bottom of scroll area */}
-                            <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                         </div>
 
-                        {/* Footer Tetap (Tombol) */}
-                        <div className="p-8 pt-4">
+                        {/* WhatsApp Action */}
+                        <div className="p-8 pt-0">
                             <a
                                 href={`https://wa.me/${selected.phone.replace(/\D/g, '').replace(/^0/, '62')}`}
-                                className="flex items-center justify-center gap-2 w-full py-4 bg-slate-900 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg"
+                                className="flex items-center justify-center gap-3 w-full py-5 bg-slate-900 text-white rounded-full text-[12px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg"
                             >
-                                <MessageCircle size={18} /> Chat WhatsApp
+                                Hubungi Pdt
                             </a>
                         </div>
                     </div>

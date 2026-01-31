@@ -12,8 +12,8 @@ function App() {
   // Mapping judul berdasarkan ID tab
   const titles: Record<string, string> = {
     profil: 'HKBP P2B',
-    warta: 'WARTA JEMAAT',
-    ibadah: 'TATA IBADAH',
+    warta: 'COMINGSOON',
+    ibadah: 'WARTA dan ACARA',
     giving: 'PERSEMBAHAN',
     other: 'LAINNYA'
   };
@@ -35,6 +35,8 @@ function App() {
         </div>
       </div>
     </Layout>
+
+
   );
 }
 

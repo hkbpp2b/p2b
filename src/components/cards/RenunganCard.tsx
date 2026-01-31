@@ -22,6 +22,7 @@ const RenunganCard = () => {
                 if (rows.length > 1) {
                     const cols = rows[1].split('\t');
                     const result = {
+                        tanggal: cols[0],
                         ayat: cols[1],
                         kutipan: cols[2],
                         topik: cols[3],
@@ -35,51 +36,78 @@ const RenunganCard = () => {
         fetchRenungan();
     }, []);
 
+    // LOGIKA BACK BUTTON & OVERFLOW
+    useEffect(() => {
+        if (isOpen) {
+            document.body.classList.add('modal-open');
+            document.body.style.overflow = 'hidden';
+            window.history.pushState({ renunganOpen: true }, "");
+
+            const handleBackInRenungan = () => {
+                setIsOpen(false);
+                document.body.classList.remove('modal-open');
+            };
+
+            window.addEventListener('popstate', handleBackInRenungan);
+            return () => {
+                window.removeEventListener('popstate', handleBackInRenungan);
+                document.body.classList.remove('modal-open');
+                document.body.style.overflow = 'unset';
+            };
+        }
+    }, [isOpen]);
+
     const handleScroll = () => {
         if (!scrollRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
         setIsScrolled(scrollTop > 50);
-        setShowAmin(scrollTop + clientHeight > scrollHeight - 50);
+        setShowAmin(scrollTop + clientHeight > scrollHeight - 80);
     };
 
-    useEffect(() => {
-        document.body.style.overflow = isOpen ? 'hidden' : 'unset';
-    }, [isOpen]);
+    const closeRenungan = () => {
+        setIsOpen(false);
+        if (window.history.state?.renunganOpen) {
+
+        }
+    };
 
     if (!data) return null;
 
     return (
         <>
             {/* CARD UTAMA */}
-            <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <div className="mb-6 text-center">
-                    <h3 className="text-xl font-black text-blue-800 tracking-tighter uppercase mb-1">Renungan Harian</h3>
-                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]"></p>
+            <div
+                className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden"
+                style={{ background: `linear-gradient(135deg, #ffffff 0%, #e0e6fe 100%)` }}
+            >
+                <div className="mb-6 text-center relative z-10">
+                    <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase mb-1">
+                        Renungan Harian
+                    </h3>
+                    <p className="text-[12px] font-black text-slate-900 uppercase tracking-[0.2em]">
+                        {data.tanggal}
+                    </p>
                 </div>
 
-                <div onClick={() => setIsOpen(true)} className="p-7 rounded-[2.5rem] bg-slate-50 active:scale-95 transition-all cursor-pointer">
+                <div
+                    onClick={() => setIsOpen(true)}
+                    className="p-7 rounded-[2.5rem] bg-white/90 backdrop-blur-sm active:scale-95 transition-all cursor-pointer relative z-10 shadow-sm border border-white"
+                >
                     <div className="space-y-6">
-                        {/* Judul, Kutipan, & Ayat Menyatu */}
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                {/* 1. Judul Topik */}
                                 <h4 className="text-[18px] font-black text-slate-900 leading-tight tracking-tight uppercase">
                                     {data.topik}
                                 </h4>
-
-                                {/* 2. Kutipan Ayat */}
                                 <p className="text-[15px] font-bold text-slate-500 leading-snug italic">
                                     "{data.kutipan}"
                                 </p>
-
-                                {/* 3. Referensi Ayat (Kecil & Fokus) */}
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pt-1">
                                     — {data.ayat}
                                 </p>
                             </div>
                         </div>
 
-                        {/* Action - Bersih */}
                         <div className="flex items-center gap-1 text-slate-900 pt-2 border-t border-slate-200/50">
                             <span className="text-[10px] font-black uppercase tracking-[0.1em]">Baca Selengkapnya</span>
                             <ChevronRight size={14} />
@@ -88,72 +116,53 @@ const RenunganCard = () => {
                 </div>
             </div>
 
-
-
             {/* OVERLAY FULL SCREEN */}
             {isOpen && (
-                <div className="fixed inset-0 z-[999] bg-white flex flex-col animate-in slide-in-from-right duration-300">
+                <div className="fixed inset-0 z-[999] flex flex-col animate-in slide-in-from-right duration-500 bg-white">
 
-                    {/* STICKY HEADER - Minimalis & Responsive terhadap Scroll */}
-                    <div className={`flex items-center px-6 h-[75px] bg-white sticky top-0 z-10 transition-all duration-300 ${isScrolled ? 'border-b border-slate-100' : 'border-transparent'
-                        }`}>
-                        <button onClick={() => setIsOpen(false)} className="text-slate-900 p-2 -ml-2 active:scale-90 transition-transform">
+                    {/* STICKY HEADER */}
+                    <div className={`flex items-center px-6 md:px-12 h-[75px] sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm' : 'bg-transparent'}`}>
+                        <button onClick={closeRenungan} className="text-slate-900 p-2 -ml-2 active:scale-90 transition-transform">
                             <ArrowLeft size={24} />
                         </button>
 
-                        {/* Judul & Ayat muncul saat di-scroll ke bawah */}
-                        <div className={`ml-4 transition-all duration-500 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                            }`}>
-                            <p className="text-[14px] font-black text-slate-900 uppercase leading-none mb-1">
-                                {data.topik}
-                            </p>
-                            <p className="text-[12px] font-black text-blue-600 uppercase tracking-widest leading-none">
-                                {data.ayat}
-                            </p>
+                        <div className={`ml-4 transition-all duration-500 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                            <p className="text-[14px] font-black text-slate-900 uppercase leading-none mb-0.5">{data.topik}</p>
+                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">{data.ayat}</p>
                         </div>
                     </div>
 
-                    {/* SCROLLABLE CONTENT */}
-                    <div
-                        ref={scrollRef}
-                        onScroll={handleScroll}
-                        className="flex-1 overflow-y-auto px-8 pt-4 pb-32 no-scrollbar bg-white"
-                    >
-                        <div className="mb-12">
-                            {/* Judul Utama */}
-                            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-[1.1] mb-6">
-                                {data.topik}
-                            </h2>
+                    {/* AREA KONTEN - Max width 3xl agar teks tidak melebar liar */}
+                    <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
+                        <div className="max-w-3xl mx-auto w-full px-8 py-12 flex flex-col">
 
-                            {/* Kutipan & Ayat (Fokus Utama sebelum Scroll) */}
-                            <div className="space-y-4">
-                                <p className="text-[18px] font-black text-slate-900 italic leading-snug">
-                                    "{data.kutipan}"
+                            <div className="mb-16">
+                                <p className="text-[14px] font-black text-slate-900 uppercase tracking-[0.4em] mb-4">
+                                    {data.tanggal}
                                 </p>
-                                <p className="text-[14px] font-black text-slate-900 uppercase tracking-[0.2em]">
-                                    — {data.ayat}
-                                </p>
+                                <h2 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[1] mb-12">
+                                    {data.topik}
+                                </h2>
+
+                                <div className="border-l-8 border-slate-900 pl-8 py-6">
+                                    <p className="text-[22px] md:text-[32px] font-black text-slate-900 italic leading-tight mb-6">
+                                        "{data.kutipan}"
+                                    </p>
+                                    <p className="text-[14px] md:text-[16px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                                        — {data.ayat}
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="w-12 h-1.5 bg-slate-900 mt-10 rounded-full" />
+                            <div className="pb-48">
+                                <p className="text-[16px] md:text-[18px] font-semibold text-slate-900 leading-[2] text-left whitespace-pre-line">
+                                    {data.isi}
+                                </p>
+                            </div>
                         </div>
-
-                        {/* Isi Renungan */}
-                        <p className="text-[16px] font-bold text-slate-700 leading-[1.8] text-left whitespace-pre-line">
-                            {data.isi}
-                        </p>
                     </div>
 
-                    {/* Tombol Amin - Tanpa Background Putih */}
-                    <div className={`fixed bottom-8 left-6 right-6 z-20 transition-all duration-700 ease-in-out ${showAmin ? 'translate-y-0 opacity-100' : 'translate-y-12 opacity-0 pointer-events-none'
-                        }`}>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="w-full py-5 bg-slate-900 text-white rounded-[2rem] text-[12px] font-black uppercase tracking-widest shadow-[0_20px_50px_rgba(0,0,0,0.3)] active:scale-95 transition-transform"
-                        >
-                            Amin
-                        </button>
-                    </div>
+
                 </div>
             )}
         </>

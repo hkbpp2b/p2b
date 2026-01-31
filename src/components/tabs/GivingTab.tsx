@@ -64,10 +64,14 @@ const GivingTab = () => {
     };
 
     if (loading) return (
-        <div className="flex justify-center py-20">
+        <div className="animate-in fade-in duration-500 flex flex-col items-center justify-center py-60 bg-transparent">
             <Loader2 className="animate-spin text-slate-900" size={32} />
+            <p className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mt-6">
+                Sinkronisasi
+            </p>
         </div>
     );
+
 
     return (
         <div className="animate-in fade-in duration-700 pb-32 pt-8 px-5 space-y-10">

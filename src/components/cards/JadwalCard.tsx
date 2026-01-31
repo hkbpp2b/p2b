@@ -27,9 +27,14 @@ const JadwalCard = () => {
     ];
 
     return (
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100">
+        <div
+            className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden"
+            style={{
+                background: `linear-gradient(135deg, #ffffff 0%, #ffffff 100%)`
+            }}
+        >
             <div className="mb-6 text-center">
-                <h3 className="text-xl font-black text-blue-800 tracking-tighter uppercase mb-1">Jadwal Kebaktian</h3>
+                <h3 className="text-xl font-black text-blue-700 tracking-tighter uppercase mb-1">Jadwal Kebaktian</h3>
                 <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{getNextSunday()}</p>
             </div>
 

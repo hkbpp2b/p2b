@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Phone, MapPin, Mail, Loader2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Phone, MapPin, Mail, Loader2, ArrowLeft, Instagram, Youtube, Facebook, Music2 } from 'lucide-react';
+
 
 let cachedHeroData: any = null;
 
@@ -7,8 +8,49 @@ const HeroCard = () => {
     const [data, setData] = useState<any>(cachedHeroData);
     const [loading, setLoading] = useState(!cachedHeroData);
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [selectedPhoto, setSelectedPhoto] = useState<any>(null);
+
+    const [isScrolled, setIsScrolled] = useState(false);
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const sliderRef = useRef<HTMLDivElement>(null);
+
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
     const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?gid=1428170023&single=true&output=tsv";
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setIsDragging(true);
+        setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
+        setScrollLeft(sliderRef.current?.scrollLeft || 0);
+    };
+
+    const handleMouseLeave = () => setIsDragging(false);
+    const handleMouseUp = () => setIsDragging(false);
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging) return;
+        e.preventDefault();
+        const x = e.pageX - (sliderRef.current?.offsetLeft || 0);
+        const walk = (x - startX) * 2; // Kecepatan scroll
+        if (sliderRef.current) {
+            sliderRef.current.scrollLeft = scrollLeft - walk;
+        }
+    };
+
+    const handleSliderScroll = () => {
+        if (sliderRef.current) {
+            const index = Math.round(sliderRef.current.scrollLeft / sliderRef.current.offsetWidth);
+            setCurrentSlide(index);
+        }
+    };
+
+    const handleScroll = () => {
+        if (scrollRef.current) {
+            setIsScrolled(scrollRef.current.scrollTop > 100);
+        }
+    };
 
     const formatDriveLink = (url: string) => {
         if (!url || !url.includes('http')) return null;
@@ -20,6 +62,26 @@ const HeroCard = () => {
         return url;
     };
 
+
+    useEffect(() => {
+        if (selectedPhoto) {
+            // Tambahkan class penanda untuk Layout
+            document.body.classList.add('modal-open');
+            window.history.pushState({ photoOpen: true }, "");
+
+            const handleBackInPhoto = (event: PopStateEvent) => {
+                setSelectedPhoto(null);
+                document.body.classList.remove('modal-open');
+            };
+
+            window.addEventListener('popstate', handleBackInPhoto);
+            return () => {
+                window.removeEventListener('popstate', handleBackInPhoto);
+                document.body.classList.remove('modal-open');
+            };
+        }
+    }, [selectedPhoto]);
+
     useEffect(() => {
         if (cachedHeroData) return;
         const fetchHeroData = async () => {
@@ -29,28 +91,45 @@ const HeroCard = () => {
                 const rawRows = text.split(/\r?\n/).filter(r => r.trim() !== "").map(r => r.split('\t'));
 
                 if (rawRows.length > 1) {
-                    let allPhotos: string[] = [];
+                    let allPhotos: any[] = [];
                     rawRows.forEach((cols, index) => {
-                        if (index === 0) return;
-                        const img = formatDriveLink(cols[0]?.trim());
-                        if (img) {
-                            allPhotos.push(img);
-                            // PRELOADING: Paksa browser unduh gambar di background
-                            const link = document.createElement('link');
-                            link.rel = 'preload';
-                            link.as = 'image';
-                            link.href = img;
-                            document.head.appendChild(link);
-                        }
+                        if (index === 0) return; // Lewati header tabel
+
+                        const imgUrl = (cols[0] || "").trim();
+                        const tanggal = (cols[1] || "").trim();
+                        const judul = (cols[2] || "").trim();
+                        const deskripsi = (cols[3] || "").trim();
+
+                        // 1. Logika Filter: Jangan tampilkan jika Judul kosong atau cuma berisi "-" atau cuma label "Judul:"
+                        const isInvalid = (val: string) => {
+                            const cleanVal = val.toLowerCase();
+                            return !val ||
+                                val === "-" ||
+                                val === "" ||
+                                cleanVal === "judul:" ||
+                                cleanVal === "judul";
+                        };
+
+                        // Jika judul tidak valid, baris ini dibuang (tidak di-push ke allPhotos)
+                        if (isInvalid(judul)) return;
+
+                        // 2. Format Link Foto
+                        const img = formatDriveLink(imgUrl);
+
+                        allPhotos.push({
+                            url: img || "",
+                            tanggal: isInvalid(tanggal) ? "" : tanggal,
+                            judul: judul,
+                            deskripsi: isInvalid(deskripsi) ? "" : deskripsi
+                        });
                     });
 
-                    const firstRow = rawRows[1];
                     const result = {
                         slides: allPhotos,
-                        alamat: firstRow[1] || "Alamat belum tersedia",
-                        telpon: firstRow[2] || "-",
-                        email: firstRow[3] || "-",
-                        maps: firstRow[4] || "#"
+                        alamat: "Jl.Gunung Gede Raya No.2 Perumnas 2 Bekasi",
+                        telpon: "(021) 8844443 ",
+                        email: "hkbpperumnasbekasi@gmail.com",
+                        maps: "https://maps.app.goo.gl/pQQHW16Fsv89kkvq6"
                     };
 
                     setData(result);
@@ -62,13 +141,17 @@ const HeroCard = () => {
     }, []);
 
     useEffect(() => {
-        if (data?.slides?.length > 1) {
+        if (data?.slides?.length > 1 && !selectedPhoto) {
             const timer = setInterval(() => {
-                setCurrentSlide((prev) => (prev + 1) % data.slides.length);
+                const nextSlide = (currentSlide + 1) % data.slides.length;
+                sliderRef.current?.scrollTo({
+                    left: nextSlide * sliderRef.current.offsetWidth,
+                    behavior: 'smooth'
+                });
             }, 5000);
             return () => clearInterval(timer);
         }
-    }, [data]);
+    }, [data, selectedPhoto, currentSlide]);
 
     if (loading) return (
         <div className="bg-white rounded-[2.5rem] h-[380px] flex items-center justify-center border border-slate-100 mt-4 shadow-sm">
@@ -77,55 +160,174 @@ const HeroCard = () => {
     );
 
     return (
-        <div className="bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 mt-4 p-3">
+        <>
+            <div
+                className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 mt-4 p-3 transition-all"
+                style={{
+                    // Gradasi simetris: Slate-200 di kedua pojok, Putih di tengah
+                    background: `linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%)`
+                }}
+            >
 
-            {/* Box Slideshow - Menggunakan Stacked Layering */}
-            <div className="rounded-[2rem] overflow-hidden aspect-[4/3] relative bg-slate-900 shadow-inner">
-                {data?.slides?.map((imgUrl: string, idx: number) => (
-                    <img
-                        key={idx}
-                        src={imgUrl}
-                        alt={`Slide ${idx}`}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-[1500ms] ease-in-out ${idx === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                            }`}
-                    />
-                ))}
+                {/* SLIDER CONTAINER */}
+                <div className="rounded-[2rem] overflow-hidden aspect-[4/3] relative bg-slate-900 group">
+                    <div
+                        ref={sliderRef}
+                        onScroll={handleSliderScroll}
+                        onMouseDown={handleMouseDown}
+                        onMouseLeave={handleMouseLeave}
+                        onMouseUp={handleMouseUp}
+                        onMouseMove={handleMouseMove}
+                        className={`flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing select-none snap-none' : ''}`}
+                        style={{
+                            msOverflowStyle: 'none',  /* IE and Edge */
+                            scrollbarWidth: 'none',   /* Firefox */
+                        }}
+                    >
 
-                {/* Dot Indicators */}
-                <div className="absolute top-5 right-6 flex gap-1.5 z-30">
-                    {data?.slides?.map((_: any, idx: number) => (
-                        <div
-                            key={idx}
-                            className={`h-1 rounded-full transition-all duration-700 ${idx === currentSlide ? 'w-6 bg-white shadow-lg' : 'w-1.5 bg-white/30'
-                                }`}
-                        />
-                    ))}
+
+                        {data?.slides?.map((slide: any, idx: number) => (
+                            <div
+                                key={idx}
+                                className="w-full h-full shrink-0 snap-center relative active:scale-95 transition-transform duration-200"
+                                onClick={() => setSelectedPhoto(slide)} // <--- INI KUNCINYA
+                            >
+                                <img src={slide.url} className="w-full h-full object-cover" alt="" />
+
+                                {/* Overlay gradient supaya teks di atasnya kebaca */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent z-10" />
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="absolute top-5 right-6 flex gap-1.5 z-30 pointer-events-none">
+                        {data?.slides?.map((_: any, idx: number) => (
+                            <div key={idx} className={`h-1 rounded-full transition-all duration-500 ${idx === currentSlide ? 'w-6 bg-white' : 'w-1.5 bg-white/30'}`} />
+                        ))}
+                    </div>
+
+                    <div className="absolute bottom-6 left-6 right-6 text-left z-20 pointer-events-none">
+                        <p className="text-white/90 text-[10px] font-black uppercase tracking-[0.3em] mb-1">
+                            {data?.slides[currentSlide]?.tanggal || ""}
+                        </p>
+                        <h3 className="text-white text-[22px] font-black uppercase tracking-tight leading-none">
+                            {data?.slides[currentSlide]?.judul || ""}
+                        </h3>
+                    </div>
                 </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent pointer-events-none z-20" />
+                {/* BAGIAN TOMBOL KONTAK */}
+                <div className="mt-4 px-2 space-y-1 pb-1 text-slate-900">
+                    <a href={data?.maps} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
+                        <MapPin size={18} className="text-slate-400 shrink-0" />
+                        <span className="text-[12px] font-black leading-snug">{data?.alamat}</span>
+                    </a>
 
-                <div className="absolute bottom-6 left-6 right-6 text-left z-20">
-                    <p className="text-white/60 text-[10px] font-black uppercase tracking-[0.3em] mb-1">We're glad you're here</p>
-                    <h3 className="text-white text-[22px] font-black uppercase tracking-tight leading-none">Welcome Home</h3>
+                    <a href={`tel:${data?.telpon?.replace(/[^0-9]/g, '')}`} className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
+                        <Phone size={18} className="text-blue-600 shrink-0" />
+                        <span className="text-[12px] font-black">{data?.telpon}</span>
+                    </a>
+
+                    <a href={`mailto:${data?.email}`} className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
+                        <Mail size={18} className="text-red-500 shrink-0" />
+                        <span className="text-[12px] font-black truncate">{data?.email}</span>
+                    </a>
+
+                    {/* SOSIAL MEDIA - Gaya Baris Menyatu */}
+                    <div className="mt-3 pt-3 border-t border-slate-100/60">
+
+
+                        {/* Tombol Aksi yang Menyatu dengan Slate-900 */}
+                        <div className="flex gap-2 px-1">
+                            <a href="https://www.instagram.com/hkbp.perum2bks/" target="_blank" rel="noopener noreferrer"
+                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
+                                <Instagram size={18} className="text-slate-900" />
+                            </a>
+                            <a href="https://www.youtube.com/@HKBPPerumnas2Bekasi" target="_blank" rel="noopener noreferrer"
+                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
+                                <Youtube size={18} className="text-slate-900" />
+                            </a>
+                            <a href="https://www.facebook.com/hkbp.perum2bks" target="_blank" rel="noopener noreferrer"
+                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
+                                <Facebook size={18} className="text-slate-900" />
+                            </a>
+
+                            <a href="https://www.tiktok.com/@hkbp.perum2bks" target="_blank" rel="noopener noreferrer"
+                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
+                                <Music2 size={18} className="text-slate-900" />
+                            </a>
+
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Kontak - Slate 900 & Font 12px */}
-            <div className="mt-4 px-2 space-y-1 pb-1 text-slate-900">
-                <a href={data?.maps} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
-                    <MapPin size={18} className="text-slate-400 shrink-0" />
-                    <span className="text-[12px] font-black leading-snug break-words">{data?.alamat}</span>
-                </a>
-                <a href={`tel:${data?.telpon}`} className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
-                    <Phone size={18} className="text-blue-600 shrink-0" />
-                    <span className="text-[12px] font-black">{data?.telpon}</span>
-                </a>
-                <a href={`mailto:${data?.email}`} className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
-                    <Mail size={18} className="text-red-500 shrink-0" />
-                    <span className="text-[12px] font-black truncate">{data?.email}</span>
-                </a>
-            </div>
-        </div>
+            {/* OVERLAY MODAL */}
+            {selectedPhoto && (
+                <div className="fixed inset-0 z-[999] bg-white flex flex-col animate-in fade-in duration-300">
+
+                    {/* WRAPPER KONTEN - Ini yang menjaga ukuran tetap maksimal seperti tadi */}
+                    <div className="w-full max-w-7xl mx-auto flex flex-col h-full overflow-hidden">
+
+                        {/* STICKY HEADER */}
+                        <div className={`flex items-center px-6 h-[75px] bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'border-b border-slate-100 shadow-sm' : 'border-transparent'}`}>
+                            <button
+                                onClick={() => {
+                                    setSelectedPhoto(null);
+                                    // Cek jika kita di state photoOpen, maka back secara programmatik
+                                    if (window.history.state?.photoOpen) {
+
+                                    }
+                                }}
+                                className="..."
+                            >
+                                <ArrowLeft size={24} />
+                            </button>
+
+                            <div className={`ml-4 transition-all duration-500 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                                <p className="text-[14px] font-black text-slate-900 uppercase leading-none mb-0.5">{selectedPhoto.judul}</p>
+                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">{selectedPhoto.tanggal}</p>
+                            </div>
+                        </div>
+
+                        {/* AREA KONTEN */}
+                        <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar bg-white">
+                            <div className="flex flex-col md:flex-row items-start min-h-full">
+
+                                {/* KIRI: FOTO */}
+                                <div className="w-full md:w-1/2 md:sticky md:top-0 h-[350px] md:h-[calc(100vh-75px)] overflow-hidden bg-slate-50">
+                                    <img
+                                        src={selectedPhoto.url}
+                                        className="w-full h-full object-cover"
+                                        alt="Content"
+                                    />
+                                </div>
+
+                                {/* KANAN: TEKS */}
+                                <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col bg-white">
+                                    <div className="mb-8">
+                                        <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">
+                                            {selectedPhoto.tanggal}
+                                        </p>
+                                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-[1.1]">
+                                            {selectedPhoto.judul}
+                                        </h2>
+                                        <div className="w-12 h-1.5 bg-slate-900 mt-6 rounded-full" />
+                                    </div>
+
+                                    <div className="pb-32">
+                                        <p className="text-[16px] md:text-[18px] font-bold text-slate-900 leading-[1.8] text-left whitespace-pre-line">
+                                            {selectedPhoto.deskripsi}
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 
