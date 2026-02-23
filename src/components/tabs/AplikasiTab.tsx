@@ -33,7 +33,7 @@ const AplikasiTab = () => {
         <div className="animate-in fade-in duration-700 pb-32 pt-8 px-5 space-y-10">
             <header className="text-center space-y-1">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Aplikasi</h2>
-                <p className="text-[14px] font-bold text-slate-900 uppercase tracking-[0.2em]">Daftar Aplikasi Jemaat</p>
+                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Layanan Aplikasi Digital</p>
             </header>
 
             <div className="grid grid-cols-3 gap-6">
