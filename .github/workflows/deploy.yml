@@ -22,12 +22,12 @@ jobs:
       - run: npm run build
         env:
          VITE_HERO_TSV_URL: ${{ secrets.VITE_HERO_TSV_URL }}
-          VITE_TSV_PENDETA_URL: ${{ secrets.VITE_TSV_PENDETA_URL }}
-          VITE_TSV_RENUNGAN_URL: ${{ secrets.VITE_TSV_RENUNGAN_URL }}
-          VITE_GIVING_TSV_URL: ${{ secrets.VITE_GIVING_TSV_URL }}
-          VITE_IBADAH_CSV_URL: ${{ secrets.VITE_IBADAH_CSV_URL }}
-          VITE_FUNGSIONARIS_TSV_URL: ${{ secrets.VITE_FUNGSIONARIS_TSV_URL }}
-          VITE_OTHER_URL: ${{ secrets.VITE_OTHER_URL }}
+        VITE_TSV_PENDETA_URL: ${{ secrets.VITE_TSV_PENDETA_URL }}
+        VITE_TSV_RENUNGAN_URL: ${{ secrets.VITE_TSV_RENUNGAN_URL }}
+        VITE_GIVING_TSV_URL: ${{ secrets.VITE_GIVING_TSV_URL }}
+        VITE_IBADAH_CSV_URL: ${{ secrets.VITE_IBADAH_CSV_URL }}
+        VITE_FUNGSIONARIS_TSV_URL: ${{ secrets.VITE_FUNGSIONARIS_TSV_URL }}
+        VITE_OTHER_URL: ${{ secrets.VITE_OTHER_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
