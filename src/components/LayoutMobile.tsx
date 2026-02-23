@@ -1,6 +1,6 @@
 // LayoutMobile.tsx
 import React, { useState, useEffect } from 'react';
-import logoHkbp from '../assets/logo 1.png';
+import logoHkbp from '../assets/logo1.png';
 
 interface LayoutMobileProps {
     children: React.ReactNode;

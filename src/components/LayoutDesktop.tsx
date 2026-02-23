@@ -1,7 +1,7 @@
 // LayoutDesktop.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
-import logoDua from '../assets/logo 3.webp';
+import logoDua from '../assets/logo3.webp';
 
 interface LayoutDesktopProps {
     children: React.ReactNode;
@@ -42,7 +42,7 @@ const LayoutDesktop = ({ children, activeTab, setActiveTab, menus = [] }: Layout
             {/* z-index diturunkan ke 50 agar Card Aplikasi (z-60/z-100) bisa menutupinya jika diperlukan */}
             <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-12 flex items-center shadow-sm h-20">
                 <div className="flex items-center gap-3 w-1/3">
-                    <img src={logoDua} alt="Logo 3" className="w-auto h-20 object-contain" />
+                    <img src={logoDua} alt="Logo3" className="w-auto h-20 object-contain" />
                 </div>
 
                 <div className="flex-1 flex justify-center items-center">
