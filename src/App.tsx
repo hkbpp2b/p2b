@@ -6,7 +6,7 @@ import ProfileTab from './components/tabs/ProfileTab';
 import IbadahTab from './components/tabs/IbadahTab';
 import GivingTab from './components/tabs/GivingTab';
 import OtherTab from './components/tabs/OtherTab';
-import WartaTab from './components/tabs/WartaTab';
+import AplikasiTab from './components/tabs/AplikasiTab';
 
 function App() {
   const [activeTab, setActiveTab] = useState('profil');
@@ -68,7 +68,7 @@ function App() {
           {renderTab('profil', ProfileTab)}
           {renderTab('giving', GivingTab)}
           {renderTab('ibadah', IbadahTab)}
-          {renderTab('warta', WartaTab)}
+          {renderTab('warta', AplikasiTab)}
           {renderTab('other', OtherTab)}
         </div>
       </div>

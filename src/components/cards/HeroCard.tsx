@@ -19,6 +19,7 @@ const HeroCard = () => {
     const [scrollLeft, setScrollLeft] = useState(0);
 
     const TSV_URL = import.meta.env.VITE_HERO_TSV_URL;
+
     const handleMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true);
         setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));

@@ -13,7 +13,7 @@ interface LayoutProps {
 
 const Layout = ({ children, activeTab, setActiveTab, title }: LayoutProps) => {
     const menus = [
-        { id: 'warta', label: 'TBA', icon: <FileClock size={22} /> },
+        { id: 'warta', label: 'App', icon: <FileClock size={22} /> },
         { id: 'ibadah', label: 'Warta', icon: <Newspaper size={22} /> },
         { id: 'profil', label: 'Home', icon: <Home size={22} /> },
         { id: 'giving', label: 'Persembahan', icon: <QrCode size={22} /> },

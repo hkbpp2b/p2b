@@ -31,6 +31,8 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
         }
     };
 
+
+
     return (
         <>
             <div
@@ -112,6 +114,14 @@ const IbadahTab = () => {
     const [openViewerId, setOpenViewerId] = useState<string | null>(null);
 
     const CSV_URL = import.meta.env.VITE_IBADAH_CSV_URL;
+
+    const handleToggleArsip = () => {
+        if (!showArsip && arsip.length === 0 && !loading) {
+            setLoadingArsip(true);
+            fetchData();
+        }
+        setShowArsip(!showArsip);
+    };
 
     const extractId = (input: string) => {
         if (!input || input === "" || input === "-") return null;
@@ -258,16 +268,21 @@ const IbadahTab = () => {
                 ))}
 
                 <div className="pt-4">
-                    {!showArsip ? (
-                        <button
-                            onClick={handleOpenArsip}
-                            className="w-full py-4 flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 rounded-3 text-slate-400 hover:text-slate-900 hover:border-slate-900 transition-all rounded-3xl"
-                        >
-                            <ChevronDown size={18} />
-                            <span className="text-[11px] font-black uppercase tracking-[0.2em]">Arsip Warta</span>
-                        </button>
-                    ) : (
-                        <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
+                    <button
+                        onClick={handleToggleArsip}
+                        className={`w-full py-4 flex items-center justify-center gap-2 border-2 border-dashed rounded-3xl transition-all ${showArsip
+                            ? "border-slate-900 text-slate-900 bg-slate-50"
+                            : "border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-900"
+                            }`}
+                    >
+                        <ChevronDown size={18} className={`transition-transform duration-300 ${showArsip ? "rotate-180" : ""}`} />
+                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">
+                            {showArsip ? "Tutup Arsip" : "Arsip Warta"}
+                        </span>
+                    </button>
+
+                    {showArsip && (
+                        <div className="mt-4 space-y-4 animate-in slide-in-from-top-4 duration-500">
                             <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-200 ml-1">
                                 Arsip Warta Jemaat
                             </h3>

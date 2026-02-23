@@ -9,7 +9,7 @@ interface SaranFormProps {
 const SaranForm = ({ onBack }: SaranFormProps) => {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-    const SCRIPT_URL = import.meta.env.VITE_SCRIPT_URL;
+    const SCRIPT_URL = import.meta.env.VITE_OTHER_URL;
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

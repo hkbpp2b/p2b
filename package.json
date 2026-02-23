@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "homepage": "https://abram-kaleb.github.io/p2b",
+  "homepage": "",
   "scripts": {
     "dev": "vite --host 192.168.137.1",
     "build": "vite build",

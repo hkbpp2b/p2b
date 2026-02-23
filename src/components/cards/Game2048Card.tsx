@@ -1,7 +1,12 @@
-// WartaTab.tsx
+// Game2048Card.tsx
 import React, { useState, useEffect, useCallback } from 'react';
+import { ArrowLeft } from 'lucide-react';
 
-const WartaTab = () => {
+interface Game2048CardProps {
+    onBack: () => void;
+}
+
+const Game2048Card = ({ onBack }: Game2048CardProps) => {
     const [grid, setGrid] = useState<number[][]>(Array(4).fill(0).map(() => Array(4).fill(0)));
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
@@ -105,7 +110,6 @@ const WartaTab = () => {
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
                 e.preventDefault();
             }
-
             switch (e.key) {
                 case 'ArrowUp': move('UP'); break;
                 case 'ArrowDown': move('DOWN'); break;
@@ -113,7 +117,6 @@ const WartaTab = () => {
                 case 'ArrowRight': move('RIGHT'); break;
             }
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [move]);
@@ -142,22 +145,26 @@ const WartaTab = () => {
     };
 
     return (
-        <div className="w-full min-h-screen bg-white flex flex-col items-center p-6 font-sans select-none overflow-y-auto pb-40">
-            <div className="w-full max-w-[280px] mt-[20px] mb-6">
+        <div className="fixed inset-0 z-[60] bg-white flex flex-col items-center p-6 font-sans select-none overflow-y-auto">
+            <div className="w-full max-w-[280px] flex justify-start mb-4">
+                <button onClick={onBack} className="p-2 -ml-2 text-black active:scale-90 transition-transform">
+                    <ArrowLeft size={24} />
+                </button>
+            </div>
+
+            <div className="w-full max-w-[280px] mb-6">
                 <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">
-                    PAGE COMING <br /> SOON
+                    2048 <br />
                 </h1>
-                <p className="mt-2 text-[9px] font-bold text-slate-400 uppercase tracking-widest leading-tight">
-                    This page is under development. <br /> Check back later for full updates.
-                </p>
+
                 <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Updt_Z12_V4N_14</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Score Record</p>
                     <span className="text-2xl font-black text-black">{score}</span>
                 </div>
             </div>
 
             <div
-                className="relative bg-white border-2 border-black p-1 mb-8 touch-none"
+                className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none"
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
             >
@@ -184,13 +191,13 @@ const WartaTab = () => {
                                 />
                                 <button onClick={saveScore} className="w-full bg-black text-white py-2 text-[10px] font-black uppercase mb-2">Save Score</button>
                             </div>
-                        ) : <p className="text-[10px] font-bold uppercase mb-4 text-slate-400">Score Recorded</p>}
+                        ) : <p className="text-[10px] font-bold uppercase mb-4 text-slate-400"></p>}
                         <button onClick={initGame} className="px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase">Retry</button>
                     </div>
                 )}
             </div>
 
-            <div className="w-full max-w-[280px]">
+            <div className="w-full max-w-[280px] pb-10">
                 <h3 className="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 mb-3">Top Scorer</h3>
                 {topScores.length === 0 ? (
                     <p className="text-[10px] text-slate-300 font-bold uppercase">No records yet</p>
@@ -207,4 +214,4 @@ const WartaTab = () => {
     );
 };
 
-export default WartaTab;
+export default Game2048Card;
