@@ -1,4 +1,4 @@
-// LayoutMobile.tsx
+// src/components/LayoutMobile.tsx
 import React, { useState, useEffect } from 'react';
 import logoHkbp from '../assets/Logo1.png';
 
@@ -64,7 +64,7 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                                         React.cloneElement(m.icon as React.ReactElement, {
                                             size: 22,
                                             strokeWidth: isActive ? 3 : 2
-                                        })
+                                        } as any)
                                     )}
                                 </div>
                                 <span className={`text-[9px] font-black uppercase tracking-tighter ${isActive ? 'text-blue-600' : 'text-slate-900 opacity-40'

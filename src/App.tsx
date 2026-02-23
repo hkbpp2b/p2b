@@ -61,7 +61,6 @@ function App() {
       activeTab={activeTab}
       setActiveTab={setActiveTab}
       title={titles[activeTab]}
-      menus={menus}
     >
       <div className="max-w-3xl mx-auto w-full pt-0">
         <div className="w-full">

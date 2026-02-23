@@ -3,19 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, ChevronDown, Maximize, X } from 'lucide-react';
 
 let cachedIbadahData: any = null;
-let cachedArsipData: any[] = [];
-
-const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
-    const iframeRef = useRef<HTMLIFrameElement>(null);
+let cachedArsipData: any[] = []; const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
 
-    const viewerUrl = `https://drive.google.com/file/d/${id}/preview?rm=minimal`;
+    const viewerUrl = `https://drive.google.com/file/d/${id}/preview`;
 
     useEffect(() => {
-        const handleFSChange = () => {
-            setIsFullScreen(!!document.fullscreenElement);
-        };
+        const handleFSChange = () => setIsFullScreen(!!document.fullscreenElement);
         document.addEventListener('fullscreenchange', handleFSChange);
         return () => document.removeEventListener('fullscreenchange', handleFSChange);
     }, []);
@@ -23,85 +18,67 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
     const toggleFullScreen = () => {
         if (!containerRef.current) return;
         if (!document.fullscreenElement) {
-            containerRef.current.requestFullscreen().catch(err => {
-                console.error(`Error full screen: ${err.message}`);
-            });
+            containerRef.current.requestFullscreen().catch(() => { });
         } else {
             document.exitFullscreen();
         }
     };
 
-
-
     return (
-        <>
+        <div className={`transition-all duration-500 ease-in-out ${isVisible ? 'opacity-100 h-auto mt-3' : 'opacity-0 h-0 overflow-hidden mt-0 pointer-events-none'}`}>
             <div
-                className={`mt-3 overflow-hidden rounded-xl bg-white transition-all duration-300 ease-in-out border-2 border-slate-200 ${isVisible ? 'opacity-100 h-auto visible' : 'opacity-0 h-0 invisible'
+                ref={containerRef}
+                className={`${isFullScreen
+                    ? 'fixed inset-0 z-[9999] bg-white flex flex-col'
+                    : 'relative w-full aspect-[4/5] rounded-[2rem] overflow-hidden border-2 border-slate-200 bg-white shadow-sm flex flex-col'
                     }`}
             >
-                <div className="flex items-center justify-between p-2 bg-slate-50 border-b border-slate-100">
+                <div className={`flex items-center justify-between p-3 border-b ${isFullScreen ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
                     <button
                         onClick={toggleFullScreen}
-                        className="p-2 hover:bg-slate-200 rounded-lg transition-colors text-slate-700 flex items-center gap-2"
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all active:scale-95 ${isFullScreen
+                            ? 'bg-slate-800 text-white hover:bg-slate-700'
+                            : 'bg-white text-slate-700 border border-slate-200 shadow-sm'
+                            }`}
                     >
-                        <Maximize size={16} />
-                        <span className="text-[10px] font-black uppercase tracking-wider">Full Screen</span>
+                        {isFullScreen ? <X size={18} /> : <Maximize size={16} />}
+                        <span className="text-[10px] font-black uppercase tracking-wider">
+                            {isFullScreen ? 'Tutup' : 'Layar Penuh'}
+                        </span>
                     </button>
+
                     <a
                         href={`https://drive.google.com/uc?export=download&id=${id}`}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-slate-800 transition-colors"
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-800 transition-all active:scale-95 shadow-md"
                     >
                         <Download size={14} />
-                        Download
+                        Unduh
                     </a>
                 </div>
-                <div className="w-full bg-white relative overflow-hidden aspect-square">
+
+                <div
+                    className="flex-1 overflow-hidden bg-white flex items-center justify-center relative touch-auto"
+                    style={{ touchAction: 'pinch-zoom' }}
+                >
                     <iframe
-                        ref={iframeRef}
                         src={viewerUrl}
-                        className="absolute inset-0 w-full h-full border-none shadow-none bg-white"
-                        allow="autoplay"
-                        loading="lazy"
-                        style={{
-                            colorScheme: 'light'
+                        className={`border-none ${isFullScreen
+                            ? 'w-full h-full'
+                            : 'w-[115%] h-[100%] shrink-0'
+                            }`}
+                        style={!isFullScreen ? {
+                            transform: 'translateY(-4%) scale(1.02)',
+                            pointerEvents: 'auto'
+                        } : {
+                            pointerEvents: 'auto'
                         }}
+                        allow="autoplay"
+                        loading="eager"
+                        title="PDF Preview"
                     />
                 </div>
             </div>
-
-
-            <div
-                ref={containerRef}
-                className={`${isFullScreen ? 'fixed inset-0 z-[9999] bg-white flex flex-col' : 'hidden'}`}
-            >
-                <div className="flex items-center justify-between p-4 bg-slate-900 text-white">
-                    <button
-                        onClick={toggleFullScreen}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors"
-                    >
-                        <X size={20} />
-                        <span className="text-xs font-bold uppercase">Tutup</span>
-                    </button>
-                    <a
-                        href={`https://drive.google.com/uc?export=download&id=${id}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-xl hover:bg-blue-500 transition-colors"
-                    >
-                        <Download size={18} />
-                        <span className="text-xs font-bold uppercase">Download</span>
-                    </a>
-                </div>
-                <div className="flex-1 bg-white relative">
-                    {isFullScreen && (
-                        <iframe
-                            src={viewerUrl}
-                            className="w-full h-full border-none shadow-none"
-                            allow="autoplay"
-                            style={{ colorScheme: 'light' }}
-                        />
-                    )}
-                </div>
-            </div>
-        </>
+        </div>
     );
 };
 
@@ -243,7 +220,7 @@ const IbadahTab = () => {
                             {section.title}
                         </h3>
                         <div className="grid gap-3">
-                            {section.items.map((item, iIdx) => (
+                            {section.items.map((item: any, iIdx: number) => (
                                 <div key={iIdx} className="w-full">
                                     <button
                                         onClick={() => toggleViewer(item.id)}
