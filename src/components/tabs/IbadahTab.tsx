@@ -69,7 +69,7 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
                 </div>
             </div>
 
-            {/* Fullscreen Overlay Layer */}
+
             <div
                 ref={containerRef}
                 className={`${isFullScreen ? 'fixed inset-0 z-[9999] bg-white flex flex-col' : 'hidden'}`}

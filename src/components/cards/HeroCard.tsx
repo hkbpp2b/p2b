@@ -33,7 +33,7 @@ const HeroCard = () => {
         if (!isDragging) return;
         e.preventDefault();
         const x = e.pageX - (sliderRef.current?.offsetLeft || 0);
-        const walk = (x - startX) * 2; // Kecepatan scroll
+        const walk = (x - startX) * 2;
         if (sliderRef.current) {
             sliderRef.current.scrollLeft = scrollLeft - walk;
         }
@@ -65,7 +65,7 @@ const HeroCard = () => {
 
     useEffect(() => {
         if (selectedPhoto) {
-            // Tambahkan class penanda untuk Layout
+
             document.body.classList.add('modal-open');
             window.history.pushState({ photoOpen: true }, "");
 
@@ -163,7 +163,7 @@ const HeroCard = () => {
             <div
                 className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 mt-4 p-3 transition-all"
                 style={{
-                    // Gradasi simetris: Slate-200 di kedua pojok, Putih di tengah
+
                     background: `linear-gradient(135deg, #ffffff 0%, #ffffff 50%, #ffffff 100%)`
                 }}
             >
@@ -179,8 +179,8 @@ const HeroCard = () => {
                         onMouseMove={handleMouseMove}
                         className={`flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar cursor-grab ${isDragging ? 'cursor-grabbing select-none snap-none' : ''}`}
                         style={{
-                            msOverflowStyle: 'none',  /* IE and Edge */
-                            scrollbarWidth: 'none',   /* Firefox */
+                            msOverflowStyle: 'none',
+                            scrollbarWidth: 'none',
                         }}
                     >
 
@@ -189,11 +189,11 @@ const HeroCard = () => {
                             <div
                                 key={idx}
                                 className="w-full h-full shrink-0 snap-center relative active:scale-95 transition-transform duration-200"
-                                onClick={() => setSelectedPhoto(slide)} // <--- INI KUNCINYA
+                                onClick={() => setSelectedPhoto(slide)}
                             >
                                 <img src={slide.url} className="w-full h-full object-cover" alt="" />
 
-                                {/* Overlay gradient supaya teks di atasnya kebaca */}
+
                                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent z-10" />
                             </div>
                         ))}
@@ -215,7 +215,7 @@ const HeroCard = () => {
                     </div>
                 </div>
 
-                {/* BAGIAN TOMBOL KONTAK */}
+
                 <div className="mt-4 px-2 space-y-1 pb-1 text-slate-900">
                     <a href={data?.maps} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
                         <MapPin size={18} className="text-red-400 shrink-0" />
@@ -232,7 +232,7 @@ const HeroCard = () => {
                         <span className="text-[12px] font-black truncate">{data?.email}</span>
                     </a>
 
-                    {/* SOSIAL MEDIA - Gaya Baris Menyatu */}
+
                     <div className="mt-3 pt-3 border-t border-slate-100/60">
 
 
@@ -258,19 +258,19 @@ const HeroCard = () => {
                 </div>
             </div>
 
-            {/* OVERLAY MODAL */}
+
             {selectedPhoto && (
                 <div className="fixed inset-0 z-[999] bg-white flex flex-col animate-in fade-in duration-300">
 
-                    {/* WRAPPER KONTEN - Ini yang menjaga ukuran tetap maksimal seperti tadi */}
+
                     <div className="w-full max-w-7xl mx-auto flex flex-col h-full overflow-hidden">
 
-                        {/* STICKY HEADER */}
+
                         <div className={`flex items-center px-6 h-[75px] bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'border-b border-slate-100 shadow-sm' : 'border-transparent'}`}>
                             <button
                                 onClick={() => {
                                     setSelectedPhoto(null);
-                                    // Cek jika kita di state photoOpen, maka back secara programmatik
+
                                     if (window.history.state?.photoOpen) {
 
                                     }
@@ -286,11 +286,9 @@ const HeroCard = () => {
                             </div>
                         </div>
 
-                        {/* AREA KONTEN */}
                         <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar bg-white">
                             <div className="flex flex-col md:flex-row items-start min-h-full">
 
-                                {/* KIRI: FOTO */}
                                 <div className="w-full md:w-1/2 md:sticky md:top-0 h-[350px] md:h-[calc(100vh-75px)] overflow-hidden bg-slate-50">
                                     <img
                                         src={selectedPhoto.url}
@@ -299,7 +297,7 @@ const HeroCard = () => {
                                     />
                                 </div>
 
-                                {/* KANAN: TEKS */}
+
                                 <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col bg-white">
                                     <div className="mb-8">
                                         <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">

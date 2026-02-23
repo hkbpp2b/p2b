@@ -23,12 +23,10 @@ const PendetaCard = () => {
     useEffect(() => {
         if (selected) {
             document.body.classList.add('modal-open');
-
-            // Tambahkan state ke history hanya agar tombol back HP bisa menutup modal
             window.history.pushState({ modalOpen: true }, "");
 
             const handlePopState = () => {
-                // Jika user tekan tombol back di HP, tutup modal tanpa reload
+
                 setSelected(null);
                 document.body.classList.remove('modal-open');
             };

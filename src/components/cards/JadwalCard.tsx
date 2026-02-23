@@ -1,10 +1,9 @@
 import React from 'react';
 
 const JadwalCard = () => {
-    // URL Live mandiri
+
     const LIVE_URL = "https://www.youtube.com/@hkbpperumnas2bekasi/live";
 
-    // Fungsi hitung tanggal Minggu depan otomatis
     const getNextSunday = () => {
         const now = new Date();
         const nextSunday = new Date();

@@ -5,12 +5,10 @@
   "type": "module",
   "homepage": "",
   "scripts": {
-    "dev": "vite --host 192.168.137.1",
+    "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

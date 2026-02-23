@@ -23,8 +23,6 @@ const AplikasiTab = () => {
     }
 
 
-
-    // Tambahkan di bagian logic render
     if (activeApp === '2048') {
         return <Game2048Card onBack={() => setActiveApp(null)} />;
     }

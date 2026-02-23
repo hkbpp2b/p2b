@@ -27,8 +27,8 @@ const RenunganCard = () => {
                         kutipan: cols[2],
                         topik: cols[3],
                         isi: cols[4],
-                        bukuEnde: cols[5], // Mengambil data kolom Buku Ende
-                        lirikEnde: cols[6]  // Mengambil data kolom Lirik
+                        bukuEnde: cols[5],
+                        lirikEnde: cols[6]
                     };
                     setData(result);
                     cachedRenungan = result;
@@ -38,7 +38,7 @@ const RenunganCard = () => {
         fetchRenungan();
     }, []);
 
-    // LOGIKA BACK BUTTON & OVERFLOW
+
     useEffect(() => {
         if (isOpen) {
             document.body.classList.add('modal-open');
@@ -77,7 +77,7 @@ const RenunganCard = () => {
 
     return (
         <>
-            {/* CARD UTAMA */}
+
             <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-800 bg-slate-900 relative overflow-hidden">
                 <div className="mb-6 text-center relative z-10">
                     <h3 className="text-xl font-black text-white tracking-tighter uppercase mb-1">
@@ -115,11 +115,10 @@ const RenunganCard = () => {
                 </div>
             </div>
 
-            {/* OVERLAY FULL SCREEN */}
             {isOpen && (
                 <div className="fixed inset-0 z-[999] flex flex-col animate-in slide-in-from-right duration-500 bg-white">
 
-                    {/* STICKY HEADER */}
+
                     <div className={`flex items-center px-6 md:px-12 h-[75px] sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm' : 'bg-transparent'}`}>
                         <button onClick={closeRenungan} className="text-slate-900 p-2 -ml-2 active:scale-90 transition-transform">
                             <ArrowLeft size={24} />
@@ -131,7 +130,7 @@ const RenunganCard = () => {
                         </div>
                     </div>
 
-                    {/* AREA KONTEN - Max width 3xl agar teks tidak melebar liar */}
+
                     <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
                         <div className="max-w-3xl mx-auto w-full px-8 py-12 flex flex-col">
 

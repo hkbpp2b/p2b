@@ -39,7 +39,8 @@ const LayoutDesktop = ({ children, activeTab, setActiveTab, menus = [] }: Layout
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans hidden md:flex flex-col">
-            <header className="sticky top-0 z-[120] bg-white/80 backdrop-blur-md border-b border-slate-200 px-12 flex items-center shadow-sm h-20">
+            {/* z-index diturunkan ke 50 agar Card Aplikasi (z-60/z-100) bisa menutupinya jika diperlukan */}
+            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-12 flex items-center shadow-sm h-20">
                 <div className="flex items-center gap-3 w-1/3">
                     <img src={logoDua} alt="Logo 3" className="w-auto h-20 object-contain" />
                 </div>
@@ -100,7 +101,7 @@ const LayoutDesktop = ({ children, activeTab, setActiveTab, menus = [] }: Layout
                 </nav>
             </header>
 
-            <main className="flex-1 max-w-7xl mx-auto p-6 w-full">
+            <main className="flex-1 max-w-7xl mx-auto p-6 w-full relative">
                 {children}
             </main>
 
