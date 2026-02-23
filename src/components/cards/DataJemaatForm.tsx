@@ -1,15 +1,20 @@
+// DataJemaatForm.tsx
+
 import React, { useState } from 'react';
-import { ArrowLeft, DatabaseZap, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, DatabaseZap, Plus, Trash2, Loader2, CheckCircle2 } from 'lucide-react';
 
 interface DataJemaatFormProps {
     onBack: () => void;
 }
 
 const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
-    const [status, setStatus] = useState<'idle' | 'error'>('idle');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
     const [anak, setAnak] = useState<string[]>(['']);
 
+    const SCRIPT_URL = import.meta.env.VITE_OTHER_URL;
+
     const handleAddAnak = () => setAnak([...anak, '']);
+
     const handleRemoveAnak = (index: number) => {
         const newAnak = anak.filter((_, i) => i !== index);
         setAnak(newAnak.length ? newAnak : ['']);
@@ -21,14 +26,35 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
         setAnak(newAnak);
     };
 
-    const handleSave = () => {
-        setStatus('error');
-        setTimeout(() => setStatus('idle'), 3000);
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setStatus('loading');
+
+        const formData = new FormData(e.currentTarget);
+        formData.append('target_sheet', 'Data Jemaat');
+        formData.append('nama_anak', anak.filter(n => n.trim() !== '').join(', '));
+        formData.append('tanggal', new Date().toLocaleString('id-ID'));
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            });
+
+            setStatus('success');
+            setTimeout(() => {
+                setStatus('idle');
+                onBack();
+            }, 2000);
+        } catch (error) {
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 4000);
+        }
     };
 
     return (
         <div className="space-y-8 pb-32 pt-4 px-2">
-            {/* Tombol Back Atas */}
             <button
                 onClick={onBack}
                 className="flex items-center gap-2 text-slate-900 font-black uppercase text-[12px] tracking-[0.2em]"
@@ -36,46 +62,44 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                 <ArrowLeft size={16} /> Kembali
             </button>
 
-            {/* Header */}
             <header className="space-y-2">
                 <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Data Jemaat</h2>
                 <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.3em]">Informasi Administrasi Jemaat</p>
             </header>
 
-            {/* Form Start */}
-            <form className="space-y-6 bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60" onSubmit={(e) => e.preventDefault()}>
-
-                {/* 1. Nama Kepala Keluarga */}
+            <form className="space-y-6 bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60" onSubmit={handleSubmit}>
                 <div className="space-y-3">
                     <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap Kepala Keluarga</label>
                     <input
+                        name="nama_kk"
                         type="text"
+                        required
                         placeholder="Masukkan nama kepala keluarga..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-blue-500"
                     />
                 </div>
 
-                {/* 2. No WA Aktif */}
                 <div className="space-y-3">
                     <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">No. WhatsApp Aktif</label>
                     <input
+                        name="whatsapp"
                         type="tel"
+                        required
                         placeholder="0812..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-emerald-500"
                     />
                 </div>
 
-                {/* 3. Nama Istri */}
                 <div className="space-y-3">
                     <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap Istri</label>
                     <input
+                        name="nama_istri"
                         type="text"
                         placeholder="Masukkan nama lengkap istri..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-rose-500"
                     />
                 </div>
 
-                {/* 4. Nama Anak (Dinamis) */}
                 <div className="space-y-3">
                     <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap Anak</label>
                     {anak.map((nama, index) => (
@@ -88,7 +112,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                                 className="flex-1 bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
                             />
                             {anak.length > 1 && (
-                                <button onClick={() => handleRemoveAnak(index)} className="px-2 text-rose-600">
+                                <button type="button" onClick={() => handleRemoveAnak(index)} className="px-2 text-rose-600">
                                     <Trash2 size={18} />
                                 </button>
                             )}
@@ -103,48 +127,47 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                     </button>
                 </div>
 
-                {/* 5. Alamat */}
                 <div className="space-y-3">
                     <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Alamat Lengkap</label>
                     <textarea
+                        name="alamat"
+                        required
                         placeholder="Jl. Contoh No. 123..."
                         rows={3}
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900 resize-none"
                     />
                 </div>
 
-                {/* 6. Wilayah */}
                 <div className="space-y-3">
                     <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Wilayah / Weyk</label>
                     <input
+                        name="wilayah"
                         type="text"
+                        required
                         placeholder="Contoh: Weyk 04"
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
                     />
                 </div>
 
-                {/* Group Tombol Aksi */}
                 <div className="space-y-3 pt-4">
                     <button
-                        type="button"
-                        onClick={handleSave}
-                        className={`w-full p-6 rounded-[2rem] flex items-center justify-center gap-3 shadow-xl transition-all ${status === 'error'
-                            ? 'bg-rose-600'
-                            : 'bg-slate-900 active:scale-95'
-                            }`}
+                        type="submit"
+                        disabled={status === 'loading' || status === 'success'}
+                        className={`w-full p-6 rounded-[2rem] flex items-center justify-center gap-3 shadow-xl transition-all ${status === 'error' ? 'bg-rose-600' :
+                            status === 'success' ? 'bg-emerald-500' :
+                                'bg-slate-900 active:scale-95'
+                            } disabled:opacity-70`}
                     >
-                        {status === 'error' ? (
-                            <>
-                                <DatabaseZap size={18} className="text-white" />
-                                <span className="font-black uppercase text-[12px] tracking-[0.1em] text-white">
-                                    ERROR: DATABASE OFFLINE
-                                </span>
-                            </>
-                        ) : (
-                            <span className="font-black uppercase text-xs tracking-[0.2em] text-white">
-                                Simpan Data
-                            </span>
-                        )}
+                        {status === 'loading' && <Loader2 size={18} className="text-white animate-spin" />}
+                        {status === 'success' && <CheckCircle2 size={18} className="text-white" />}
+                        {status === 'error' && <DatabaseZap size={18} className="text-white" />}
+
+                        <span className="font-black uppercase text-[12px] tracking-[0.1em] text-white">
+                            {status === 'loading' ? 'Mengirim...' :
+                                status === 'success' ? 'Berhasil Disimpan' :
+                                    status === 'error' ? 'Error: Database Offline' :
+                                        'Simpan Data'}
+                        </span>
                     </button>
 
                     <button
@@ -156,12 +179,6 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                             Kembali
                         </span>
                     </button>
-
-                    {status === 'error' && (
-                        <p className="text-[9px] text-rose-600 font-black text-center uppercase tracking-widest mt-2">
-                            Server tidak merespon, coba lagi nanti
-                        </p>
-                    )}
                 </div>
             </form>
         </div>

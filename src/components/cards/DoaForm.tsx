@@ -1,21 +1,44 @@
+// DoaForm.tsx
 import React, { useState } from 'react';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, CheckCircle2, MessageSquareHeart } from 'lucide-react';
 
 interface DoaFormProps {
     onBack: () => void;
 }
 
 const DoaForm = ({ onBack }: DoaFormProps) => {
-    const [status, setStatus] = useState<'idle' | 'error'>('idle');
+    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
-    const handleSend = () => {
-        setStatus('error');
-        setTimeout(() => setStatus('idle'), 3000);
+    const SCRIPT_URL = import.meta.env.VITE_OTHER_URL;
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setStatus('loading');
+
+        const formData = new FormData(e.currentTarget);
+        formData.append('target_sheet', 'Permohonan Doa');
+        formData.append('tanggal', new Date().toLocaleString('id-ID'));
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors'
+            });
+
+            setStatus('success');
+            setTimeout(() => {
+                setStatus('idle');
+                onBack();
+            }, 2000);
+        } catch (error) {
+            setStatus('error');
+            setTimeout(() => setStatus('idle'), 4000);
+        }
     };
 
     return (
         <div className="space-y-8 pb-32 pt-4 px-2">
-            {/* Tombol Back Atas */}
             <button
                 onClick={onBack}
                 className="flex items-center gap-2 text-slate-900 font-black uppercase text-xs tracking-[0.2em]"
@@ -23,7 +46,6 @@ const DoaForm = ({ onBack }: DoaFormProps) => {
                 <ArrowLeft size={18} /> Kembali
             </button>
 
-            {/* Header */}
             <header className="space-y-2">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">
                     Permohonan Doa
@@ -31,72 +53,62 @@ const DoaForm = ({ onBack }: DoaFormProps) => {
                 <p className="text-xs font-bold text-slate-900 uppercase tracking-[0.3em]">Kami Ingin Berdoa Bersama Anda</p>
             </header>
 
-            <form className="space-y-6 bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60" onSubmit={(e) => e.preventDefault()}>
-
-                {/* Input Nama */}
+            <form className="space-y-6 bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60" onSubmit={handleSubmit}>
                 <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-900 uppercase tracking-widest ml-2">Nama (Boleh Inisial)</label>
+                    <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-2">Nama Lengkap</label>
                     <input
+                        name="nama"
                         type="text"
-                        placeholder="Nama atau Anonim..."
-                        className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold text-slate-900 outline-none border-2 border-transparent focus:bg-white focus:border-slate-300"
+                        required
+                        placeholder="Masukkan nama Anda..."
+                        className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-rose-500"
                     />
                 </div>
 
-                {/* Input Pokok Doa */}
                 <div className="space-y-3">
-                    <label className="text-xs font-black text-slate-900 uppercase tracking-widest ml-2">Pokok Doa / Pergumulan</label>
+                    <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest ml-2">Pokok Doa</label>
                     <textarea
-                        rows={5}
-                        placeholder="Tuliskan pokok doa Anda di sini..."
-                        className="w-full bg-slate-50 rounded-[2rem] p-6 text-sm font-bold text-slate-900 outline-none border-2 border-transparent focus:bg-white focus:border-slate-300 resize-none"
-                    ></textarea>
+                        name="pokok_doa"
+                        required
+                        placeholder="Tuliskan pergumulan atau syukur Anda..."
+                        rows={6}
+                        className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-rose-500 resize-none"
+                    />
                 </div>
 
-                {/* Group Tombol Aksi */}
-                <div className="space-y-3 pt-2">
+                <div className="space-y-3 pt-4">
                     <button
-                        type="button"
-                        onClick={handleSend}
-                        className={`w-full p-6 rounded-[2rem] flex items-center justify-center gap-3 shadow-xl transition-all ${status === 'error'
-                            ? 'bg-rose-600'
-                            : 'bg-slate-900 active:scale-95'
-                            }`}
+                        type="submit"
+                        disabled={status === 'loading' || status === 'success'}
+                        className={`w-full p-6 rounded-[2rem] flex items-center justify-center gap-3 shadow-xl transition-all ${status === 'error' ? 'bg-rose-600' :
+                            status === 'success' ? 'bg-emerald-500' :
+                                'bg-slate-900 active:scale-95'
+                            } disabled:opacity-70`}
                     >
-                        {status === 'error' ? (
-                            <span className="font-black uppercase text-xs tracking-[0.1em] text-white">
-                                ERROR: DATABASE OFFLINE
-                            </span>
-                        ) : (
-                            <>
-                                <span className="font-black uppercase text-xs tracking-[0.2em] text-white">
-                                    Kirim Permohonan Doa
-                                </span>
-                                <Send size={18} className="text-white/50" />
-                            </>
-                        )}
+                        {status === 'loading' && <Loader2 size={18} className="text-white animate-spin" />}
+                        {status === 'success' && <CheckCircle2 size={18} className="text-white" />}
+                        {status === 'error' && <MessageSquareHeart size={18} className="text-white" />}
+
+                        <span className="font-black uppercase text-xs tracking-[0.2em] text-white">
+                            {status === 'loading' ? 'Mengirim...' :
+                                status === 'success' ? 'Berhasil Merkirim' :
+                                    status === 'error' ? 'Gagal Mengirim' :
+                                        'Kirim'}
+                        </span>
                     </button>
 
-                    {/* Tombol Batal & Kembali */}
                     <button
                         type="button"
                         onClick={onBack}
                         className="w-full p-5 rounded-[2rem] border-2 border-slate-200 flex items-center justify-center active:scale-95 transition-all"
                     >
                         <span className="font-black uppercase text-xs tracking-[0.2em] text-slate-900">
-                            Kembali
+                            Batal
                         </span>
                     </button>
-
-                    {status === 'error' && (
-                        <p className="text-xs text-rose-600 font-black text-center uppercase tracking-widest mt-2">
-                            Server sibuk, permohonan gagal terkirim
-                        </p>
-                    )}
                 </div>
             </form>
 
-            {/* Quote Box */}
             <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100">
                 <p className="text-xs text-slate-600 font-bold leading-relaxed text-center italic">
                     "Bersukacitalah dalam pengharapan, sabarlah dalam kesesakan, dan bertekunlah dalam doa!" <br />

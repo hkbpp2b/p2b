@@ -1,13 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText } from 'lucide-react';
+// IbadahTab.tsx
+import React, { useState, useEffect, useRef } from 'react';
+import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, ChevronDown, Maximize, X } from 'lucide-react';
 
 let cachedIbadahData: any = null;
+let cachedArsipData: any[] = [];
+
+const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
+    const iframeRef = useRef<HTMLIFrameElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [isFullScreen, setIsFullScreen] = useState(false);
+
+    const viewerUrl = `https://drive.google.com/file/d/${id}/preview?rm=minimal`;
+
+    useEffect(() => {
+        const handleFSChange = () => {
+            setIsFullScreen(!!document.fullscreenElement);
+        };
+        document.addEventListener('fullscreenchange', handleFSChange);
+        return () => document.removeEventListener('fullscreenchange', handleFSChange);
+    }, []);
+
+    const toggleFullScreen = () => {
+        if (!containerRef.current) return;
+        if (!document.fullscreenElement) {
+            containerRef.current.requestFullscreen().catch(err => {
+                console.error(`Error full screen: ${err.message}`);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    };
+
+    return (
+        <>
+            <div
+                className={`mt-3 overflow-hidden rounded-xl bg-white transition-all duration-300 ease-in-out border-2 border-slate-200 ${isVisible ? 'opacity-100 h-auto visible' : 'opacity-0 h-0 invisible'
+                    }`}
+            >
+                <div className="flex items-center justify-between p-2 bg-slate-50 border-b border-slate-100">
+                    <button
+                        onClick={toggleFullScreen}
+                        className="p-2 hover:bg-slate-200 rounded-lg transition-colors text-slate-700 flex items-center gap-2"
+                    >
+                        <Maximize size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-wider">Full Screen</span>
+                    </button>
+                    <a
+                        href={`https://drive.google.com/uc?export=download&id=${id}`}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-slate-900 text-white rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-slate-800 transition-colors"
+                    >
+                        <Download size={14} />
+                        Download
+                    </a>
+                </div>
+                <div className="w-full bg-white relative overflow-hidden aspect-square">
+                    <iframe
+                        ref={iframeRef}
+                        src={viewerUrl}
+                        className="absolute inset-0 w-full h-full border-none shadow-none bg-white"
+                        allow="autoplay"
+                        loading="lazy"
+                        style={{
+                            colorScheme: 'light'
+                        }}
+                    />
+                </div>
+            </div>
+
+            {/* Fullscreen Overlay Layer */}
+            <div
+                ref={containerRef}
+                className={`${isFullScreen ? 'fixed inset-0 z-[9999] bg-white flex flex-col' : 'hidden'}`}
+            >
+                <div className="flex items-center justify-between p-4 bg-slate-900 text-white">
+                    <button
+                        onClick={toggleFullScreen}
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-xl hover:bg-slate-700 transition-colors"
+                    >
+                        <X size={20} />
+                        <span className="text-xs font-bold uppercase">Tutup</span>
+                    </button>
+                    <a
+                        href={`https://drive.google.com/uc?export=download&id=${id}`}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-xl hover:bg-blue-500 transition-colors"
+                    >
+                        <Download size={18} />
+                        <span className="text-xs font-bold uppercase">Download</span>
+                    </a>
+                </div>
+                <div className="flex-1 bg-white relative">
+                    {isFullScreen && (
+                        <iframe
+                            src={viewerUrl}
+                            className="w-full h-full border-none shadow-none"
+                            allow="autoplay"
+                            style={{ colorScheme: 'light' }}
+                        />
+                    )}
+                </div>
+            </div>
+        </>
+    );
+};
 
 const IbadahTab = () => {
     const [data, setData] = useState<any>(cachedIbadahData);
+    const [arsip, setArsip] = useState<any[]>(cachedArsipData);
     const [loading, setLoading] = useState(!cachedIbadahData);
+    const [loadingArsip, setLoadingArsip] = useState(false);
+    const [showArsip, setShowArsip] = useState(false);
+    const [openViewerId, setOpenViewerId] = useState<string | null>(null);
 
-    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?output=csv";
+    const CSV_URL = import.meta.env.VITE_IBADAH_CSV_URL;
 
     const extractId = (input: string) => {
         if (!input || input === "" || input === "-") return null;
@@ -17,21 +121,18 @@ const IbadahTab = () => {
         return match ? (match[1] || match[2]) : url;
     };
 
-    useEffect(() => {
-        if (cachedIbadahData) return;
-        const fetchData = async () => {
-            try {
-                const res = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
-                const text = await res.text();
-                const rows = text.split(/\r?\n/).filter(r => r.trim() !== "");
+    const fetchData = async () => {
+        try {
+            const res = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
+            const text = await res.text();
+            const rows = text.split(/\r?\n/).filter(r => r.trim() !== "");
 
-                if (rows.length > 1) {
-                    // Ambil Label dari Baris 1 (Header)
-                    const headers = rows[0].split(',').map(v => v.replace(/^"|"$/g, '').trim());
-                    // Ambil Data dari Baris 2
-                    const cols = rows[1].split(',').map(v => v.replace(/^"|"$/g, '').trim());
+            if (rows.length > 1) {
+                const headers = rows[0].split(',').map(v => v.replace(/^"|"$/g, '').trim());
 
-                    const result = {
+                const parseRow = (rowStr: string) => {
+                    const cols = rowStr.split(',').map(v => v.replace(/^"|"$/g, '').trim());
+                    return {
                         minggu: cols[0],
                         tanggal: cols[1],
                         warta: extractId(cols[2]),
@@ -39,7 +140,6 @@ const IbadahTab = () => {
                         remaja: extractId(cols[4]),
                         sm: extractId(cols[5]),
                         sore: extractId(cols[6]),
-                        // Dokumen Tambahan dengan Label Otomatis dari Header Sheet
                         lainnya: [
                             { label: headers[7], id: extractId(cols[7]) },
                             { label: headers[8], id: extractId(cols[8]) },
@@ -48,13 +148,42 @@ const IbadahTab = () => {
                             { label: headers[11], id: extractId(cols[11]) },
                         ].filter(item => item.id)
                     };
-                    cachedIbadahData = result;
-                    setData(result);
-                }
-            } catch (e) { console.error(e); } finally { setLoading(false); }
-        };
-        fetchData();
+                };
+
+                const currentData = parseRow(rows[1]);
+                const archiveData = rows.slice(2).map(row => parseRow(row));
+
+                cachedIbadahData = currentData;
+                cachedArsipData = archiveData;
+
+                setData(currentData);
+                setArsip(archiveData);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+            setLoadingArsip(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!cachedIbadahData) {
+            fetchData();
+        }
     }, []);
+
+    const handleOpenArsip = () => {
+        setShowArsip(true);
+        if (arsip.length === 0 && !loading) {
+            setLoadingArsip(true);
+            fetchData();
+        }
+    };
+
+    const toggleViewer = (id: string) => {
+        setOpenViewerId(openViewerId === id ? null : id);
+    };
 
     if (loading) return (
         <div className="animate-in fade-in duration-500 flex flex-col items-center justify-center py-60 bg-transparent">
@@ -82,7 +211,7 @@ const IbadahTab = () => {
         {
             title: "Dokumen Lainnya",
             items: data?.lainnya?.map((doc: any) => ({
-                label: doc.label, // Menggunakan nama kolom dari Google Sheets
+                label: doc.label,
                 id: doc.id,
                 icon: <FileText size={18} />
             })) || []
@@ -105,24 +234,69 @@ const IbadahTab = () => {
                         </h3>
                         <div className="grid gap-3">
                             {section.items.map((item, iIdx) => (
-                                <a
-                                    key={iIdx}
-                                    href={`https://drive.google.com/uc?export=download&id=${item.id}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`flex items-center justify-between p-5 rounded-3xl transition-all active:scale-[0.97] group ${item.primary ? "bg-slate-900 text-white shadow-xl" : "bg-white border-2 border-slate-100 text-slate-900 shadow-sm hover:border-slate-900"
-                                        }`}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className={item.primary ? "text-slate-400" : "text-slate-900"}>{item.icon}</div>
-                                        <span className="text-[12px] font-black uppercase tracking-wider">{item.label}</span>
-                                    </div>
-                                    <Download size={18} className={item.primary ? "text-white" : "text-slate-300 group-hover:text-slate-900"} />
-                                </a>
+                                <div key={iIdx} className="w-full">
+                                    <button
+                                        onClick={() => toggleViewer(item.id)}
+                                        className={`w-full flex items-center justify-between p-5 rounded-3xl transition-all active:scale-[0.97] group ${item.primary ? "bg-slate-900 text-white shadow-xl" : "bg-white border-2 border-slate-100 text-slate-900 shadow-sm hover:border-slate-900"
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-4">
+                                            <div className={item.primary ? "text-slate-400" : "text-slate-900"}>{item.icon}</div>
+                                            <span className="text-[12px] font-black uppercase tracking-wider text-left">{item.label}</span>
+                                        </div>
+                                        <ChevronDown
+                                            size={18}
+                                            className={`transition-transform duration-300 ${openViewerId === item.id ? "rotate-180" : ""} ${item.primary ? "text-white" : "text-slate-300 group-hover:text-slate-900"}`}
+                                        />
+                                    </button>
+
+                                    <PDFViewer id={item.id} isVisible={openViewerId === item.id} />
+                                </div>
                             ))}
                         </div>
                     </div>
                 ))}
+
+                <div className="pt-4">
+                    {!showArsip ? (
+                        <button
+                            onClick={handleOpenArsip}
+                            className="w-full py-4 flex items-center justify-center gap-2 border-2 border-dashed border-slate-200 rounded-3 text-slate-400 hover:text-slate-900 hover:border-slate-900 transition-all rounded-3xl"
+                        >
+                            <ChevronDown size={18} />
+                            <span className="text-[11px] font-black uppercase tracking-[0.2em]">Arsip Warta</span>
+                        </button>
+                    ) : (
+                        <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
+                            <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-200 ml-1">
+                                Arsip Warta Jemaat
+                            </h3>
+                            {loadingArsip ? (
+                                <div className="flex justify-center py-10">
+                                    <Loader2 className="animate-spin text-slate-300" size={24} />
+                                </div>
+                            ) : (
+                                <div className="grid gap-2">
+                                    {arsip.map((item, idx) => (
+                                        <a
+                                            key={idx}
+                                            href={`https://drive.google.com/uc?export=download&id=${item.warta}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 transition-all active:scale-[0.98]"
+                                        >
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-bold text-slate-800 uppercase tracking-tight">{item.tanggal}</span>
+                                                <span className="text-[12px] font-black text-slate-800 uppercase">{item.minggu}</span>
+                                            </div>
+                                            <Download size={16} className="text-slate-400" />
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

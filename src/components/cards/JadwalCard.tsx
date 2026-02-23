@@ -23,7 +23,7 @@ const JadwalCard = () => {
         { name: "Kebaktian Umum", time: "10.00", desc: "Bahasa Batak" },
         { name: "Kebaktian Live", time: "10.00", desc: "YouTube HKBP P2B", isLive: true, link: LIVE_URL },
         { name: "Kebaktian Remaja", time: "10.00", desc: "Bahasa Indonesia" },
-        { name: "Kebaktian Umum", time: "18.00", desc: "Bahasa Indonesia" }
+        { name: "Kebaktian Sore", time: "18.00", desc: "Bahasa Indonesia" }
     ];
 
     return (

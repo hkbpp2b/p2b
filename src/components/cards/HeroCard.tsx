@@ -18,8 +18,7 @@ const HeroCard = () => {
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
 
-    const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?gid=1428170023&single=true&output=tsv";
-
+    const TSV_URL = import.meta.env.VITE_HERO_TSV_URL;
     const handleMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true);
         setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
@@ -93,14 +92,13 @@ const HeroCard = () => {
                 if (rawRows.length > 1) {
                     let allPhotos: any[] = [];
                     rawRows.forEach((cols, index) => {
-                        if (index === 0) return; // Lewati header tabel
+                        if (index === 0) return;
 
                         const imgUrl = (cols[0] || "").trim();
                         const tanggal = (cols[1] || "").trim();
                         const judul = (cols[2] || "").trim();
                         const deskripsi = (cols[3] || "").trim();
 
-                        // 1. Logika Filter: Jangan tampilkan jika Judul kosong atau cuma berisi "-" atau cuma label "Judul:"
                         const isInvalid = (val: string) => {
                             const cleanVal = val.toLowerCase();
                             return !val ||
@@ -110,16 +108,16 @@ const HeroCard = () => {
                                 cleanVal === "judul";
                         };
 
-                        // Jika judul tidak valid, baris ini dibuang (tidak di-push ke allPhotos)
-                        if (isInvalid(judul)) return;
+                        const isFirstSlide = index === 1;
 
-                        // 2. Format Link Foto
+                        if (!isFirstSlide && isInvalid(judul)) return;
+
                         const img = formatDriveLink(imgUrl);
 
                         allPhotos.push({
                             url: img || "",
                             tanggal: isInvalid(tanggal) ? "" : tanggal,
-                            judul: judul,
+                            judul: isFirstSlide && judul === "-" ? "" : judul,
                             deskripsi: isInvalid(deskripsi) ? "" : deskripsi
                         });
                     });
@@ -219,7 +217,7 @@ const HeroCard = () => {
                 {/* BAGIAN TOMBOL KONTAK */}
                 <div className="mt-4 px-2 space-y-1 pb-1 text-slate-900">
                     <a href={data?.maps} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
-                        <MapPin size={18} className="text-slate-400 shrink-0" />
+                        <MapPin size={18} className="text-red-400 shrink-0" />
                         <span className="text-[12px] font-black leading-snug">{data?.alamat}</span>
                     </a>
 
@@ -237,26 +235,23 @@ const HeroCard = () => {
                     <div className="mt-3 pt-3 border-t border-slate-100/60">
 
 
-                        {/* Tombol Aksi yang Menyatu dengan Slate-900 */}
                         <div className="flex gap-2 px-1">
                             <a href="https://www.instagram.com/hkbp.perum2bks/" target="_blank" rel="noopener noreferrer"
-                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
-                                <Instagram size={18} className="text-slate-900" />
+                                className="flex-1 py-3 bg-rose-50 rounded-2xl flex justify-center items-center active:bg-rose-100 active:scale-95 transition-all">
+                                <Instagram size={18} className="text-pink-600" />
                             </a>
                             <a href="https://www.youtube.com/@HKBPPerumnas2Bekasi" target="_blank" rel="noopener noreferrer"
-                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
-                                <Youtube size={18} className="text-slate-900" />
+                                className="flex-1 py-3 bg-red-50 rounded-2xl flex justify-center items-center active:bg-red-100 active:scale-95 transition-all">
+                                <Youtube size={18} className="text-red-600" />
                             </a>
                             <a href="https://www.facebook.com/hkbp.perum2bks" target="_blank" rel="noopener noreferrer"
-                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
-                                <Facebook size={18} className="text-slate-900" />
+                                className="flex-1 py-3 bg-blue-50 rounded-2xl flex justify-center items-center active:bg-blue-100 active:scale-95 transition-all">
+                                <Facebook size={18} className="text-blue-600" />
                             </a>
-
                             <a href="https://www.tiktok.com/@hkbp.perum2bks" target="_blank" rel="noopener noreferrer"
-                                className="flex-1 py-3 bg-slate-0 rounded-2xl flex justify-center items-center active:bg-slate-100 active:scale-95 transition-all">
-                                <Music2 size={18} className="text-slate-900" />
+                                className="flex-1 py-3 bg-slate-600 rounded-2xl flex justify-center items-center active:bg-slate-800 active:scale-95 transition-all">
+                                <Music2 size={18} className="text-white" />
                             </a>
-
                         </div>
                     </div>
                 </div>
@@ -312,7 +307,7 @@ const HeroCard = () => {
                                         <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-[1.1]">
                                             {selectedPhoto.judul}
                                         </h2>
-                                        <div className="w-12 h-1.5 bg-slate-900 mt-6 rounded-full" />
+
                                     </div>
 
                                     <div className="pb-32">

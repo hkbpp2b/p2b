@@ -1,16 +1,16 @@
+// GivingTab.tsx
 import React, { useState, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { Copy, ChevronRight, Wallet, Loader2, QrCode } from 'lucide-react';
+import { Copy, ChevronRight, Wallet, Loader2, QrCode, Check, ChevronDown } from 'lucide-react';
 
 let cachedGivingData: any[] | null = null;
 
 const GivingTab = () => {
-    const [selectedItem, setSelectedItem] = useState<any | null>(null);
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const [givingData, setGivingData] = useState<any[]>(cachedGivingData || []);
     const [loading, setLoading] = useState(!cachedGivingData);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
-
-    const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?gid=1003566266&single=true&output=tsv";
+    const TSV_URL = import.meta.env.VITE_GIVING_TSV_URL;
 
     useEffect(() => {
         if (cachedGivingData) return;
@@ -23,19 +23,17 @@ const GivingTab = () => {
                 if (rows.length > 1) {
                     const parsedData = rows.slice(1).map((row, index) => {
                         const cols = row.split('\t').map(v => v.trim());
-
-                        console.log(`Baris ${index + 1}:`, cols);
-
                         let rawQr = cols[2] || "";
 
                         if (rawQr.includes('drive.google.com')) {
                             const fileId = rawQr.match(/\/d\/(.+?)\//) || rawQr.match(/id=(.+?)(&|$)/);
                             if (fileId) {
-                                rawQr = `https://lh3.googleusercontent.com/u/0/d/${fileId[1]}=w1000`;
+                                rawQr = `https://lh3.googleusercontent.com/d/${fileId[1]}=w1000`;
                             }
                         }
 
                         return {
+                            id: `item-${index}`,
                             title: cols[0] || "Tanpa Nama",
                             desc: cols[1] || "-",
                             qrUrl: rawQr,
@@ -55,132 +53,141 @@ const GivingTab = () => {
             }
         };
         fetchGiving();
-    }, []);
+    }, [TSV_URL]);
 
-    const copyToClipboard = (text: string) => {
+    const handleCopy = (text: string, id: string, e: React.MouseEvent) => {
+        e.stopPropagation();
         if (!text || text === "-") return;
-        navigator.clipboard.writeText(text);
-        alert("Nomor rekening disalin!");
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            setCopiedId(id);
+            setTimeout(() => setCopiedId(null), 2000);
+        } catch (err) {
+            console.error('Copy failed', err);
+        }
+        document.body.removeChild(textArea);
+    };
+
+    const toggleExpand = (id: string) => {
+        setExpandedId(expandedId === id ? null : id);
     };
 
     if (loading) return (
         <div className="animate-in fade-in duration-500 flex flex-col items-center justify-center py-60 bg-transparent">
             <Loader2 className="animate-spin text-slate-900" size={32} />
-            <p className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mt-6">
-                Sinkronisasi
-            </p>
+            <p className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mt-6">Sinkronisasi</p>
         </div>
     );
 
-
     return (
-        <div className="animate-in fade-in duration-700 pb-32 pt-8 px-5 space-y-10">
-            {/* Header */}
+        <div className="pb-32 pt-8 px-5 space-y-10">
             <header className="text-center space-y-1">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Persembahan</h2>
-                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Transfer atau scan kode QR</p>
+                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Transfer atau scan kode</p>
             </header>
 
-            {/* --- LIST VIEW --- */}
+            {givingData.length > 0 && (
+                <div className="relative bg-white w-full max-w-sm rounded-[3rem] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.04)] flex flex-col border border-slate-100/50 overflow-hidden mx-auto mb-10">
+                    <div className="text-center mb-6">
+                        <h3 className="text-[22px] font-black text-slate-900 uppercase tracking-tight leading-none">
+                            {givingData[0].title}
+                        </h3>
+                    </div>
+
+                    <div className="bg-slate-50 w-[100%] mx-auto aspect-square flex items-center justify-center overflow-hidden rounded-[2rem] border border-slate-100 shadow-inner relative">
+                        {givingData[0].qrUrl ? (
+                            <img src={givingData[0].qrUrl} alt="QR" className="w-[85%] h-[85%] object-contain mix-blend-multiply" />
+                        ) : (
+                            <div className="text-center opacity-20">
+                                <QrCode size={40} className="mx-auto" />
+                                <p className="text-[8px] font-black uppercase mt-2">QR Kosong</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mt-6 overflow-hidden rounded-[2.2rem] border border-slate-100 shadow-sm">
+                        <button
+                            type="button"
+                            onClick={(e) => handleCopy(givingData[0].norek, givingData[0].id, e)}
+                            className="group relative z-10 w-full py-5 px-6 flex items-center justify-between active:scale-[0.97] transition-all duration-500 bg-white"
+                        >
+                            <div className={`absolute inset-0 bg-blue-50 transition-transform duration-500 ease-out ${copiedId === givingData[0].id ? 'translate-x-0' : '-translate-x-full'}`} />
+                            <div className="relative z-10 text-left pointer-events-none">
+                                <p className={`text-[20px] font-black mb-2.5 transition-all ${copiedId === givingData[0].id ? 'text-blue-600' : 'text-slate-900'}`}>{givingData[0].norek}</p>
+                                <div className="space-y-1">
+                                    <p className={`text-[11px] font-black uppercase ${copiedId === givingData[0].id ? 'text-blue-500' : 'text-slate-900'}`}>{givingData[0].bank}</p>
+                                    <p className={`text-[10px] font-bold uppercase truncate max-w-[180px] ${copiedId === givingData[0].id ? 'text-blue-300' : 'text-slate-900'}`}>{givingData[0].an}</p>
+                                </div>
+                            </div>
+                            <div className="relative z-10 flex items-center gap-2">
+                                {copiedId === givingData[0].id && <span className="text-[10px] font-black uppercase text-blue-600">Copied</span>}
+                                <div className={`p-3.5 rounded-[1.2rem] transition-all duration-500 ${copiedId === givingData[0].id ? 'bg-blue-600 text-white rotate-[360deg]' : 'bg-slate-50 text-slate-400'}`}>
+                                    {copiedId === givingData[0].id ? <Check size={18} strokeWidth={3} /> : <Copy size={18} />}
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            )}
+
             <div className="grid grid-cols-1 gap-4">
-                {givingData.map((item, i) => (
-                    <button
-                        key={i}
-                        onClick={() => setSelectedItem(item)}
-                        className="flex items-center p-5 bg-white rounded-[2rem] border border-slate-100 active:scale-[0.98] transition-all group shadow-sm text-left"
-                    >
-                        <div className={`flex-shrink-0 w-14 h-14 rounded-[1.2rem] flex items-center justify-center ${item.norek === "-" ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-900"}`}>
-                            <Wallet size={24} />
-                        </div>
-
-                        <div className="ml-5 flex-grow min-w-0 text-left">
-                            <h3 className="text-[14px] font-black text-slate-900 uppercase leading-tight break-words">
-                                {item.title}
-                            </h3>
-                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wide mt-1 break-words">
-                                {item.desc}
-                            </p>
-                        </div>
-
-                        <ChevronRight size={18} className="text-slate-200 group-hover:text-slate-900 transition-colors ml-2" />
-                    </button>
-                ))}
-            </div>
-
-            {/* --- MODAL DETAIL (DIBUKA SAAT LIST DI-KLIK) --- */}
-            {selectedItem && createPortal(
-                <div className="fixed inset-0 z-[999] flex items-center justify-center p-6">
+                {givingData.slice(1).map((item) => (
                     <div
-                        className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm animate-in fade-in duration-300"
-                        onClick={() => setSelectedItem(null)}
-                    />
-
-                    <div className="relative bg-white w-full max-w-sm rounded-[3rem] p-8 shadow-2xl animate-in zoom-in-95 duration-300 flex flex-col border border-slate-50 overflow-hidden">
-                        <div className="flex flex-col items-center text-center">
-                            <button
-                                onClick={() => setSelectedItem(null)}
-                                className="absolute top-6 right-8 text-slate-300 hover:text-slate-900 transition-colors"
-                            >
-
-                            </button>
-
-                            <div className="mb-6 mt-2">
-                                <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{selectedItem.title}</h3>
-                                <p className="text-[16px] text-blue-600 font-black uppercase mt-1 tracking-widest">{selectedItem.bank}</p>
+                        key={item.id}
+                        className={`bg-white rounded-[2.5rem] border transition-all duration-300 overflow-hidden ${expandedId === item.id ? 'border-slate-200 shadow-lg' : 'border-slate-100 shadow-sm'}`}
+                    >
+                        <div
+                            onClick={() => toggleExpand(item.id)}
+                            className="w-full flex items-center p-5 text-left cursor-pointer active:scale-[0.98] transition-transform"
+                        >
+                            <div className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${expandedId === item.id ? "bg-slate-900 text-white" : "bg-slate-50 text-slate-400"}`}>
+                                <Wallet size={20} />
                             </div>
 
-                            {/* Area QR - Diperbarui agar fit dan jelas */}
-                            <div className="bg-white w-full aspect-square rounded-[2.5rem] p-2 mb-8 border border-slate-100 flex items-center justify-center overflow-hidden shadow-inner">
-                                {selectedItem.qrUrl && selectedItem.qrUrl !== "" ? (
-                                    <img
-                                        src={selectedItem.qrUrl}
-                                        alt="QR Code"
-                                        key={selectedItem.qrUrl}
-                                        className="w-full h-full object-contain animate-in fade-in zoom-in duration-500"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = 'none';
-                                            if (e.currentTarget.parentElement) {
-                                                e.currentTarget.parentElement.innerHTML = `
-                        <div class="text-slate-300 text-[10px] font-black uppercase tracking-widest text-center px-4">
-                            Gagal Memuat QR<br/>Pastikan Link Direct Image
-                        </div>`;
-                                            }
-                                        }}
-                                    />
-                                ) : (
-                                    <div className="text-center space-y-2 opacity-20">
-                                        <QrCode size={60} className="mx-auto text-slate-900" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-900">QR Belum Tersedia</p>
-                                    </div>
-                                )}
+                            <div className="ml-4 flex-grow min-w-0">
+                                <h3 className="text-[13px] font-black text-slate-900 uppercase leading-tight">{item.title}</h3>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">{item.desc}</p>
                             </div>
 
-                            {/* Tombol Salin */}
-                            <button
-                                onClick={() => copyToClipboard(selectedItem.norek)}
-                                className="w-full bg-slate-900 text-white p-6 rounded-[1.8rem] flex items-center justify-between active:scale-95 transition-all shadow-xl shadow-slate-200 group"
-                            >
-                                <div className="text-left">
-                                    <p className="text-[10px] text-slate-400 font-black uppercase mb-1 tracking-widest">Klik untuk Salin</p>
-                                    <p className="text-[18px] font-black tracking-tighter leading-none">{selectedItem.norek}</p>
-                                    <p className="text-[14px] text-slate-100 font-bold uppercase mt-1.5 truncate max-w-[180px]">A.N {selectedItem.an}</p>
-                                </div>
-                                <div className="bg-white/10 p-3 rounded-2xl">
-                                    <Copy size={18} className="text-white" />
-                                </div>
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={(e) => handleCopy(item.norek, item.id, e)}
+                                    className={`p-2.5 rounded-xl transition-all ${copiedId === item.id ? 'bg-blue-600 text-white' : 'bg-slate-50 text-slate-400'}`}
+                                >
+                                    {copiedId === item.id ? <Check size={14} strokeWidth={3} /> : <Copy size={14} />}
+                                </button>
+                                <ChevronDown size={18} className={`text-slate-300 transition-transform duration-300 ${expandedId === item.id ? 'rotate-180' : ''}`} />
+                            </div>
+                        </div>
 
-                            <button
-                                onClick={() => setSelectedItem(null)}
-                                className="mt-8 text-slate-600 text-[10px] font-black uppercase tracking-widest hover:text-slate-900 transition-colors"
-                            >
-                                Tutup
-                            </button>
+                        <div className={`transition-all duration-500 ease-in-out ${expandedId === item.id ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                            <div className="px-5 pb-8 flex flex-col items-center">
+                                <div className="w-full h-px bg-slate-100 mb-6" />
+                                <div className="bg-slate-50 w-full max-w-[240px] aspect-square flex items-center justify-center overflow-hidden rounded-[2rem] border border-slate-100 shadow-inner p-4">
+                                    {item.qrUrl ? (
+                                        <img src={item.qrUrl} alt="QR" className="w-full h-full object-contain mix-blend-multiply" />
+                                    ) : (
+                                        <div className="text-center opacity-20">
+                                            <QrCode size={40} className="mx-auto" />
+                                            <p className="text-[8px] font-black uppercase mt-2">QR Tidak Tersedia</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mt-4 text-center">
+                                    <p className="text-[14px] font-black text-slate-900 tracking-tight">{item.norek}</p>
+                                    <p className="text-[9px] font-bold text-slate-900 uppercase tracking-widest mt-1">{item.bank} • {item.an}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>,
-                document.body
-            )}
+                ))}
+            </div>
         </div>
     );
 };

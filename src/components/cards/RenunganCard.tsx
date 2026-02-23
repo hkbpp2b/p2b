@@ -10,7 +10,7 @@ const RenunganCard = () => {
     const [showAmin, setShowAmin] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
-    const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?gid=1305703556&single=true&output=tsv";
+    const TSV_URL = import.meta.env.VITE_TSV_RENUNGAN_URL;
 
     useEffect(() => {
         if (cachedRenungan) return;
@@ -26,7 +26,9 @@ const RenunganCard = () => {
                         ayat: cols[1],
                         kutipan: cols[2],
                         topik: cols[3],
-                        isi: cols[4]
+                        isi: cols[4],
+                        bukuEnde: cols[5], // Mengambil data kolom Buku Ende
+                        lirikEnde: cols[6]  // Mengambil data kolom Lirik
                     };
                     setData(result);
                     cachedRenungan = result;
@@ -76,41 +78,38 @@ const RenunganCard = () => {
     return (
         <>
             {/* CARD UTAMA */}
-            <div
-                className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden"
-                style={{ background: `linear-gradient(135deg, #ffffff 0%, #e0e6fe 100%)` }}
-            >
+            <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-800 bg-slate-900 relative overflow-hidden">
                 <div className="mb-6 text-center relative z-10">
-                    <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase mb-1">
+                    <h3 className="text-xl font-black text-white tracking-tighter uppercase mb-1">
                         Renungan Harian
                     </h3>
-                    <p className="text-[12px] font-black text-slate-900 uppercase tracking-[0.2em]">
+                    <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.2em]">
                         {data.tanggal}
                     </p>
                 </div>
 
                 <div
                     onClick={() => setIsOpen(true)}
-                    className="p-7 rounded-[2.5rem] bg-white/90 backdrop-blur-sm active:scale-95 transition-all cursor-pointer relative z-10 shadow-sm border border-white"
+                    className="p-7 rounded-[2.5rem] bg-slate-800/50 backdrop-blur-sm active:scale-95 transition-all cursor-pointer relative z-10 border border-slate-700/50 hover:border-slate-600 shadow-xl"
                 >
                     <div className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <h4 className="text-[18px] font-black text-slate-900 leading-tight tracking-tight uppercase">
+                                <h4 className="text-[18px] font-black text-white leading-tight tracking-tight uppercase">
                                     {data.topik}
                                 </h4>
-                                <p className="text-[15px] font-bold text-slate-500 leading-snug italic">
+                                <p className="text-[15px] font-semibold text-slate-100 leading-snug italic">
                                     "{data.kutipan}"
                                 </p>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pt-1">
+                                <p className="text-[14px] font-black text-blue-400 uppercase tracking-widest pt-1">
                                     — {data.ayat}
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-1 text-slate-900 pt-2 border-t border-slate-200/50">
+                        <div className="flex items-center gap-1 text-white pt-2 border-t border-slate-700/50">
                             <span className="text-[10px] font-black uppercase tracking-[0.1em]">Baca Selengkapnya</span>
-                            <ChevronRight size={14} />
+                            <ChevronRight size={14} className="text-blue-500" />
                         </div>
                     </div>
                 </div>
@@ -154,6 +153,20 @@ const RenunganCard = () => {
                                 </div>
                             </div>
 
+                            {data.bukuEnde && (
+                                <div className="mb-12 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100">
+                                    <h5 className="text-[12px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">
+                                        Buku Ende / HKBP
+                                    </h5>
+                                    <p className="text-[18px] font-black text-slate-900 mb-4">
+                                        {data.bukuEnde}
+                                    </p>
+                                    <p className="text-[16px] font-medium text-slate-600 leading-relaxed italic whitespace-pre-line">
+                                        {data.lirikEnde}
+                                    </p>
+                                </div>
+                            )}
+
                             <div className="pb-48">
                                 <p className="text-[16px] md:text-[18px] font-semibold text-slate-900 leading-[2] text-left whitespace-pre-line">
                                     {data.isi}
@@ -170,3 +183,4 @@ const RenunganCard = () => {
 };
 
 export default RenunganCard;
+

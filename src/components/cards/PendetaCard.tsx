@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, X, Loader2, GraduationCap, History } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 let cachedPendetaData: any[] | null = null;
 
@@ -8,7 +8,7 @@ const PendetaCard = () => {
     const [selected, setSelected] = useState<any>(null);
     const [loading, setLoading] = useState(!cachedPendetaData);
 
-    const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoIpT64H7mZe1JiK8yPpr0HhXSr7dgfM5zM8sOzzLhz0SviQoJzxN425Ln9UxqRU19-R_1p4IpI3DK/pub?gid=143481815&single=true&output=tsv";
+    const TSV_URL = import.meta.env.VITE_TSV_PENDETA_URL;
 
     const formatDriveLink = (url: string) => {
         if (!url || url.trim() === "") return null;
@@ -20,7 +20,6 @@ const PendetaCard = () => {
         return url;
     };
 
-    // LOGIKA BACK BUTTON HANDLER (Disederhanakan agar tidak bentrok dengan sistem)
     useEffect(() => {
         if (selected) {
             document.body.classList.add('modal-open');
@@ -44,7 +43,6 @@ const PendetaCard = () => {
     }, [selected]);
 
 
-
     useEffect(() => {
         if (cachedPendetaData) return;
         const fetchPendeta = async () => {
@@ -65,8 +63,10 @@ const PendetaCard = () => {
                             pelayanan: cols[6] ? cols[6].split(/[,;\n]/).map(s => s.trim()).filter(Boolean) : []
                         };
                     });
-                    cachedPendetaData = parsedData;
-                    setPendetaList(parsedData);
+
+                    const topThree = parsedData.slice(0, 3);
+                    cachedPendetaData = topThree;
+                    setPendetaList(topThree);
                 }
             } catch (e) { console.error(e); } finally { setLoading(false); }
         };
@@ -74,8 +74,12 @@ const PendetaCard = () => {
     }, []);
 
     const closeDetail = () => {
-        setSelected(null);
-        document.body.classList.remove('modal-open');
+        if (window.history.state?.modalOpen) {
+            window.history.back();
+        } else {
+            setSelected(null);
+            document.body.style.overflow = 'unset';
+        }
     };
 
     if (loading) return (
@@ -88,7 +92,6 @@ const PendetaCard = () => {
                 <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Pendeta Kami</h3>
             </div>
 
-            {/* DAFTAR PENDETA - VERTIKAL RAPAT */}
             <div className="space-y-4">
                 {pendetaList.map((pdt, i) => (
                     <div
@@ -113,14 +116,12 @@ const PendetaCard = () => {
                 ))}
             </div>
 
-            {/* OVERLAY DESIGN BARU */}
             {selected && (
                 <div className="fixed inset-0 z-[1000] flex items-end justify-center sm:items-center p-4">
                     <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={closeDetail} />
 
                     <div className="relative bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-300 max-h-[85vh] overflow-hidden flex flex-col">
 
-                        {/* Handle Bar & Close */}
                         <div className="flex justify-center pt-4 pb-2">
                             <div className="w-12 h-1 bg-slate-100 rounded-full" />
                         </div>
@@ -129,7 +130,6 @@ const PendetaCard = () => {
                         </button>
 
                         <div className="overflow-y-auto no-scrollbar px-8 pt-4 pb-10">
-                            {/* Profil */}
                             <div className="flex flex-col items-center mb-8">
                                 {selected.img && (
                                     <img src={selected.img} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl mb-6" alt="pdt" />
@@ -138,14 +138,12 @@ const PendetaCard = () => {
                                 <h4 className="text-[20px] font-black text-slate-900 uppercase tracking-tighter text-center">{selected.name}</h4>
                             </div>
 
-                            {/* Bio */}
                             {selected.bio !== "-" && (
                                 <div className="mb-8 p-6 bg-slate-50 rounded-[2rem] text-center border border-slate-100/50">
                                     <p className="text-[14px] font-bold text-slate-600 italic leading-relaxed">"{selected.bio}"</p>
                                 </div>
                             )}
 
-                            {/* Info Lists */}
                             <div className="space-y-6">
                                 {selected.pendidikan.length > 0 && (
                                     <div className="border-l-4 border-blue-600 pl-4">
@@ -170,7 +168,6 @@ const PendetaCard = () => {
                             </div>
                         </div>
 
-                        {/* WhatsApp Action */}
                         <div className="p-8 pt-0">
                             <a
                                 href={`https://wa.me/${selected.phone.replace(/\D/g, '').replace(/^0/, '62')}`}
