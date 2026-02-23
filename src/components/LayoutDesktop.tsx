@@ -1,7 +1,7 @@
 // LayoutDesktop.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
-import logoDua from '../assets/logo3.webp';
+import logoDua from '../assets/Logo3.webp';
 
 interface LayoutDesktopProps {
     children: React.ReactNode;
