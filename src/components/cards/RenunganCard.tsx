@@ -1,3 +1,4 @@
+// RenunganCard.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
 
@@ -38,7 +39,6 @@ const RenunganCard = () => {
         fetchRenungan();
     }, []);
 
-
     useEffect(() => {
         if (isOpen) {
             document.body.classList.add('modal-open');
@@ -62,22 +62,18 @@ const RenunganCard = () => {
     const handleScroll = () => {
         if (!scrollRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
-        setIsScrolled(scrollTop > 50);
+        setIsScrolled(scrollTop > 20);
         setShowAmin(scrollTop + clientHeight > scrollHeight - 80);
     };
 
     const closeRenungan = () => {
         setIsOpen(false);
-        if (window.history.state?.renunganOpen) {
-
-        }
     };
 
     if (!data) return null;
 
     return (
         <>
-
             <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-800 bg-slate-900 relative overflow-hidden">
                 <div className="mb-6 text-center relative z-10">
                     <h3 className="text-xl font-black text-white tracking-tighter uppercase mb-1">
@@ -116,65 +112,67 @@ const RenunganCard = () => {
             </div>
 
             {isOpen && (
-                <div className="fixed inset-0 z-[999] flex flex-col animate-in slide-in-from-right duration-500 bg-white">
-
-
-                    <div className={`flex items-center px-6 md:px-12 h-[75px] sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm' : 'bg-transparent'}`}>
-                        <button onClick={closeRenungan} className="text-slate-900 p-2 -ml-2 active:scale-90 transition-transform">
-                            <ArrowLeft size={24} />
-                        </button>
-
-                        <div className={`ml-4 transition-all duration-500 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                            <p className="text-[14px] font-black text-slate-900 uppercase leading-none mb-0.5">{data.topik}</p>
-                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">{data.ayat}</p>
+                <div className="fixed inset-0 z-[9999] flex flex-col animate-in slide-in-from-right duration-500 bg-white">
+                    <header className="flex-none bg-white border-b border-slate-100 px-2 h-12 flex items-center">
+                        <div className="flex-1 flex items-center">
+                            <button onClick={closeRenungan} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-900">
+                                <ArrowLeft size={22} />
+                            </button>
                         </div>
-                    </div>
 
+                        <div className={`flex flex-col items-center transition-all duration-300 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}>
+                            <h2 className="text-[12px] font-black text-slate-900 tracking-tight uppercase truncate max-w-[180px]">
+                                {data.topik}
+                            </h2>
+                            <span className="text-[9px] font-bold text-blue-600 uppercase tracking-widest leading-none">
+                                {data.ayat}
+                            </span>
+                        </div>
+
+                        <div className="flex-1" />
+                    </header>
 
                     <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
-                        <div className="max-w-3xl mx-auto w-full px-8 py-12 flex flex-col">
-
-                            <div className="mb-16">
-                                <p className="text-[14px] font-black text-slate-900 uppercase tracking-[0.4em] mb-4">
+                        <div className="max-w-2xl mx-auto w-full px-6 pt-8 pb-32 flex flex-col">
+                            <div className="mb-10">
+                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2">
                                     {data.tanggal}
                                 </p>
-                                <h2 className="text-4xl md:text-7xl font-black text-slate-900 tracking-tighter uppercase leading-[1] mb-12">
+                                <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-8">
                                     {data.topik}
-                                </h2>
+                                </h1>
 
-                                <div className="border-l-8 border-slate-900 pl-8 py-6">
-                                    <p className="text-[22px] md:text-[32px] font-black text-slate-900 italic leading-tight mb-6">
+                                <div className="border-l-[3px] border-slate-900 pl-5 py-1">
+                                    <p className="text-[19px] md:text-[24px] font-black text-slate-900 italic leading-snug mb-3">
                                         "{data.kutipan}"
                                     </p>
-                                    <p className="text-[14px] md:text-[16px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                                    <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em]">
                                         — {data.ayat}
                                     </p>
                                 </div>
                             </div>
 
                             {data.bukuEnde && (
-                                <div className="mb-12 p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100">
-                                    <h5 className="text-[12px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">
+                                <div className="mb-10 p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                                    <h5 className="text-[9px] font-black text-blue-600 uppercase tracking-[0.2em] mb-3">
                                         Buku Ende / HKBP
                                     </h5>
-                                    <p className="text-[18px] font-black text-slate-900 mb-4">
+                                    <p className="text-[16px] font-black text-slate-900 mb-2">
                                         {data.bukuEnde}
                                     </p>
-                                    <p className="text-[16px] font-medium text-slate-600 leading-relaxed italic whitespace-pre-line">
+                                    <p className="text-[15px] font-medium text-slate-600 leading-relaxed italic whitespace-pre-line">
                                         {data.lirikEnde}
                                     </p>
                                 </div>
                             )}
 
-                            <div className="pb-48">
-                                <p className="text-[16px] md:text-[18px] font-semibold text-slate-900 leading-[2] text-left whitespace-pre-line">
+                            <div>
+                                <p className="text-[17px] md:text-[18px] font-medium text-slate-800 leading-[1.7] text-left whitespace-pre-line">
                                     {data.isi}
                                 </p>
                             </div>
                         </div>
                     </div>
-
-
                 </div>
             )}
         </>
@@ -182,4 +180,3 @@ const RenunganCard = () => {
 };
 
 export default RenunganCard;
-
