@@ -8,7 +8,7 @@ interface KonselingFormProps {
 
 const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
     const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [selectedService, setSelectedService] = useState('baptis');
+    const [selectedService, setSelectedService] = useState('Baptis');
 
     const SCRIPT_URL = import.meta.env.VITE_OTHER_URL;
     const services = [
@@ -70,6 +70,17 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
                         type="text"
                         required
                         placeholder="Masukkan nama lengkap..."
+                        className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-emerald-500"
+                    />
+                </div>
+
+                <div className="space-y-3">
+                    <label className="text-[12px] font-black text-slate-900 uppercase tracking-widest ml-2">Nomor WhatsApp</label>
+                    <input
+                        name="whatsapp"
+                        type="tel"
+                        required
+                        placeholder="Contoh: 081234567890"
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-emerald-500"
                     />
                 </div>
@@ -149,7 +160,7 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
 
             <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100">
                 <p className="text-[12px] text-slate-900 font-bold leading-relaxed text-center tracking-tight">
-                    Pastikan data yang diisi benar. Tim sekretariat akan menghubungi Anda untuk tahap administrasi fisik lebih lanjut.
+                    Pastikan data yang diisi benar. Tim sekretariat akan menghubungi Anda untuk tahap administrasi lebih lanjut.
                 </p>
             </div>
         </div>
