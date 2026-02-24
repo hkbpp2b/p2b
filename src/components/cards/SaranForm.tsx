@@ -76,9 +76,9 @@ const SaranForm = ({ onBack }: SaranFormProps) => {
                 </div>
 
                 <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-3">
-                    <div className="flex items-center gap-2 text-amber-600">
+                    <div className="flex items-center gap-2 text-emerald-600">
                         <ShieldCheck size={16} />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Privasi Terjamin</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Privasi</span>
                     </div>
                     <p className="text-[9px] font-bold text-slate-500 leading-relaxed tracking-tight">
                         Masukan Anda dapat dikirim secara anonim. Identitas Anda (jika diisi) akan dijaga kerahasiaannya dan hanya digunakan untuk evaluasi internal.
