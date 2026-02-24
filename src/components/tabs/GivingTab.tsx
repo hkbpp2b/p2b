@@ -61,7 +61,7 @@ const GivingTab = () => {
 
             <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden mx-auto max-w-sm relative p-6 pb-12">
                 <div className="absolute left-0 top-[20%] w-16 h-32 bg-[#ea1c24] z-0" style={{ clipPath: 'polygon(0 0, 100% 50%, 0 100%)' }} />
-                <div className="absolute right-0 bottom-1 w-20 h-20 bg-[#ea1c24] z-0" style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }} />
+                <div className="absolute right-0 bottom-0 w-20 h-20 bg-[#ea1c24] z-0" style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }} />
 
                 <div className="relative z-10 flex flex-col items-center">
                     <div className="flex justify-between items-center w-full mb-6">
