@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, ChevronDown, Maximize, X } from 'lucide-react';
 
 let cachedIbadahData: any = null;
-let cachedArsipData: any[] = []; const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
+let cachedArsipData: any[] = [];
+const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
 
