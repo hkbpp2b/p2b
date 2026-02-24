@@ -1,6 +1,6 @@
 // AplikasiTab.tsx
 import React, { useState } from 'react';
-import { Book, Music, Gamepad2 } from 'lucide-react';
+import { Book, Music, Gamepad2, Construction, Lightbulb } from 'lucide-react';
 import AlkitabCard from '../cards/AlkitabCard';
 import BukuEndeCard from '../cards/BukuEndeCard';
 import Game2048Card from '../cards/Game2048Card';
@@ -21,7 +21,6 @@ const AplikasiTab = () => {
     if (activeApp === 'ende') {
         return <BukuEndeCard onBack={() => setActiveApp(null)} />;
     }
-
 
     if (activeApp === '2048') {
         return <Game2048Card onBack={() => setActiveApp(null)} />;
@@ -47,6 +46,22 @@ const AplikasiTab = () => {
                         <span className="text-[10px] font-black uppercase tracking-wider text-slate-900">{app.name}</span>
                     </button>
                 ))}
+            </div>
+
+            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 space-y-4">
+                <div className="flex items-center gap-3 text-slate-900">
+                    <Construction size={20} className="text-orange-500" />
+                    <span className="text-[11px] font-black uppercase tracking-wider">Tahap Pengembangan</span>
+                </div>
+                <p className="text-[12px] leading-relaxed text-slate-600 font-medium">
+                    Fitur ini masih dalam tahap pengembangan. Terima kasih atas kesabaran Anda.
+                </p>
+                <div className="flex items-start gap-3 bg-white p-4 rounded-2xl shadow-sm">
+                    <Lightbulb size={18} className="text-yellow-500 shrink-0 mt-0.5" />
+                    <p className="text-[11px] text-slate-500 leading-snug">
+                        Punya ide menarik untuk kita diskusikan bersama?  Sampaikan melalui fitur <span className="font-bold text-slate-900 text-[10px] uppercase">Kritik & Saran</span>.
+                    </p>
+                </div>
             </div>
         </div>
     );
