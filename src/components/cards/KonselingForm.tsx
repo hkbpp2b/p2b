@@ -142,7 +142,7 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
                             {status === 'loading' ? 'Mengirim...' :
                                 status === 'success' ? 'Berhasil Terkirim' :
                                     status === 'error' ? 'Error: Database Offline' :
-                                        'Kirim Permohonan'}
+                                        'Kirim'}
                         </span>
                     </button>
 
