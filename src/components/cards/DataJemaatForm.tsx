@@ -1,7 +1,7 @@
 // DataJemaatForm.tsx
 
 import React, { useState } from 'react';
-import { ArrowLeft, DatabaseZap, Plus, Trash2, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, DatabaseZap, Plus, Trash2, Loader2, CheckCircle2, ShieldCheck } from 'lucide-react';
 
 interface DataJemaatFormProps {
     onBack: () => void;
@@ -147,6 +147,17 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                         placeholder="Contoh: Weyk 04"
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
                     />
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2 text-emerald-600">
+                        <ShieldCheck size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Privasi Data</span>
+                    </div>
+                    <p className="text-[9px] font-bold text-slate-500 leading-relaxed tracking-tight">
+                        Dengan menyimpan data, Anda setuju bahwa informasi ini akan digunakan secara internal oleh
+                        HKBP Perumnas 2 Bekasi sesuai dengan hukum yang berlaku.
+                    </p>
                 </div>
 
                 <div className="space-y-3 pt-4">

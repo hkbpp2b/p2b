@@ -1,6 +1,6 @@
 // DoaForm.tsx
 import React, { useState } from 'react';
-import { ArrowLeft, Send, Loader2, CheckCircle2, MessageSquareHeart } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle2, MessageSquareHeart, ShieldCheck } from 'lucide-react';
 
 interface DoaFormProps {
     onBack: () => void;
@@ -76,6 +76,17 @@ const DoaForm = ({ onBack }: DoaFormProps) => {
                     />
                 </div>
 
+
+                <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2 text-emerald-600">
+                        <ShieldCheck size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Privasi Doa</span>
+                    </div>
+                    <p className="text-[9px] font-bold text-slate-500 leading-relaxed tracking-tight">
+                        Pokok doa Anda bersifat rahasia dan hanya akan dibacakan/didoakan oleh Pendeta dan petugas yang berwenang dalam ibadah.
+                    </p>
+                </div>
+
                 <div className="space-y-3 pt-4">
                     <button
                         type="submit"
@@ -91,7 +102,7 @@ const DoaForm = ({ onBack }: DoaFormProps) => {
 
                         <span className="font-black uppercase text-xs tracking-[0.2em] text-white">
                             {status === 'loading' ? 'Mengirim...' :
-                                status === 'success' ? 'Berhasil Merkirim' :
+                                status === 'success' ? 'Berhasil Terkirim' :
                                     status === 'error' ? 'Gagal Mengirim' :
                                         'Kirim'}
                         </span>
@@ -100,7 +111,7 @@ const DoaForm = ({ onBack }: DoaFormProps) => {
                     <button
                         type="button"
                         onClick={onBack}
-                        className="w-full p-5 rounded-[2rem] border-2 border-slate-200 flex items-center justify-center active:scale-95 transition-all"
+                        className="w-full p-5 rounded-[2rem] border-2 border-slate-100 flex items-center justify-center active:scale-95 transition-all"
                     >
                         <span className="font-black uppercase text-xs tracking-[0.2em] text-slate-900">
                             Batal

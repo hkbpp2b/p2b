@@ -1,6 +1,6 @@
 // SaranForm.tsx
 import React, { useState } from 'react';
-import { ArrowLeft, Send, Loader2, CheckCircle2, MessageCircleWarning } from 'lucide-react';
+import { ArrowLeft, Loader2, CheckCircle2, MessageCircleWarning, ShieldCheck } from 'lucide-react';
 
 interface SaranFormProps {
     onBack: () => void;
@@ -75,6 +75,16 @@ const SaranForm = ({ onBack }: SaranFormProps) => {
                     />
                 </div>
 
+                <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2 text-amber-600">
+                        <ShieldCheck size={16} />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Privasi Terjamin</span>
+                    </div>
+                    <p className="text-[9px] font-bold text-slate-500 leading-relaxed tracking-tight">
+                        Masukan Anda dapat dikirim secara anonim. Identitas Anda (jika diisi) akan dijaga kerahasiaannya dan hanya digunakan untuk evaluasi internal.
+                    </p>
+                </div>
+
                 <div className="space-y-3 pt-4">
                     <button
                         type="submit"
@@ -99,7 +109,7 @@ const SaranForm = ({ onBack }: SaranFormProps) => {
                     <button
                         type="button"
                         onClick={onBack}
-                        className="w-full p-5 rounded-[2rem] border-2 border-slate-200 flex items-center justify-center active:scale-95 transition-all"
+                        className="w-full p-5 rounded-[2rem] border-2 border-slate-100 flex items-center justify-center active:scale-95 transition-all"
                     >
                         <span className="font-black uppercase text-xs tracking-[0.2em] text-slate-900">
                             Batal
