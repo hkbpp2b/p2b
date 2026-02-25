@@ -1,4 +1,4 @@
-# ⛪ HKBP Perumnas 2 Bekasi - Digital Ministry
+# ⛪ HKBP Perumnas 2 Bekasi - Digital Services
 
 Aplikasi Mobile Web resmi **HKBP Perumnas 2 Bekasi** yang dirancang sebagai pusat informasi dan pelayanan digital bagi seluruh jemaat. Akses semua kebutuhan ibadah kini lebih mudah, cepat, dan bisa dilakukan dari mana saja melalui smartphone.
 

@@ -68,14 +68,14 @@ const GivingTab = () => {
                         <img src={qrisLogo} alt="QRIS" className="h-4 object-contain" />
                         <img src={gpnLogo} alt="GPN" className="h-6 object-contain" />
                     </div>
-                    <div className="text-center mb-6">
-                        <p className="text-[16px] font-black text-slate-900">HKBP PERUMNAS 2</p>
-                        <p className="text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-tight">NMID: 9360091100010430137</p>
+                    <div className="text-center mb-4">
+                        <p className="text-[22px] font-black text-slate-900">Persembahan HKBP 2</p>
+                        <p className="text-[14px] font-medium text-slate-500 mt-1 uppercase tracking-tight">NMID: 9360091100010430137</p>
                     </div>
                     <div className="bg-white p-2 border-slate-100 border-[12px] border-white shadow-sm w-full aspect-square flex items-center justify-center overflow-hidden">
                         <img src={qrUtama} alt="QR" className="w-full h-full object-contain scale-110" />
                     </div>
-                    <div className="mt-6 text-center">
+                    <div className="mt-4 text-center">
 
                         <p className="text-[11px] font-black text-slate-900 uppercase tracking-[0.1em]">Satu QRIS Untuk Semua</p>
 
