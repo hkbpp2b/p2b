@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, Users, MessageCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Users, ChevronDown, ChevronUp } from 'lucide-react';
 
 let cachedFungsionarisData: any[] | null = null;
 
@@ -53,11 +53,6 @@ const FungsionarisCard = () => {
         fetchFungsionaris();
     }, []);
 
-    const handleContact = (phone: string) => {
-        const cleanPhone = phone.replace(/\D/g, '').replace(/^0/, '62');
-        window.open(`https://wa.me/${cleanPhone}`, '_blank');
-    };
-
     return (
         <div className="w-full">
             <button
@@ -81,8 +76,7 @@ const FungsionarisCard = () => {
                             {fungsionarisList.map((item, i) => (
                                 <div
                                     key={i}
-                                    onClick={() => handleContact(item.phone)}
-                                    className="flex items-center gap-5 p-4 rounded-3xl border border-transparent hover:border-slate-100 hover:bg-slate-50 transition-all cursor-pointer group"
+                                    className="flex items-center gap-5 p-4 rounded-3xl border border-transparent transition-all cursor-default group"
                                 >
                                     <div className="w-14 h-14 rounded-full bg-slate-100 overflow-hidden flex-shrink-0 border-2 border-white shadow-sm">
                                         {item.img ? (
@@ -100,9 +94,6 @@ const FungsionarisCard = () => {
                                         <p className="text-[11px] text-blue-600 font-bold uppercase tracking-widest mt-0.5">
                                             {item.role}
                                         </p>
-                                    </div>
-                                    <div className="text-slate-300 group-hover:text-green-500 transition-colors flex-shrink-0">
-                                        <MessageCircle size={20} />
                                     </div>
                                 </div>
                             ))}

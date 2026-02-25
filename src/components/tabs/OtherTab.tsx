@@ -77,6 +77,10 @@ const OtherTab = () => {
 
             <div className="mx-2 p-7 bg-slate-900 rounded-[2.5rem] border border-slate-800 shadow-xl">
                 <div className="text-center space-y-2">
+                    <p className="text-[12px] text-white font-black uppercase tracking-widest">Administrasi Huria</p>
+                    <div className="text-center space-y-2">
+                        <p className="text-[14px] text-slate-300 font-bold tracking-tight">0813.10683300</p>
+                    </div>
                     <p className="text-[12px] text-white font-black uppercase tracking-widest">Jam Pelayanan Kantor</p>
                     <div className="flex flex-col gap-1">
                         <p className="text-[14px] text-slate-300 font-bold tracking-tight">Selasa - Sabtu</p>
