@@ -11,9 +11,11 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
     const [isPlaying, setIsPlaying] = useState(false);
 
     const dummyLirik = [
-        { bait: 1, teks: "Avon ma luhut hamu angka na porsea i, mardongan olopolop tu Betlehem." },
-        { bait: 2, teks: "Ida ma dakdanak i, Raja ni surusuruan, somba ma Ibana, somba ma Ibana, somba ma Ibana, Raja i." },
-        { bait: 3, teks: "O Raja na sun sangap, na sun gogo, hami mambahen sangap tu GoarMi." }
+        {
+            bait: 1, teks: "Ringgas ma ho tondingku mamuji Debatanta i Ai diparmudumudu ho unang halupahon i, Disesa do dosamu, didaoni sahitmi, diudut do hosamu, diburi tondimi Huhut diapulapul roham na marsak i Asa tung lam humibul mingot uhumNa i "
+        },
+        { bait: 2, teks: "Na tolhas do tu hita uhumNa na sumurung i Dibaen holong rohaNa Di angka na porsea i Ai ndada dilaluhon tu hita rimas i Sai lam dipatuduhon denggan basaNa i: Ai songon hasundutan dao sian purba i Holang dibaen Ibana sude dosanta i" },
+        { bait: 3, teks: "Asi roha ni ama marnida anakkonna i Suman tusi Jahowa marnida na porsea i Diboto do mulanta na sian tano i Tudoshon bungabunga tudoshon bulung i Disi ro habahaba mamintor habang be Suman tusi do jolma, sai mate do sude. " }
     ];
 
     return (
@@ -33,8 +35,8 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                         onClick={() => setIsSongSelectOpen(true)}
                         className="px-3 py-1 hover:bg-slate-100 rounded-lg transition-colors text-center"
                     >
-                        <h2 className="text-base font-bold text-slate-900 tracking-tight leading-none">BE. 565</h2>
-                        <span className="text-[10px] font-medium text-slate-500 uppercase tracking-tighter">Las ma rohamu</span>
+                        <h2 className="text-base font-bold text-slate-900 tracking-tight leading-none">BE 1</h2>
+
                     </button>
                     <button className="p-1 hover:bg-slate-100 rounded text-slate-300">
                         <ChevronRight size={20} />
@@ -54,7 +56,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
             <div className="flex-1 overflow-y-auto">
                 <div className="max-w-2xl mx-auto p-8 space-y-10 pb-32">
                     <div className="text-center space-y-2">
-                        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">Las Ma Rohamu</h1>
+                        <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">RINGGAS MA HO TONDINGKU</h1>
                         <div className="h-1 w-12 bg-blue-600 mx-auto rounded-full" />
                     </div>
 
@@ -85,15 +87,15 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                         <input
                             type="number"
                             placeholder="Masukkan nomor (1-864)..."
-                            className="w-full p-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none font-bold text-lg"
+                            className="w-full p-4 rounded-2xl border-2 border-slate-200 focus:border-blue-600 outline-none font-bold text-xs"
                         />
                     </div>
                     <div className="flex-1 overflow-y-auto p-4">
                         <div className="grid grid-cols-1 gap-2">
-                            {[564, 565, 566, 567].map((num) => (
+                            {[1].map((num) => (
                                 <button key={num} onClick={() => setIsSongSelectOpen(false)} className="flex items-center gap-4 p-4 rounded-2xl bg-slate-50 hover:bg-slate-900 hover:text-white transition-all group">
                                     <span className="text-lg font-black opacity-30 group-hover:opacity-100">{num}</span>
-                                    <span className="text-sm font-bold uppercase tracking-tight">Judul Lagu Ende</span>
+                                    <span className="text-sm font-bold uppercase tracking-tight">RINGGAS MAS HO RONDINGKU</span>
                                 </button>
                             ))}
                         </div>

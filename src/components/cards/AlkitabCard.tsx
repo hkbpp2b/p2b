@@ -17,7 +17,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     ];
 
     const daftarKitab = [
-        "Kejadian", "Keluaran", "Imamat", "Bilangan"
+        "Kejadian", "Keluaran", "Imamat",
     ];
 
     return (
@@ -77,7 +77,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                 <div className="max-w-2xl mx-auto p-6 space-y-8 pb-32">
                     <div className="py-4 border-b border-slate-200">
                         <h1 className="text-xl font-black text-slate-900 text-center leading-relaxed uppercase tracking-tight">
-                            {version === 'TB' ? 'Allah menciptakan langit dan bumi serta isinya' : 'Panompaon ni Debata di langit dohot di tano'}
+                            {version === 'TB' ? 'Allah menciptakan langit dan bumi serta isinya' : 'I. Mula ni tano on 1.'}
                         </h1>
                     </div>
 
@@ -88,7 +88,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                         </p>
                         <p className="relative pl-8">
                             <span className="absolute left-0 top-1 text-blue-600 font-bold text-xs">2</span>
-                            {version === 'TB' ? 'Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air.' : 'Dung i so marrupa dope tano i jala lungun, jala haholomon do di atas lung i, jala Tondi ni Debata mangareapreap di atas ni angka aek.'}
+                            {version === 'TB' ? 'Bumi belum berbentuk dan kosong; gelap gulita menutupi samudera raya, dan Roh Allah melayang-layang di atas permukaan air.' : 'Dung i tarulang ma tano i gabe halongonan jala holom di atas lung i, dung i mangareapreap ma Tondi ni Debata di atas ni angka aek.'}
                         </p>
                     </div>
                 </div>
