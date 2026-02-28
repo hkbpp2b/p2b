@@ -20,7 +20,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
     return (
         <div className="fixed inset-0 z-[60] bg-[#f8f9fa] flex flex-col overflow-hidden">
-            <header className="flex-none bg-white border-b border-slate-200 px-4 h-14 flex items-center justify-between shadow-sm">
+            <header className="flex-none bg-white border-b border-slate-100 px-4 h-14 flex items-center justify-between">
                 <div className="flex items-center">
                     <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
                         <ArrowLeft size={20} />

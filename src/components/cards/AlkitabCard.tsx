@@ -110,7 +110,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const fileName = version === 'TB' ? 'tb.csv' : 'btv2.csv';
+                const fileName = version === 'TB' ? 'tb.csv' : 'btv3.csv';
                 const response = await fetch(`/${fileName}`);
                 const rawData = await response.text();
                 const lines = rawData.split(/\r?\n/);
