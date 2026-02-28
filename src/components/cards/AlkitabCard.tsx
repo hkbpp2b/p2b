@@ -110,7 +110,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const fileName = version === 'TB' ? 'tb.csv' : 'bt.csv';
+                const fileName = version === 'TB' ? 'tb.csv' : 'btv2.csv';
                 const response = await fetch(`/${fileName}`);
                 const rawData = await response.text();
                 const lines = rawData.split(/\r?\n/);
@@ -271,7 +271,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                             <div className="space-y-6">
                                 <div>
                                     <h3 className="text-[14px] font-bold text-blue-600 uppercase tracking-[0.1em] mb-3 ml-1">
-                                        {version === 'TB' ? 'Perjanjian Lama' : 'Padan Na Robi'}
+                                        {version === 'TB' ? 'Perjanjian Lama' : 'Perjanjian Lama'}
                                     </h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {kitabGrup.pl.map(k => (
@@ -287,7 +287,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                 </div>
                                 <div>
                                     <h3 className="text-[14px] font-black text-red-600 uppercase tracking-widest mb-3 ml-1">
-                                        {version === 'TB' ? 'Perjanjian Baru' : 'Padan Na Imbaru'}
+                                        {version === 'TB' ? 'Perjanjian Baru' : 'Perjanjian Baru'}
                                     </h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {kitabGrup.pb.map(k => (
