@@ -34,23 +34,32 @@ function App() {
 
   useEffect(() => {
     const backgroundQueue = ['giving', 'ibadah', 'warta', 'other'];
+
     const loadSequentially = async () => {
-      // Tunggu 2 detik setelah Home muncul agar user lancar baca Home dulu
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => requestAnimationFrame(() => {
+        setTimeout(resolve, 100);
+      }));
 
       for (const tab of backgroundQueue) {
-        setLoadedTabs(prev => prev.includes(tab) ? prev : [...prev, tab]);
-        // Delay antar tab agar browser tidak hang saat load PDF/Gambar di bg
-        await new Promise(resolve => setTimeout(resolve, 500));
+        setLoadedTabs((prev) => (prev.includes(tab) ? prev : [...prev, tab]));
+        await new Promise((resolve) => setTimeout(resolve, 800));
       }
     };
-    loadSequentially();
+
+    if (document.readyState === 'complete') {
+      loadSequentially();
+    } else {
+      window.addEventListener('load', loadSequentially, { once: true });
+    }
   }, []);
 
   const renderTab = (id: string, Component: React.ComponentType) => {
     if (!loadedTabs.includes(id)) return null;
     return (
-      <div className={activeTab === id ? 'block' : 'hidden'}>
+      <div
+        className={activeTab === id ? 'block' : 'hidden'}
+        style={{ contentVisibility: activeTab === id ? 'visible' : 'auto' }}
+      >
         <Component />
       </div>
     );

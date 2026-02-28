@@ -69,7 +69,7 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
                         name="nama"
                         type="text"
                         required
-                        placeholder="Masukkan nama lengkap..."
+                        placeholder="Nama lengkap..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-emerald-500"
                     />
                 </div>
@@ -80,7 +80,7 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
                         name="whatsapp"
                         type="tel"
                         required
-                        placeholder="Contoh: 081234567890"
+                        placeholder="08..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-emerald-500"
                     />
                 </div>
@@ -121,7 +121,7 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
                         <span className="text-[10px] font-black uppercase tracking-widest">Privasi Data</span>
                     </div>
                     <p className="text-[9px] font-bold text-slate-500 leading-relaxed tracking-tight">
-                        Informasi permohonan layanan ini bersifat rahasia dan hanya akan diakses oleh bagian pengurus gereja terkait.
+                        Informasi permohonan layanan ini bersifat rahasia dan hanya akan diakses oleh bagian pengurus gereja.
                     </p>
                 </div>
 

@@ -60,7 +60,7 @@ const DoaForm = ({ onBack }: DoaFormProps) => {
                         name="nama"
                         type="text"
                         required
-                        placeholder="Masukkan nama Anda..."
+                        placeholder="Nama Anda..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-rose-500"
                     />
                 </div>

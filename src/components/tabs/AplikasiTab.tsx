@@ -49,14 +49,11 @@ const AplikasiTab = () => {
             </div>
 
             <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 space-y-4">
-                <div className="flex items-center gap-3 text-slate-900">
-                    <Construction size={20} className="text-orange-500" />
-                    <span className="text-[11px] font-black uppercase tracking-wider">Tahap Pengembangan</span>
-                </div>
+
                 <p className="text-[12px] leading-relaxed text-slate-600 font-medium">
                     Fitur ini masih dalam tahap pengembangan. Terima kasih atas kesabaran Anda.
                 </p>
-                <div className="flex items-start gap-3 bg-white p-4 rounded-2xl shadow-sm">
+                <div className="flex items-start gap-3 p-4 rounded-2xl shadow-sm">
                     <Lightbulb size={18} className="text-yellow-500 shrink-0 mt-0.5" />
                     <p className="text-[11px] text-slate-500 leading-snug">
                         Punya ide menarik untuk kita diskusikan bersama?  Sampaikan melalui fitur <span className="font-bold text-slate-900 text-[10px] uppercase">Kritik & Saran</span>.

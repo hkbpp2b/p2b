@@ -74,7 +74,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                         name="nama_kk"
                         type="text"
                         required
-                        placeholder="Masukkan nama kepala keluarga..."
+                        placeholder="Nama kepala keluarga"
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-blue-500"
                     />
                 </div>
@@ -85,7 +85,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                         name="whatsapp"
                         type="tel"
                         required
-                        placeholder="0812..."
+                        placeholder="08..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-emerald-500"
                     />
                 </div>
@@ -95,7 +95,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                     <input
                         name="nama_istri"
                         type="text"
-                        placeholder="Masukkan nama lengkap istri..."
+                        placeholder="Nama istri"
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-rose-500"
                     />
                 </div>
@@ -108,7 +108,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                                 type="text"
                                 value={nama}
                                 onChange={(e) => handleAnakChange(index, e.target.value)}
-                                placeholder={`Anak ke-${index + 1}`}
+                                placeholder={`Nama anak ke-${index + 1}`}
                                 className="flex-1 bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
                             />
                             {anak.length > 1 && (
@@ -144,7 +144,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                         name="wilayah"
                         type="text"
                         required
-                        placeholder="Contoh: Weyk 04"
+                        placeholder="Contoh: Jerusalem"
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-slate-900"
                     />
                 </div>
@@ -156,7 +156,7 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                     </div>
                     <p className="text-[9px] font-bold text-slate-500 leading-relaxed tracking-tight">
                         Dengan menyimpan data, Anda setuju bahwa informasi ini akan digunakan secara internal oleh
-                        HKBP Perumnas 2 Bekasi sesuai dengan hukum yang berlaku.
+                        HKBP Perumnas 2 Bekasi sesuai dengan aturan yang berlaku.
                     </p>
                 </div>
 

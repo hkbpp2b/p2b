@@ -59,7 +59,7 @@ const SaranForm = ({ onBack }: SaranFormProps) => {
                     <input
                         name="nama"
                         type="text"
-                        placeholder="Masukkan nama Anda..."
+                        placeholder="Nama Anda..."
                         className="w-full bg-slate-50 rounded-[1.5rem] p-5 text-sm font-bold outline-none border-2 border-transparent focus:bg-white focus:border-amber-500"
                     />
                 </div>
@@ -102,7 +102,7 @@ const SaranForm = ({ onBack }: SaranFormProps) => {
                             {status === 'loading' ? 'Mengirim...' :
                                 status === 'success' ? 'Terima Kasih' :
                                     status === 'error' ? 'Gagal Terkirim' :
-                                        'Kirim Masukan'}
+                                        'Kirim'}
                         </span>
                     </button>
 

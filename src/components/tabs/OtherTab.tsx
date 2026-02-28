@@ -54,7 +54,7 @@ const OtherTab = () => {
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Layanan Jemaat Digital</p>
             </header>
 
-            <div className="space-y-4 px-2">
+            <div className="space-y-4">
                 {services.map((service) => (
                     <button
                         key={service.id}
@@ -65,8 +65,8 @@ const OtherTab = () => {
                             {service.icon}
                         </div>
                         <div className="flex-1 text-left">
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">{service.title}</h3>
-                            <p className="text-[10px] text-slate-900 font-bold mt-0.5">{service.desc}</p>
+                            <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-tight">{service.title}</h3>
+                            <p className="text-[11px] text-slate-500 font-medium mt-0.5">{service.desc}</p>
                         </div>
                         <div className="text-slate-900 group-hover:text-slate-900 transition-colors">
                             <ChevronRight size={20} />
