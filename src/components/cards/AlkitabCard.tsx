@@ -25,22 +25,73 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     const [currentPasal, setCurrentPasal] = useState(1);
     const [loading, setLoading] = useState(true);
 
-
-    const namaFullKitab: Record<string, string> = {
-        "Kej": "Kejadian", "Kel": "Keluaran", "Ima": "Imamat", "Bil": "Bilangan", "Ula": "Ulangan",
-        "Yos": "Yosua", "Hak": "Hakim-hakim", "Rut": "Rut", "1Sa": "1 Samuel", "2Sa": "2 Samuel",
-        "1Ra": "1 Raja-raja", "2Ra": "2 Raja-raja", "1Ta": "1 Tawarikh", "2Ta": "2 Tawarikh",
-        "Ezr": "Ezra", "Neh": "Nehemia", "Est": "Ester", "Ayb": "Ayub", "Mzm": "Mazmur",
-        "Ams": "Amsal", "Pkh": "Pengkhotbah", "Kid": "Kidung Agung", "Yes": "Yesaya", "Yer": "Yeremia",
-        "Rat": "Ratapan", "Yeh": "Yehezkiel", "Dan": "Daniel", "Hos": "Hosea", "Yoel": "Yoel",
-        "Amos": "Amos", "Oba": "Obaja", "Yun": "Yunus", "Mik": "Mikha", "Nah": "Nahum",
-        "Hab": "Habakuk", "Zef": "Zefanya", "Hag": "Hagai", "Zak": "Zakharia", "Mal": "Maleakhi",
-        "Mat": "Matius", "Mrk": "Markus", "Luk": "Lukas", "Yoh": "Yohanes", "Kis": "Kisah Para Rasul",
-        "Rom": "Roma", "1Ko": "1 Korintus", "2Ko": "2 Korintus", "Gal": "Galatia", "Efe": "Efesus",
-        "Flp": "Filipi", "Kol": "Kolose", "1Te": "1 Tesalonika", "2Te": "2 Tesalonika",
-        "1Ti": "1 Timotius", "2Ti": "2 Timotius", "Tit": "Titus", "Flm": "Filemon", "Ibr": "Ibrani",
-        "Yak": "Yakobus", "1Pt": "1 Petrus", "2Pt": "2 Petrus", "1Yo": "1 Yohanes", "2Yo": "2 Yohanes",
-        "3Yo": "3 Yohanes", "Yud": "Yudas", "Why": "Wahyu"
+    const namaFullKitab: Record<string, { TB: string; BT: string }> = {
+        "Kej": { TB: "Kejadian", BT: "1 Musa" },
+        "Kel": { TB: "Keluaran", BT: "2 Musa" },
+        "Ima": { TB: "Imamat", BT: "3 Musa" },
+        "Bil": { TB: "Bilangan", BT: "4 Musa" },
+        "Ula": { TB: "Ulangan", BT: "5 Musa" },
+        "Yos": { TB: "Yosua", BT: "Josua" },
+        "Hak": { TB: "Hakim-hakim", BT: "Panguhum" },
+        "Rut": { TB: "Rut", BT: "Rut" },
+        "1Sa": { TB: "1 Samuel", BT: "1 Samuel" },
+        "2Sa": { TB: "2 Samuel", BT: "2 Samuel" },
+        "1Ra": { TB: "1 Raja-raja", BT: "1 Raja-raja" },
+        "2Ra": { TB: "2 Raja-raja", BT: "2 Raja-raja" },
+        "1Ta": { TB: "1 Tawarikh", BT: "1 Kronika" },
+        "2Ta": { TB: "2 Tawarikh", BT: "2 Kronika" },
+        "Ezr": { TB: "Ezra", BT: "Esra" },
+        "Neh": { TB: "Nehemia", BT: "Nehemia" },
+        "Est": { TB: "Ester", BT: "Ester" },
+        "Ayb": { TB: "Ayub", BT: "Job" },
+        "Mzm": { TB: "Mazmur", BT: "Psalmen" },
+        "Ams": { TB: "Amsal", BT: "Poda" },
+        "Pkh": { TB: "Pengkhotbah", BT: "Parjamita" },
+        "Kid": { TB: "Kidung Agung", BT: "Angka Ende" },
+        "Yes": { TB: "Yesaya", BT: "Jesaya" },
+        "Yer": { TB: "Yeremia", BT: "Jeremia" },
+        "Rat": { TB: "Ratapan", BT: "Andung-andung" },
+        "Yeh": { TB: "Yehezkiel", BT: "Hesekiel" },
+        "Dan": { TB: "Daniel", BT: "Daniel" },
+        "Hos": { TB: "Hosea", BT: "Hosea" },
+        "Yoel": { TB: "Yoel", BT: "Joel" },
+        "Amos": { TB: "Amos", BT: "Amos" },
+        "Oba": { TB: "Obaja", BT: "Obaja" },
+        "Yun": { TB: "Yunus", BT: "Jona" },
+        "Mik": { TB: "Mikha", BT: "Mika" },
+        "Nah": { TB: "Nahum", BT: "Nahum" },
+        "Hab": { TB: "Habakuk", BT: "Habakuk" },
+        "Zef": { TB: "Zefanya", BT: "Sepania" },
+        "Hag": { TB: "Hagai", BT: "Haggai" },
+        "Zak": { TB: "Zakharia", BT: "Sakaria" },
+        "Mal": { TB: "Maleakhi", BT: "Maleaki" },
+        "Mat": { TB: "Matius", BT: "Mateus" },
+        "Mrk": { TB: "Markus", BT: "Markus" },
+        "Luk": { TB: "Lukas", BT: "Lukas" },
+        "Yoh": { TB: "Yohanes", BT: "Johannes" },
+        "Kis": { TB: "Kisah Para Rasul", BT: "Ulaon ni Apostel" },
+        "Rom": { TB: "Roma", BT: "Rom" },
+        "1Ko": { TB: "1 Korintus", BT: "1 Korint" },
+        "2Ko": { TB: "2 Korintus", BT: "2 Korint" },
+        "Gal": { TB: "Galatia", BT: "Galatia" },
+        "Efe": { TB: "Efesus", BT: "Epesus" },
+        "Flp": { TB: "Filipi", BT: "Pilippi" },
+        "Kol": { TB: "Kolose", BT: "Kolosse" },
+        "1Te": { TB: "1 Tesalonika", BT: "1 Tessalonik" },
+        "2Te": { TB: "2 Tesalonika", BT: "2 Tessalonik" },
+        "1Ti": { TB: "1 Timotius", BT: "1 Timoteus" },
+        "2Ti": { TB: "2 Timotius", BT: "2 Timoteus" },
+        "Tit": { TB: "Titus", BT: "Titus" },
+        "Flm": { TB: "Filemon", BT: "Pilemon" },
+        "Ibr": { TB: "Ibrani", BT: "Heber" },
+        "Yak": { TB: "Yakobus", BT: "Jakobus" },
+        "1Pt": { TB: "1 Petrus", BT: "1 Petrus" },
+        "2Pt": { TB: "2 Petrus", BT: "2 Petrus" },
+        "1Yo": { TB: "1 Yohanes", BT: "1 Johannes" },
+        "2Yo": { TB: "2 Yohanes", BT: "2 Johannes" },
+        "3Yo": { TB: "3 Yohanes", BT: "3 Johannes" },
+        "Yud": { TB: "Yudas", BT: "Judas" },
+        "Why": { TB: "Wahyu", BT: "Pangungkapon" }
     };
 
     const daftarPL = [
@@ -113,6 +164,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
         }, 100);
     };
 
+    const getNamaKitab = (key: string) => {
+        return namaFullKitab[key] ? namaFullKitab[key][version] : key;
+    };
 
     return (
         <div className="fixed inset-0 z-[60] bg-white flex flex-col overflow-hidden">
@@ -126,7 +180,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                     </button>
                     <button onClick={() => { setSelectorTab('kitab'); setIsSelectorOpen(true); }} className="px-3 py-1 flex items-center gap-1">
                         <span className="text-base font-bold text-slate-900">
-                            {namaFullKitab[currentKitab] || currentKitab} {currentPasal}
+                            {getNamaKitab(currentKitab)} {currentPasal}
                         </span>
                     </button>
                     <button onClick={() => setCurrentPasal(p => p + 1)} className="p-1 text-slate-300">
@@ -177,7 +231,6 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                         <button onClick={() => setIsSelectorOpen(false)} className="p-2 -ml-2 text-slate-600">
                             <ArrowLeft size={20} />
                         </button>
-
                         <div className="flex gap-8">
                             {['kitab', 'pasal', 'ayat'].map((tab) => (
                                 <button
@@ -189,7 +242,6 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                 </button>
                             ))}
                         </div>
-
                         <div className="relative">
                             <button onClick={() => setIsVersionOpen(!isVersionOpen)} className="text-[10px] font-black border px-2 py-0.5 rounded text-slate-700">{version}</button>
                             {isVersionOpen && (
@@ -218,7 +270,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                         {selectorTab === 'kitab' && (
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-[14px] font-bold text-blue-600 uppercase tracking-[0.1em] mb-3 ml-1">Perjanjian Lama</h3>
+                                    <h3 className="text-[14px] font-bold text-blue-600 uppercase tracking-[0.1em] mb-3 ml-1">
+                                        {version === 'TB' ? 'Perjanjian Lama' : 'Padan Na Robi'}
+                                    </h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {kitabGrup.pl.map(k => (
                                             <button
@@ -226,13 +280,15 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                                 onClick={() => { setCurrentKitab(k); setSelectorTab('pasal'); }}
                                                 className={`p-4 text-left text-[12px] font-bold uppercase border rounded-xl ${currentKitab === k ? 'border-slate-900 text-slate-900' : 'border-slate-100 text-slate-600'}`}
                                             >
-                                                {namaFullKitab[k] || k}
+                                                {getNamaKitab(k)}
                                             </button>
                                         ))}
                                     </div>
                                 </div>
                                 <div>
-                                    <h3 className="text-[14px] font-black text-red-600 uppercase tracking-widest mb-3 ml-1">Perjanjian Baru</h3>
+                                    <h3 className="text-[14px] font-black text-red-600 uppercase tracking-widest mb-3 ml-1">
+                                        {version === 'TB' ? 'Perjanjian Baru' : 'Padan Na Imbaru'}
+                                    </h3>
                                     <div className="grid grid-cols-2 gap-2">
                                         {kitabGrup.pb.map(k => (
                                             <button
@@ -240,7 +296,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                                 onClick={() => { setCurrentKitab(k); setSelectorTab('pasal'); }}
                                                 className={`p-4 text-left text-[11px] font-bold uppercase border rounded-xl ${currentKitab === k ? 'border-slate-900 text-slate-900' : 'border-slate-100 text-slate-600'}`}
                                             >
-                                                {namaFullKitab[k] || k}
+                                                {getNamaKitab(k)}
                                             </button>
                                         ))}
                                     </div>
