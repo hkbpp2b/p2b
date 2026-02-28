@@ -2,6 +2,7 @@ import HeroCard from '../cards/HeroCard';
 import RenunganCard from '../cards/RenunganCard';
 import JadwalCard from '../cards/JadwalCard';
 import PendetaCard from '../cards/PendetaCard';
+import FungsionarisCard from '../cards/FungsionarisCard';
 
 const ProfileTab = () => {
     return (
@@ -11,6 +12,7 @@ const ProfileTab = () => {
             <RenunganCard />
             <JadwalCard />
             <PendetaCard />
+            <FungsionarisCard />
 
         </div>
     );

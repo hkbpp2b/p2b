@@ -261,30 +261,26 @@ const HeroCard = () => {
 
             {selectedPhoto && (
                 <div className="fixed inset-0 z-[999] bg-white flex flex-col animate-in fade-in duration-300">
+                    <div className="w-full max-w-7xl mx-auto flex flex-col h-full overflow-hidden">    <div className={`flex items-center px-6 h-[75px] bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'border-b border-slate-100 shadow-sm' : 'border-transparent'}`}>
 
+                        <button
+                            onClick={() => {
+                                setSelectedPhoto(null);
 
-                    <div className="w-full max-w-7xl mx-auto flex flex-col h-full overflow-hidden">
+                                if (window.history.state?.photoOpen) {
 
+                                }
+                            }}
+                            className="..."
+                        >
+                            <ArrowLeft size={24} />
+                        </button>
 
-                        <div className={`flex items-center px-6 h-[75px] bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'border-b border-slate-100 shadow-sm' : 'border-transparent'}`}>
-                            <button
-                                onClick={() => {
-                                    setSelectedPhoto(null);
-
-                                    if (window.history.state?.photoOpen) {
-
-                                    }
-                                }}
-                                className="..."
-                            >
-                                <ArrowLeft size={24} />
-                            </button>
-
-                            <div className={`ml-4 transition-all duration-500 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                                <p className="text-[14px] font-black text-slate-900 uppercase leading-none mb-0.5">{selectedPhoto.judul}</p>
-                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">{selectedPhoto.tanggal}</p>
-                            </div>
+                        <div className={`ml-4 transition-all duration-500 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                            <p className="text-[14px] font-black text-slate-900 uppercase leading-none mb-0.5">{selectedPhoto.judul}</p>
+                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest leading-none">{selectedPhoto.tanggal}</p>
                         </div>
+                    </div>
 
                         <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar bg-white">
                             <div className="flex flex-col md:flex-row items-start min-h-full">
@@ -298,12 +294,12 @@ const HeroCard = () => {
                                 </div>
 
 
-                                <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col bg-white">
+                                <div className="w-full md:w-1/2 p-8 md:p-8 flex flex-col bg-white">
                                     <div className="mb-8">
                                         <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">
                                             {selectedPhoto.tanggal}
                                         </p>
-                                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-[1.1]">
+                                        <h2 className="text-2xl md:text-2xl font-black text-slate-900 tracking-tighter uppercase leading-[1.1]">
                                             {selectedPhoto.judul}
                                         </h2>
 

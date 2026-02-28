@@ -6,7 +6,7 @@ import DataJemaatForm from '../cards/DataJemaatForm';
 import DoaForm from '../cards/DoaForm';
 import SaranForm from '../cards/SaranForm';
 import KonselingForm from '../cards/KonselingForm';
-import FungsionarisCard from '../cards/FungsionarisCard';
+
 
 const OtherTab = () => {
     const [activeView, setActiveView] = useState<'menu' | 'data-jemaat' | 'doa' | 'saran' | 'konseling'>('menu');
@@ -89,7 +89,6 @@ const OtherTab = () => {
                 </div>
             </div>
 
-            <FungsionarisCard />
         </div>
     );
 };
