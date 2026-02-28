@@ -20,8 +20,13 @@ const RenunganCard = () => {
                 const response = await fetch(`${TSV_URL}&t=${new Date().getTime()}`);
                 const text = await response.text();
                 const rows = text.split(/\r?\n/).filter(row => row.trim() !== "");
+
                 if (rows.length > 1) {
-                    const cols = rows[1].split('\t');
+                    const cols = rows[1].split('\t').map(col => {
+                        let cleaned = col.replace(/^"|"$/g, '').trim();
+                        return cleaned.replace(/\[br\]/g, '\n');
+                    });
+
                     const result = {
                         tanggal: cols[0],
                         ayat: cols[1],
@@ -34,7 +39,9 @@ const RenunganCard = () => {
                     setData(result);
                     cachedRenungan = result;
                 }
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         };
         fetchRenungan();
     }, []);

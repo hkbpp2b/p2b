@@ -209,7 +209,7 @@ const HeroCard = () => {
                         <p className="text-white/90 text-[10px] font-black uppercase tracking-[0.3em] mb-1">
                             {data?.slides[currentSlide]?.tanggal || ""}
                         </p>
-                        <h3 className="text-white text-[22px] font-black uppercase tracking-tight leading-none">
+                        <h3 className="text-white text-[16px] font-black uppercase tracking-tight leading-none">
                             {data?.slides[currentSlide]?.judul || ""}
                         </h3>
                     </div>
