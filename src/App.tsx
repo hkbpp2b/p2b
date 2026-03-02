@@ -1,6 +1,7 @@
 // App.tsx
 import { useState, useEffect } from 'react';
-import { Home, X, Loader2 } from 'lucide-react';
+import { Home } from 'lucide-react';
+import { Instagram, Youtube, Facebook, Music2 } from 'lucide-react';
 import Layout from './components/Layout';
 import ProfileTab from './components/tabs/ProfileTab';
 import IbadahTab from './components/tabs/IbadahTab';
@@ -60,6 +61,42 @@ function App() {
             <Home size={32} className="opacity-20" />
           </div>
           <p className="font-black uppercase tracking-widest text-xs">Pilih konten di kiri layar untuk melihat detail</p>
+        </div>
+      );
+    }
+
+    if (selectedDetail.type === 'social') {
+      return (
+        <div className="flex flex-col h-full bg-white">
+          <div className="p-12 flex flex-col items-center justify-center h-full text-center">
+            <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mb-8 border border-slate-100 shadow-sm">
+              {selectedDetail.platform === 'INSTAGRAM' && <Instagram size={40} className="text-pink-600" />}
+              {selectedDetail.platform === 'YOUTUBE' && <Youtube size={40} className="text-red-600" />}
+              {selectedDetail.platform === 'FACEBOOK' && <Facebook size={40} className="text-blue-600" />}
+              {selectedDetail.platform === 'TIKTOK' && <Music2 size={40} className="text-slate-900" />}
+            </div>
+
+            <p className="text-[14px] font-black text-blue-600 uppercase tracking-[0.4em] mb-1">
+              {selectedDetail.judul}
+            </p>
+
+            <p className="text-[32px] font-bold text-slate-900 lowercase tracking-tight mb-1">
+              {selectedDetail.url.split('/').filter(Boolean).pop()}
+            </p>
+
+            <p className="text-slate-500 font-medium text-[15px] max-w-sm mb-10 leading-relaxed">
+              Akun {selectedDetail.platform.toLowerCase()} Resmi Gereja HKBP Perumnas 2 Bekasi
+            </p>
+
+            <a
+              href={selectedDetail.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative flex items-center gap-3 bg-slate-900 text-white font-black text-[11px] uppercase tracking-[0.2em] px-10 py-5 rounded-2xl hover:bg-blue-600 transition-all active:scale-95 shadow-xl shadow-slate-200"
+            >
+              Kunjungi {selectedDetail.platform}
+            </a>
+          </div>
         </div>
       );
     }

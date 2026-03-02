@@ -32,6 +32,19 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
         }
     };
 
+    const handleSocialClick = (e: React.MouseEvent, platform: string, url: string) => {
+        if (window.innerWidth >= 1024 && onSelect) {
+            e.preventDefault();
+            onSelect({
+                type: 'social',
+                platform,
+                url,
+                judul: `${platform}`,
+                tanggal: 'SOCIAL MEDIA'
+            });
+        }
+    };
+
     const handleMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true);
         setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
@@ -207,16 +220,40 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
                     </a>
                     <div className="mt-3 pt-3 border-t border-slate-100/60">
                         <div className="flex gap-2 px-1">
-                            <a href="https://www.instagram.com/hkbp.perum2bks/" target="_blank" rel="noopener noreferrer" className="flex-1 py-3 bg-rose-50 rounded-2xl flex justify-center items-center active:bg-rose-100 active:scale-95 transition-all">
+                            <a
+                                href="https://www.instagram.com/hkbp.perum2bks/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => handleSocialClick(e, 'INSTAGRAM', 'https://www.instagram.com/hkbp.perum2bks/')}
+                                className="flex-1 py-3 bg-rose-50 rounded-2xl flex justify-center items-center active:bg-rose-100 active:scale-95 transition-all"
+                            >
                                 <Instagram size={18} className="text-pink-600" />
                             </a>
-                            <a href="https://www.youtube.com/@HKBPPerumnas2Bekasi" target="_blank" rel="noopener noreferrer" className="flex-1 py-3 bg-red-50 rounded-2xl flex justify-center items-center active:bg-red-100 active:scale-95 transition-all">
+                            <a
+                                href="https://www.youtube.com/@HKBPPerumnas2Bekasi"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => handleSocialClick(e, 'YOUTUBE', 'https://www.youtube.com/@HKBPPerumnas2Bekasi')}
+                                className="flex-1 py-3 bg-red-50 rounded-2xl flex justify-center items-center active:bg-red-100 active:scale-95 transition-all"
+                            >
                                 <Youtube size={18} className="text-red-600" />
                             </a>
-                            <a href="https://www.facebook.com/hkbp.perum2bks" target="_blank" rel="noopener noreferrer" className="flex-1 py-3 bg-blue-50 rounded-2xl flex justify-center items-center active:bg-blue-100 active:scale-95 transition-all">
+                            <a
+                                href="https://www.facebook.com/hkbp.perum2bks"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => handleSocialClick(e, 'FACEBOOK', 'https://www.facebook.com/hkbp.perum2bks')}
+                                className="flex-1 py-3 bg-blue-50 rounded-2xl flex justify-center items-center active:bg-blue-100 active:scale-95 transition-all"
+                            >
                                 <Facebook size={18} className="text-blue-600" />
                             </a>
-                            <a href="https://www.tiktok.com/@hkbp.perum2bks" target="_blank" rel="noopener noreferrer" className="flex-1 py-3 bg-slate-600 rounded-2xl flex justify-center items-center active:bg-slate-800 active:scale-95 transition-all">
+                            <a
+                                href="https://www.tiktok.com/@hkbp.perum2bks"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => handleSocialClick(e, 'TIKTOK', 'https://www.tiktok.com/@hkbp.perum2bks')}
+                                className="flex-1 py-3 bg-slate-600 rounded-2xl flex justify-center items-center active:bg-slate-800 active:scale-95 transition-all"
+                            >
                                 <Music2 size={18} className="text-white" />
                             </a>
                         </div>

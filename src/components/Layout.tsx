@@ -1,8 +1,9 @@
 // Layout.tsx
 import React, { useState, useEffect } from 'react';
-import { Home, QrCode, CalendarDays, Newspaper, FileClock } from 'lucide-react';
+import { Home, QrCode, CalendarDays, Newspaper, LayoutGrid } from 'lucide-react';
 import LayoutDesktop from './LayoutDesktop';
 import LayoutMobile from './LayoutMobile';
+
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -14,7 +15,7 @@ interface LayoutProps {
 
 const Layout = ({ children, activeTab, setActiveTab, title, detailContent }: LayoutProps) => {
     const menus = [
-        { id: 'warta', label: 'App', icon: <FileClock size={22} /> },
+        { id: 'warta', label: 'Aplikasi', icon: <LayoutGrid size={22} /> },
         { id: 'ibadah', label: 'Warta', icon: <Newspaper size={22} /> },
         { id: 'profil', label: 'Home', icon: <Home size={22} /> },
         { id: 'giving', label: 'Persembahan', icon: <QrCode size={22} /> },
