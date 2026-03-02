@@ -4,7 +4,11 @@ import { ChevronRight, ArrowLeft } from 'lucide-react';
 
 let cachedRenungan: any = null;
 
-const RenunganCard = () => {
+interface RenunganCardProps {
+    onSelect?: (data: any) => void;
+}
+
+const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const [data, setData] = useState<any>(cachedRenungan);
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -12,6 +16,14 @@ const RenunganCard = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const TSV_URL = import.meta.env.VITE_TSV_RENUNGAN_URL;
+
+    const handleRenunganClick = () => {
+        if (window.innerWidth >= 1024 && onSelect) {
+            onSelect({ ...data, type: 'renungan' });
+        } else {
+            setIsOpen(true);
+        }
+    };
 
     useEffect(() => {
         if (cachedRenungan) return;
@@ -92,7 +104,7 @@ const RenunganCard = () => {
                 </div>
 
                 <div
-                    onClick={() => setIsOpen(true)}
+                    onClick={handleRenunganClick}
                     className="p-7 rounded-[2.5rem] bg-slate-800/50 backdrop-blur-sm active:scale-95 transition-all cursor-pointer relative z-10 border border-slate-700/50 hover:border-slate-600 shadow-xl"
                 >
                     <div className="space-y-6">
@@ -119,14 +131,13 @@ const RenunganCard = () => {
             </div>
 
             {isOpen && (
-                <div className="fixed inset-0 z-[9999] flex flex-col animate-in slide-in-from-right duration-500 bg-white">
+                <div className="fixed inset-0 z-[9999] flex flex-col animate-in slide-in-from-right duration-500 bg-white lg:hidden">
                     <header className="flex-none bg-white border-b border-slate-100 px-2 h-12 flex items-center">
                         <div className="flex-1 flex items-center">
                             <button onClick={closeRenungan} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-900">
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
-
                         <div className={`flex flex-col items-center transition-all duration-300 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}>
                             <h2 className="text-[12px] font-black text-slate-900 tracking-tight uppercase truncate max-w-[180px]">
                                 {data.topik}
@@ -135,7 +146,6 @@ const RenunganCard = () => {
                                 {data.ayat}
                             </span>
                         </div>
-
                         <div className="flex-1" />
                     </header>
 
@@ -148,7 +158,6 @@ const RenunganCard = () => {
                                 <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-8">
                                     {data.topik}
                                 </h1>
-
                                 <div className="border-l-[3px] border-slate-900 pl-5 py-1">
                                     <p className="text-[19px] md:text-[24px] font-black text-slate-900 italic leading-snug mb-3">
                                         "{data.kutipan}"

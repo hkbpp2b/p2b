@@ -9,24 +9,23 @@ interface LayoutProps {
     activeTab: string;
     setActiveTab: (tab: string) => void;
     title: string;
+    detailContent?: React.ReactNode;
 }
 
-const Layout = ({ children, activeTab, setActiveTab, title }: LayoutProps) => {
+const Layout = ({ children, activeTab, setActiveTab, title, detailContent }: LayoutProps) => {
     const menus = [
         { id: 'warta', label: 'App', icon: <FileClock size={22} /> },
         { id: 'ibadah', label: 'Warta', icon: <Newspaper size={22} /> },
         { id: 'profil', label: 'Home', icon: <Home size={22} /> },
         { id: 'giving', label: 'Persembahan', icon: <QrCode size={22} /> },
-        { id: 'other', label: 'Lainnya', icon: <CalendarDays size={22} /> },
+        { id: 'other', label: 'Layanan', icon: <CalendarDays size={22} /> },
     ];
 
     useEffect(() => {
         window.history.pushState({ activeTab }, "");
-
         const handleBackButton = (event: PopStateEvent) => {
             const isOverlayOpen = document.body.classList.contains('modal-open');
             if (isOverlayOpen) return;
-
             if (activeTab !== 'profil') {
                 setActiveTab('profil');
             } else {
@@ -38,7 +37,6 @@ const Layout = ({ children, activeTab, setActiveTab, title }: LayoutProps) => {
                 }
             }
         };
-
         window.addEventListener('popstate', handleBackButton);
         return () => window.removeEventListener('popstate', handleBackButton);
     }, [activeTab, setActiveTab]);
@@ -49,8 +47,12 @@ const Layout = ({ children, activeTab, setActiveTab, title }: LayoutProps) => {
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 menus={menus}
+                detailContent={detailContent}
             >
-                {children}
+                {/* Gunakan key berbasis activeTab agar komponen reset saat pindah tab */}
+                <div key={activeTab} className="h-full">
+                    {children}
+                </div>
             </LayoutDesktop>
 
             <LayoutMobile
@@ -59,7 +61,9 @@ const Layout = ({ children, activeTab, setActiveTab, title }: LayoutProps) => {
                 title={title}
                 menus={menus}
             >
-                {children}
+                <div key={activeTab} className="h-full">
+                    {children}
+                </div>
             </LayoutMobile>
         </>
     );

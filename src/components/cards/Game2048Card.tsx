@@ -145,70 +145,72 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
     };
 
     return (
-        <div className="fixed inset-0 z-[60] bg-white flex flex-col items-center p-6 font-sans select-none overflow-y-auto">
-            <div className="w-full max-w-[280px] flex justify-start mb-4">
-                <button onClick={onBack} className="p-2 -ml-2 text-black active:scale-90 transition-transform">
-                    <ArrowLeft size={24} />
+        <div className="fixed lg:absolute inset-0 z-[60] bg-white flex flex-col overflow-hidden animate-in slide-in-from-right lg:slide-in-from-none duration-300">
+            <header className="flex-none h-14 border-b border-slate-100 flex items-center px-4 bg-white">
+                <button onClick={onBack} className="p-2 -ml-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
+                    <ArrowLeft size={20} />
                 </button>
-            </div>
 
-            <div className="w-full max-w-[280px] mb-6">
-                <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">
-                    2048 <br />
-                </h1>
+            </header>
 
-                <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Score Record</p>
-                    <span className="text-2xl font-black text-black">{score}</span>
-                </div>
-            </div>
-
-            <div
-                className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none"
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-            >
-                <div className="grid grid-cols-4 gap-1">
-                    {grid.map((row, r) => row.map((val, c) => (
-                        <div key={`${r}-${c}`} className={`w-[60px] h-[60px] flex items-center justify-center text-lg font-black transition-colors ${val === 0 ? 'bg-slate-50' : 'bg-black text-white'}`}>
-                            {val !== 0 ? val : ''}
-                        </div>
-                    )))}
-                </div>
-
-                {gameOver && (
-                    <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-50 p-4 text-center">
-                        <p className="font-black text-xl uppercase tracking-tighter mb-2 text-black">Game Over</p>
-                        {!submitted ? (
-                            <div className="w-full">
-                                <input
-                                    type="text"
-                                    placeholder="Enter Name"
-                                    className="w-full border-2 border-black p-2 text-[10px] font-black uppercase outline-none mb-2"
-                                    value={playerName}
-                                    onChange={(e) => setPlayerName(e.target.value)}
-                                    maxLength={10}
-                                />
-                                <button onClick={saveScore} className="w-full bg-black text-white py-2 text-[10px] font-black uppercase mb-2">Save Score</button>
-                            </div>
-                        ) : <p className="text-[10px] font-bold uppercase mb-4 text-slate-400"></p>}
-                        <button onClick={initGame} className="px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase">Retry</button>
+            <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col items-center p-6 select-none">
+                <div className="w-full max-w-[280px] mb-6">
+                    <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">
+                        2048 <br />
+                    </h1>
+                    <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Score Record</p>
+                        <span className="text-2xl font-black text-black">{score}</span>
                     </div>
-                )}
-            </div>
+                </div>
 
-            <div className="w-full max-w-[280px] pb-10">
-                <h3 className="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 mb-3">Top Scorer</h3>
-                {topScores.length === 0 ? (
-                    <p className="text-[10px] text-slate-300 font-bold uppercase">No records yet</p>
-                ) : (
-                    topScores.map((s, i) => (
-                        <div key={i} className="flex justify-between items-center mb-1">
-                            <span className="text-[10px] font-black uppercase">{i + 1}. {s.name}</span>
-                            <span className="text-[10px] font-mono font-bold text-slate-400">{s.score}</span>
+                <div
+                    className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none"
+                    onTouchStart={handleTouchStart}
+                    onTouchEnd={handleTouchEnd}
+                >
+                    <div className="grid grid-cols-4 gap-1">
+                        {grid.map((row, r) => row.map((val, c) => (
+                            <div key={`${r}-${c}`} className={`w-[60px] h-[60px] flex items-center justify-center text-lg font-black transition-all duration-100 ${val === 0 ? 'bg-slate-50' : 'bg-black text-white scale-95'}`}>
+                                {val !== 0 ? val : ''}
+                            </div>
+                        )))}
+                    </div>
+
+                    {gameOver && (
+                        <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-50 p-4 text-center">
+                            <p className="font-black text-xl uppercase tracking-tighter mb-2 text-black">Game Over</p>
+                            {!submitted ? (
+                                <div className="w-full">
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Name"
+                                        className="w-full border-2 border-black p-2 text-[10px] font-black uppercase outline-none mb-2 focus:bg-slate-50"
+                                        value={playerName}
+                                        onChange={(e) => setPlayerName(e.target.value)}
+                                        maxLength={10}
+                                    />
+                                    <button onClick={saveScore} className="w-full bg-black text-white py-2 text-[10px] font-black uppercase mb-2 active:scale-95 transition-transform">Save Score</button>
+                                </div>
+                            ) : <p className="text-[10px] font-bold uppercase mb-4 text-blue-600">Score Saved!</p>}
+                            <button onClick={initGame} className="w-full px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase active:bg-black active:text-white transition-colors">Retry</button>
                         </div>
-                    ))
-                )}
+                    )}
+                </div>
+
+                <div className="w-full max-w-[280px] pb-10">
+                    <h3 className="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 mb-3">Top Scorer</h3>
+                    {topScores.length === 0 ? (
+                        <p className="text-[10px] text-slate-300 font-bold uppercase italic">No records yet</p>
+                    ) : (
+                        topScores.map((s, i) => (
+                            <div key={i} className="flex justify-between items-center mb-1">
+                                <span className="text-[10px] font-black uppercase">{i + 1}. {s.name}</span>
+                                <span className="text-[10px] font-mono font-bold text-slate-400">{s.score}</span>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

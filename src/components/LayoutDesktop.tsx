@@ -5,13 +5,13 @@ import logoDua from '../assets/Logo3.webp';
 
 interface LayoutDesktopProps {
     children: React.ReactNode;
+    detailContent?: React.ReactNode;
     activeTab: string;
     setActiveTab: (tab: string) => void;
     menus?: any[];
 }
 
-const LayoutDesktop = ({ children, activeTab, setActiveTab, menus = [] }: LayoutDesktopProps) => {
-    const isHomePage = activeTab === 'profil';
+const LayoutDesktop = ({ children, detailContent, activeTab, setActiveTab, menus = [] }: LayoutDesktopProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
     const dropdownRef = useRef<HTMLDivElement>(null);
@@ -39,7 +39,6 @@ const LayoutDesktop = ({ children, activeTab, setActiveTab, menus = [] }: Layout
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans hidden md:flex flex-col">
-            {/* z-index diturunkan ke 50 agar Card Aplikasi (z-60/z-100) bisa menutupinya jika diperlukan */}
             <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-12 flex items-center shadow-sm h-20">
                 <div className="flex items-center gap-3 w-1/3">
                     <img src={logoDua} alt="Logo3" className="w-auto h-20 object-contain" />
@@ -101,15 +100,28 @@ const LayoutDesktop = ({ children, activeTab, setActiveTab, menus = [] }: Layout
                 </nav>
             </header>
 
-            <main className="flex-1 max-w-7xl mx-auto p-6 w-full relative">
-                {children}
+            <main className="flex-1 p-6 flex justify-center gap-8 max-w-[1600px] mx-auto w-full">
+                <div className="w-full max-w-md shrink-0">
+                    {children}
+                </div>
+
+                <div className="hidden lg:block flex-1 min-w-[500px] sticky top-[104px] h-[calc(100vh-140px)]">
+                    <div className="w-full h-full bg-white rounded-[2.5rem] border border-slate-200 shadow-sm overflow-hidden">
+                        {detailContent ? (
+                            detailContent
+                        ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 p-12 text-center">
+                                <div className="w-20 h-20 mb-4 rounded-full bg-slate-50 flex items-center justify-center">
+                                    <logoDua className="opacity-20 grayscale" />
+                                </div>
+                                <p className="font-black text-[10px] uppercase tracking-[0.3em]">Pilih konten untuk melihat detail</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </main>
 
-            <footer className="py-8 text-center border-t border-slate-100 bg-white">
-                <p className="text-[10px] font-bold text-slate-300 tracking-[0.2em]">
-                    CRAFTED BY MULMED TEAM
-                </p>
-            </footer>
+
         </div>
     );
 };

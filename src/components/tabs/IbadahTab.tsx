@@ -4,11 +4,19 @@ import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, Ch
 
 let cachedIbadahData: any = null;
 let cachedArsipData: any[] = [];
+
 const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [isFullScreen, setIsFullScreen] = useState(false);
-
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [hasBeenOpened, setHasBeenOpened] = useState(false);
     const viewerUrl = `https://drive.google.com/file/d/${id}/preview`;
+
+    useEffect(() => {
+        if (isVisible && !hasBeenOpened) {
+            setHasBeenOpened(true);
+        }
+    }, [isVisible]);
 
     useEffect(() => {
         const handleFSChange = () => setIsFullScreen(!!document.fullscreenElement);
@@ -25,8 +33,10 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
         }
     };
 
+    if (!hasBeenOpened) return null;
+
     return (
-        <div className={`transition-all duration-500 ease-in-out ${isVisible ? 'opacity-100 h-auto mt-3' : 'opacity-0 h-0 overflow-hidden mt-0 pointer-events-none'}`}>
+        <div className={`mt-3 transition-all duration-300 ${isVisible ? 'block animate-in zoom-in-95' : 'hidden'} lg:hidden`}>
             <div
                 ref={containerRef}
                 className={`${isFullScreen
@@ -37,45 +47,33 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
                 <div className={`flex items-center justify-between p-3 border-b ${isFullScreen ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
                     <button
                         onClick={toggleFullScreen}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all active:scale-95 ${isFullScreen
-                            ? 'bg-slate-800 text-white hover:bg-slate-700'
-                            : 'bg-white text-slate-700 border border-slate-200 shadow-sm'
-                            }`}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all active:scale-95 ${isFullScreen ? 'bg-slate-800 text-white' : 'bg-white text-slate-700 border border-slate-200 shadow-sm'}`}
                     >
                         {isFullScreen ? <X size={18} /> : <Maximize size={16} />}
                         <span className="text-[10px] font-black uppercase tracking-wider">
                             {isFullScreen ? 'Tutup' : 'Layar Penuh'}
                         </span>
                     </button>
-
                     <a
                         href={`https://drive.google.com/uc?export=download&id=${id}`}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-slate-800 transition-all active:scale-95 shadow-md"
+                        className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase tracking-wider shadow-md"
                     >
-                        <Download size={14} />
-                        Unduh
+                        <Download size={14} /> Unduh
                     </a>
                 </div>
-
-                <div
-                    className="flex-1 overflow-hidden bg-white flex items-center justify-center relative touch-auto"
-                    style={{ touchAction: 'pinch-zoom' }}
-                >
+                <div className="flex-1 overflow-hidden bg-slate-50 flex items-center justify-center relative">
+                    {!isLoaded && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10 bg-white">
+                            <Loader2 className="animate-spin text-slate-300" size={24} />
+                        </div>
+                    )}
                     <iframe
                         src={viewerUrl}
-                        className={`border-none ${isFullScreen
-                            ? 'w-full h-full'
-                            : 'w-[115%] h-[100%] shrink-0'
-                            }`}
-                        style={!isFullScreen ? {
-                            transform: 'translateY(-4%) scale(1.02)',
-                            pointerEvents: 'auto'
-                        } : {
-                            pointerEvents: 'auto'
-                        }}
+                        onLoad={() => setIsLoaded(true)}
+                        className={`border-none transition-opacity duration-500 ${isLoaded ? 'opacity-100' : 'opacity-0'} ${isFullScreen ? 'w-full h-full' : 'w-[115%] h-[100%] shrink-0'}`}
+                        style={!isFullScreen ? { transform: 'translateY(-4%) scale(1.02)' } : {}}
                         allow="autoplay"
-                        loading="eager"
-                        title="PDF Preview"
+                        loading="lazy"
                     />
                 </div>
             </div>
@@ -83,23 +81,17 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
     );
 };
 
-const IbadahTab = () => {
+interface IbadahTabProps {
+    onSelectContent?: (content: any) => void;
+}
+
+const IbadahTab = ({ onSelectContent }: IbadahTabProps) => {
     const [data, setData] = useState<any>(cachedIbadahData);
     const [arsip, setArsip] = useState<any[]>(cachedArsipData);
     const [loading, setLoading] = useState(!cachedIbadahData);
-    const [loadingArsip, setLoadingArsip] = useState(false);
-    const [showArsip, setShowArsip] = useState(false);
     const [openViewerId, setOpenViewerId] = useState<string | null>(null);
 
     const CSV_URL = import.meta.env.VITE_IBADAH_CSV_URL;
-
-    const handleToggleArsip = () => {
-        if (!showArsip && arsip.length === 0 && !loading) {
-            setLoadingArsip(true);
-            fetchData();
-        }
-        setShowArsip(!showArsip);
-    };
 
     const extractId = (input: string) => {
         if (!input || input === "" || input === "-") return null;
@@ -114,20 +106,13 @@ const IbadahTab = () => {
             const res = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
             const text = await res.text();
             const rows = text.split(/\r?\n/).filter(r => r.trim() !== "");
-
             if (rows.length > 1) {
                 const headers = rows[0].split(',').map(v => v.replace(/^"|"$/g, '').trim());
-
                 const parseRow = (rowStr: string) => {
                     const cols = rowStr.split(',').map(v => v.replace(/^"|"$/g, '').trim());
                     return {
-                        minggu: cols[0],
-                        tanggal: cols[1],
-                        warta: extractId(cols[2]),
-                        umum: extractId(cols[3]),
-                        remaja: extractId(cols[4]),
-                        sm: extractId(cols[5]),
-                        sore: extractId(cols[6]),
+                        minggu: cols[0], tanggal: cols[1], warta: extractId(cols[2]),
+                        umum: extractId(cols[3]), remaja: extractId(cols[4]), sm: extractId(cols[5]), sore: extractId(cols[6]),
                         lainnya: [
                             { label: headers[7], id: extractId(cols[7]) },
                             { label: headers[8], id: extractId(cols[8]) },
@@ -137,73 +122,49 @@ const IbadahTab = () => {
                         ].filter(item => item.id)
                     };
                 };
-
                 const currentData = parseRow(rows[1]);
                 const archiveData = rows.slice(2).map(row => parseRow(row));
-
                 cachedIbadahData = currentData;
                 cachedArsipData = archiveData;
-
                 setData(currentData);
                 setArsip(archiveData);
             }
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-            setLoadingArsip(false);
-        }
+        } catch (e) { console.error(e); } finally { setLoading(false); }
     };
 
-    useEffect(() => {
-        if (!cachedIbadahData) {
-            fetchData();
-        }
-    }, []);
+    useEffect(() => { if (!cachedIbadahData) fetchData(); }, []);
 
-    const handleOpenArsip = () => {
-        setShowArsip(true);
-        if (arsip.length === 0 && !loading) {
-            setLoadingArsip(true);
-            fetchData();
-        }
-    };
+    const handleItemClick = (item: any) => {
+        const isDesktop = window.innerWidth >= 1024;
+        setOpenViewerId(openViewerId === item.id ? null : item.id);
 
-    const toggleViewer = (id: string) => {
-        setOpenViewerId(openViewerId === id ? null : id);
+        if (isDesktop && onSelectContent) {
+            onSelectContent({
+                type: 'pdf',
+                id: item.id,
+                title: item.label,
+                subtitle: `${data?.minggu} - ${data?.tanggal}`
+            });
+        }
     };
 
     if (loading) return (
-        <div className="animate-in fade-in duration-500 flex flex-col items-center justify-center py-60 bg-transparent">
+        <div className="flex flex-col items-center justify-center py-60">
             <Loader2 className="animate-spin text-slate-900" size={32} />
-            <p className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mt-6">
-                Sinkronisasi
-            </p>
         </div>
     );
 
     const sections = [
+        { title: "Warta Jemaat", items: [{ label: "Warta Mingguan", id: data?.warta, icon: <Newspaper size={20} />, primary: true }] },
         {
-            title: "Warta Jemaat",
-            items: [{ label: "Warta Mingguan", id: data?.warta, icon: <Newspaper size={20} />, primary: true }]
-        },
-        {
-            title: "Tata Ibadah",
-            items: [
+            title: "Tata Ibadah", items: [
                 { label: "Ibadah Umum", id: data?.umum, icon: <BookOpen size={18} /> },
                 { label: "Ibadah Remaja", id: data?.remaja, icon: <Users size={18} /> },
                 { label: "Sekolah Minggu", id: data?.sm, icon: <Baby size={18} /> },
                 { label: "Ibadah Sore", id: data?.sore, icon: <Moon size={18} /> },
             ].filter(i => i.id)
         },
-        {
-            title: "Dokumen Lainnya",
-            items: data?.lainnya?.map((doc: any) => ({
-                label: doc.label,
-                id: doc.id,
-                icon: <FileText size={18} />
-            })) || []
-        }
+        { title: "Dokumen Lainnya", items: data?.lainnya?.map((doc: any) => ({ label: doc.label, id: doc.id, icon: <FileText size={18} /> })) || [] }
     ].filter(section => section.items.length > 0);
 
     return (
@@ -213,83 +174,38 @@ const IbadahTab = () => {
                 <p className="text-[15px] font-bold text-slate-900 uppercase tracking-[0.2em]">{data?.minggu}</p>
                 <p className="text-[14px] font-bold text-slate-900 uppercase tracking-[0.2em]">{data?.tanggal}</p>
             </header>
-
             <div className="space-y-10">
                 {sections.map((section, sIdx) => (
                     <div key={sIdx} className="space-y-4">
-                        <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-900 ml-1">
-                            {section.title}
-                        </h3>
+                        <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-900 ml-1">{section.title}</h3>
                         <div className="grid gap-3">
-                            {section.items.map((item: any, iIdx: number) => (
-                                <div key={iIdx} className="w-full">
-                                    <button
-                                        onClick={() => toggleViewer(item.id)}
-                                        className={`w-full flex items-center justify-between p-5 rounded-3xl transition-all active:scale-[0.97] group ${item.primary ? "bg-slate-900 text-white shadow-xl" : "bg-white border-2 border-slate-100 text-slate-900 shadow-sm hover:border-slate-900"
-                                            }`}
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className={item.primary ? "text-slate-400" : "text-slate-900"}>{item.icon}</div>
-                                            <span className="text-[12px] font-black uppercase tracking-wider text-left">{item.label}</span>
-                                        </div>
-                                        <ChevronDown
-                                            size={18}
-                                            className={`transition-transform duration-300 ${openViewerId === item.id ? "rotate-180" : ""} ${item.primary ? "text-white" : "text-slate-300 group-hover:text-slate-900"}`}
-                                        />
-                                    </button>
-
-                                    <PDFViewer id={item.id} isVisible={openViewerId === item.id} />
-                                </div>
-                            ))}
+                            {section.items.map((item: any, iIdx: number) => {
+                                const isActive = openViewerId === item.id;
+                                return (
+                                    <div key={iIdx} className="w-full">
+                                        <button
+                                            onClick={() => handleItemClick(item)}
+                                            className={`w-full flex items-center justify-between p-5 rounded-3xl transition-all active:scale-[0.97] group ${isActive
+                                                ? "bg-blue-900 text-white shadow-xl scale-[1.02]"
+                                                : item.primary
+                                                    ? "bg-slate-900 text-white shadow-xl"
+                                                    : "bg-white border-2 border-slate-100 text-slate-900 shadow-sm hover:border-slate-900"
+                                                }`}
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className={isActive || item.primary ? "text-blue-200" : "text-slate-900"}>{item.icon}</div>
+                                                <span className="text-[12px] font-black uppercase tracking-wider text-left">{item.label}</span>
+                                            </div>
+                                            <ChevronDown size={18} className={`lg:hidden transition-transform duration-300 ${isActive ? "rotate-180" : ""} ${isActive || item.primary ? "text-white" : "text-slate-300 group-hover:text-slate-900"}`} />
+                                            <FileText size={18} className={`hidden lg:block transition-opacity ${isActive ? "opacity-100" : "opacity-20 group-hover:opacity-100"}`} />
+                                        </button>
+                                        <PDFViewer id={item.id} isVisible={isActive} />
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 ))}
-
-                <div className="pt-4">
-                    <button
-                        onClick={handleToggleArsip}
-                        className={`w-full py-4 flex items-center justify-center gap-2 border-2 border-dashed rounded-3xl transition-all ${showArsip
-                            ? "border-slate-900 text-slate-900 bg-slate-50"
-                            : "border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-900"
-                            }`}
-                    >
-                        <ChevronDown size={18} className={`transition-transform duration-300 ${showArsip ? "rotate-180" : ""}`} />
-                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">
-                            {showArsip ? "Tutup Arsip" : "Arsip Warta"}
-                        </span>
-                    </button>
-
-                    {showArsip && (
-                        <div className="mt-4 space-y-4 animate-in slide-in-from-top-4 duration-500">
-                            <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-200 ml-1">
-                                Arsip Warta Jemaat
-                            </h3>
-                            {loadingArsip ? (
-                                <div className="flex justify-center py-10">
-                                    <Loader2 className="animate-spin text-slate-300" size={24} />
-                                </div>
-                            ) : (
-                                <div className="grid gap-2">
-                                    {arsip.map((item, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={`https://drive.google.com/uc?export=download&id=${item.warta}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 transition-all active:scale-[0.98]"
-                                        >
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-bold text-slate-800 uppercase tracking-tight">{item.tanggal}</span>
-                                                <span className="text-[12px] font-black text-slate-800 uppercase">{item.minggu}</span>
-                                            </div>
-                                            <Download size={16} className="text-slate-400" />
-                                        </a>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
             </div>
         </div>
     );

@@ -25,7 +25,7 @@ Aplikasi ini dibagi menjadi beberapa menu utama yang mudah diakses:
     * **Buku Ende:** Lirik lagu pujian lengkap untuk mendukung ibadah Anda.
 
 
-* ** Menu Lainnya (Layanan Jemaat)**
+* ** Menu Layanan Jemaat**
     * **Pendataan Jemaat:** Daftar atau perbarui data keluarga Anda secara mandiri.
     * **Permohonan Doa & Konseling:** Butuh dukungan doa atau layanan sakramen? Kirimkan permohonan Anda langsung melalui formulir digital.
     * **Kotak Saran:** Kami sangat menghargai masukan Anda demi kemajuan pelayanan gereja kita.

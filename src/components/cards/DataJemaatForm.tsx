@@ -59,12 +59,14 @@ const DataJemaatForm = ({ onBack }: DataJemaatFormProps) => {
                 onClick={onBack}
                 className="flex items-center gap-2 text-slate-900 font-black uppercase text-[12px] tracking-[0.2em]"
             >
-                <ArrowLeft size={16} /> Kembali
+                <ArrowLeft size={18} /> Kembali
             </button>
 
             <header className="space-y-2">
-                <h2 className="text-2xl font-black text-slate-900 tracking-tighter uppercase">Data Jemaat</h2>
-                <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.3em]">Informasi Administrasi Jemaat</p>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">
+                    Pendataan Jemaat
+                </h2>
+                <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.3em]">Formulir Pendataan Jemaat</p>
             </header>
 
             <form className="space-y-6 bg-white p-8 rounded-[3.5rem] border border-slate-100 shadow-2xl shadow-slate-200/60" onSubmit={handleSubmit}>
