@@ -16,7 +16,7 @@ const PDFViewer = ({ id, isVisible }: { id: string; isVisible: boolean }) => {
         if (isVisible && !hasBeenOpened) {
             setHasBeenOpened(true);
         }
-    }, [isVisible]);
+    }, [isVisible, hasBeenOpened]);
 
     useEffect(() => {
         const handleFSChange = () => setIsFullScreen(!!document.fullscreenElement);
@@ -89,6 +89,8 @@ const IbadahTab = ({ onSelectContent }: IbadahTabProps) => {
     const [data, setData] = useState<any>(cachedIbadahData);
     const [arsip, setArsip] = useState<any[]>(cachedArsipData);
     const [loading, setLoading] = useState(!cachedIbadahData);
+    const [loadingArsip, setLoadingArsip] = useState(false);
+    const [showArsip, setShowArsip] = useState(false);
     const [openViewerId, setOpenViewerId] = useState<string | null>(null);
 
     const CSV_URL = import.meta.env.VITE_IBADAH_CSV_URL;
@@ -129,10 +131,21 @@ const IbadahTab = ({ onSelectContent }: IbadahTabProps) => {
                 setData(currentData);
                 setArsip(archiveData);
             }
-        } catch (e) { console.error(e); } finally { setLoading(false); }
+        } catch (e) { console.error(e); } finally {
+            setLoading(false);
+            setLoadingArsip(false);
+        }
     };
 
     useEffect(() => { if (!cachedIbadahData) fetchData(); }, []);
+
+    const handleToggleArsip = () => {
+        if (!showArsip && arsip.length === 0 && !loading) {
+            setLoadingArsip(true);
+            fetchData();
+        }
+        setShowArsip(!showArsip);
+    };
 
     const handleItemClick = (item: any) => {
         const isDesktop = window.innerWidth >= 1024;
@@ -206,6 +219,52 @@ const IbadahTab = ({ onSelectContent }: IbadahTabProps) => {
                         </div>
                     </div>
                 ))}
+
+                <div className="pt-4">
+                    <button
+                        onClick={handleToggleArsip}
+                        className={`w-full py-4 flex items-center justify-center gap-2 border-2 border-dashed rounded-3xl transition-all ${showArsip
+                            ? "border-slate-900 text-slate-900 bg-slate-50"
+                            : "border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-900"
+                            }`}
+                    >
+                        <ChevronDown size={18} className={`transition-transform duration-300 ${showArsip ? "rotate-180" : ""}`} />
+                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">
+                            {showArsip ? "Tutup Arsip" : "Arsip Warta"}
+                        </span>
+                    </button>
+
+                    {showArsip && (
+                        <div className="mt-4 space-y-4 animate-in slide-in-from-top-4 duration-500">
+                            <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-200 ml-1">
+                                Arsip Warta Jemaat
+                            </h3>
+                            {loadingArsip ? (
+                                <div className="flex justify-center py-10">
+                                    <Loader2 className="animate-spin text-slate-300" size={24} />
+                                </div>
+                            ) : (
+                                <div className="grid gap-2">
+                                    {arsip.map((item, idx) => (
+                                        <a
+                                            key={idx}
+                                            href={`https://drive.google.com/uc?export=download&id=${item.warta}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 transition-all active:scale-[0.98]"
+                                        >
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-bold text-slate-800 uppercase tracking-tight">{item.tanggal}</span>
+                                                <span className="text-[12px] font-black text-slate-800 uppercase">{item.minggu}</span>
+                                            </div>
+                                            <Download size={16} className="text-slate-400" />
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
