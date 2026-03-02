@@ -93,7 +93,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
 
     const apps = [
         { id: 'alkitab', name: "Alkitab", icon: <BibleCrossIcon size={24} />, color: "bg-slate-900" },
-        { id: 'ende', name: "Buku Ende", icon: <BibleCircleIcon size={24} />, color: "bg-yellow-600" },
+        { id: 'ende', name: "Buku Lagu", icon: <BibleCircleIcon size={24} />, color: "bg-yellow-600" },
         { id: '2048', name: "2048", icon: <Game2048Icon size={24} />, color: "bg-slate-200" }
     ];
 
