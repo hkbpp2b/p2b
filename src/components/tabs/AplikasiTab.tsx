@@ -1,9 +1,10 @@
 // AplikasiTab.tsx
 import React, { useState, useEffect } from 'react';
-import { Book, Music, Gamepad2, Lightbulb } from 'lucide-react';
+import { Book, Music, Gamepad2, Lightbulb, ChevronRight } from 'lucide-react';
 import AlkitabCard from '../cards/AlkitabCard';
 import BukuEndeCard from '../cards/BukuEndeCard';
 import Game2048Card from '../cards/Game2048Card';
+import SaranForm from '../cards/SaranForm';
 
 interface AplikasiTabProps {
     activeTab?: string;
@@ -27,6 +28,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
             case 'alkitab': return <AlkitabCard onBack={() => setActiveApp(null)} />;
             case 'ende': return <BukuEndeCard onBack={() => setActiveApp(null)} />;
             case '2048': return <Game2048Card onBack={() => setActiveApp(null)} />;
+            case 'saran': return <SaranForm onBack={() => setActiveApp(null)} />;
             default: return null;
         }
     };
@@ -54,22 +56,29 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                     ))}
                 </div>
 
-                <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-6 space-y-4">
-                    <p className="text-[12px] leading-relaxed text-slate-600 font-medium">
-                        Fitur ini masih dalam tahap pengembangan. Terima kasih atas kesabaran Anda.
-                    </p>
-                    <div className="flex items-start gap-3 p-4 rounded-2xl shadow-sm">
-                        <Lightbulb size={18} className="text-yellow-500 shrink-0 mt-0.5" />
-                        <p className="text-[11px] text-slate-500 leading-snug">
-                            Punya ide menarik untuk kita diskusikan bersama? Sampaikan melalui fitur <span className="font-bold text-slate-900 text-[10px] uppercase">Kritik & Saran</span>.
-                        </p>
+                <button
+                    onClick={() => setActiveApp('saran')}
+                    className="w-full flex items-center justify-between p-5 rounded-[2rem] bg-slate-50 border border-slate-400/20 transition-all hover:bg-slate-100 active:scale-[0.97] active:bg-slate-200 group"
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="w-5 h-5 rounded-full bg-slate-100/50 flex items-center justify-center text-slate-900/20 group-hover:rotate-12 transition-transform">
+                            <Lightbulb size={15} />
+                        </div>
+                        <div className="text-left">
+                            <p className="text-[10px] text-slate-900/20 font-bold uppercase tracking-tight">Kirim masukan/perbaikan</p>
+                        </div>
                     </div>
-                </div>
+                    <div className=" border-slate-100 text-slate-900/20 group-hover:text-slate-900 transition-colors">
+                        <ChevronRight size={16} />
+                    </div>
+                </button>
             </div>
 
             {activeApp && (
-                <div className="fixed inset-0 z-[100] lg:absolute lg:inset-0 lg:z-[40] bg-white animate-in slide-in-from-right lg:slide-in-from-none duration-300">
-                    {renderActiveApp()}
+                <div className="fixed inset-0 z-[100] lg:absolute lg:inset-0 lg:z-[40] bg-white overflow-y-auto px-5 pt-8 animate-in slide-in-from-right duration-300">
+                    <div className="w-full">
+                        {renderActiveApp()}
+                    </div>
                 </div>
             )}
         </div>

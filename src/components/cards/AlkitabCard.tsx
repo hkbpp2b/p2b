@@ -139,9 +139,38 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
         loadData();
     }, [version]);
 
+    const listPasal = useMemo(() => {
+        if (alkitabData.length === 0) return [];
+        const pasals = alkitabData
+            .filter(v => v.kitab === currentKitab)
+            .map(v => v.pasal);
+        return Array.from(new Set(pasals)).sort((a, b) => a - b);
+    }, [alkitabData, currentKitab]);
+
+    const maxPasal = useMemo(() => {
+        return listPasal.length > 0 ? listPasal[listPasal.length - 1] : 1;
+    }, [listPasal]);
+
+    useEffect(() => {
+        if (loading || alkitabData.length === 0) return;
+
+        const isPasalValid = listPasal.includes(currentPasal);
+
+        if (!isPasalValid) {
+            setCurrentPasal(1);
+        }
+    }, [currentKitab, listPasal]);
+
     const versesInPasal = useMemo(() => {
         return alkitabData.filter(v => v.kitab === currentKitab && v.pasal === currentPasal);
     }, [alkitabData, currentKitab, currentPasal]);
+
+    useEffect(() => {
+        if (listPasal.length > 0 && !listPasal.includes(currentPasal)) {
+            setCurrentPasal(1);
+        }
+    }, [currentKitab, listPasal, currentPasal]);
+
 
     const kitabGrup = useMemo(() => {
         const unik = Array.from(new Set(alkitabData.map(v => v.kitab)));
@@ -151,10 +180,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
         };
     }, [alkitabData]);
 
-    const listPasal = useMemo(() => {
-        const pasals = alkitabData.filter(v => v.kitab === currentKitab).map(v => v.pasal);
-        return Array.from(new Set(pasals));
-    }, [alkitabData, currentKitab]);
+
 
     const scrollToAyat = (ayatNum: number) => {
         setIsSelectorOpen(false);
@@ -179,7 +205,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                 <div className="flex items-center gap-1">
                     <button
                         disabled={currentPasal <= 1}
-                        onClick={() => setCurrentPasal(p => p - 1)}
+                        onClick={() => setCurrentPasal(p => Math.max(1, p - 1))}
                         className="p-1 text-slate-400 hover:text-slate-900 disabled:opacity-20 transition-colors"
                     >
                         <ChevronLeft size={20} />
@@ -193,8 +219,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                         </span>
                     </button>
                     <button
-                        onClick={() => setCurrentPasal(p => p + 1)}
-                        className="p-1 text-slate-400 hover:text-slate-900 transition-colors"
+                        disabled={currentPasal >= maxPasal}
+                        onClick={() => setCurrentPasal(p => Math.min(maxPasal, p + 1))}
+                        className="p-1 text-slate-400 hover:text-slate-900 disabled:opacity-20 transition-colors"
                     >
                         <ChevronRight size={20} />
                     </button>
@@ -229,7 +256,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                 </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-6 scroll-smooth">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {loading ? (
                     <div className="flex items-center justify-center h-full">
                         <div className="text-center text-slate-400 text-xs font-bold uppercase tracking-widest animate-pulse">Memuat...</div>
@@ -238,7 +265,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                     <>
                         {versesInPasal.map((v) => (
                             <div key={v.id} id={`ayat-${v.ayat}`} className="relative pl-8 group">
-                                <span className="absolute left-0 top-1.5 text-[10px] font-bold text-slate-300 group-hover:text-blue-500 transition-colors">{v.ayat}</span>
+                                <span className="absolute left-0 top-1.5 text-[12px] text-slate-600 group-hover:text-blue-500 transition-colors">{v.ayat}</span>
                                 <p className="text-[17px] leading-[1.8] font-serif text-slate-900">{v.firman}</p>
                             </div>
                         ))}
@@ -295,7 +322,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                         </div>
                     </header>
 
-                    <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                    <div className="flex-1 overflow-y-auto px-4 pt-4 pb-32 custom-scrollbar">
                         {selectorTab === 'kitab' && (
                             <div className="space-y-8 pb-10">
                                 <div>

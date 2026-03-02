@@ -39,7 +39,7 @@ const LayoutDesktop = ({ children, detailContent, activeTab, setActiveTab, menus
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900 font-sans hidden md:flex flex-col">
-            <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-12 flex items-center shadow-sm h-20">
+            <header className="sticky top-0 z-50 bg-white/100 border-b border-slate-200 px-12 flex items-center shadow-sm h-20">
                 <div className="flex items-center gap-3 w-1/3">
                     <img src={logoDua} alt="Logo3" className="w-auto h-20 object-contain" />
                 </div>
