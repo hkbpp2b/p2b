@@ -108,8 +108,8 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
     };
 
     return (
-        <div className="relative h-[50vw] w-full">
-            <div className="h-full overflow-y-auto border-slate-900 pb-32 pt-8 px-5 space-y-10">
+        <div className="relative min-h-[100dvh] lg:h-full w-full bg-white">
+            <div className="h-full border-slate-900 pb-32 pt-8 px-5 space-y-10">
                 <header className="text-center space-y-1">
                     <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Aplikasi</h2>
                     <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Layanan Aplikasi Digital</p>
@@ -132,10 +132,10 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
 
                 <button
                     onClick={() => setActiveApp('saran')}
-                    className="w-full flex items-center justify-between p-5 rounded-[2rem] bg-slate-50 border-slate-400/20 transition-all hover:bg-slate-100 active:scale-[0.97] active:bg-slate-200 group"
+                    className="w-full flex items-center justify-between p-5 rounded-[2rem] border border-slate-400/20 transition-all hover:bg-slate-100 active:scale-[0.97] active:bg-slate-200 group"
                 >
                     <div className="flex items-center gap-4">
-                        <div className="w-5 h-5 rounded-full bg-slate-100/50 flex items-center justify-center text-slate-900/20 group-hover:rotate-12 transition-transform">
+                        <div className="w-5 h-5 rounded-full flex items-center justify-center text-slate-900/20 group-hover:rotate-12 transition-transform">
                             <Lightbulb size={15} />
                         </div>
                         <div className="text-left">
