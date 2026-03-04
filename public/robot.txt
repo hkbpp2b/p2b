@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hkbpperumnas2bekasi.org/sitemap.xml
