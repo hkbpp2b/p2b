@@ -1,9 +1,9 @@
 // BukuEndeCard.tsx
 import React, { useState, useMemo } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Search, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, X, Search, ChevronDown, BookOpen } from 'lucide-react';
 import BUKU_ENDE_DATA from '../../assets/bev1.json';
 import BUKU_NYANYIAN_DATA from '../../assets/bnv1.json';
-import KIDUNG_JEMAAT_DATA from '../../assets/kjv1.json';
+import KIDUNG_JEMAAT_DATA from '../../assets/kjv2.json';
 
 interface SongVerse {
     bait: string;
@@ -26,26 +26,26 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isSongSelectOpen, setIsSongSelectOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [currentBook, setCurrentBook] = useState<BookType>('BE');
+    const [currentBook, setCurrentBook] = useState<BookType | null>(null);
     const [isBookDropdownOpen, setIsBookDropdownOpen] = useState(false);
 
     const books: Record<BookType, { label: string; data: SongData[] }> = {
         BE: { label: 'Buku Ende', data: BUKU_ENDE_DATA as SongData[] },
         BN: { label: 'Buku Nyanyian HKBP', data: BUKU_NYANYIAN_DATA as SongData[] },
-        KJ: { label: '---', data: KIDUNG_JEMAAT_DATA as SongData[] },
+        KJ: { label: 'Kidung Jemaat', data: KIDUNG_JEMAAT_DATA as SongData[] },
     };
 
-    const currentData = books[currentBook].data;
+    const currentData = currentBook ? books[currentBook].data : [];
     const currentSong = currentData[currentIndex] || { id: '-', title: 'Data Kosong', verses: [] };
 
     const filteredSongs = useMemo(() => {
         if (!currentData.length) return [];
-        if (!searchQuery) return currentData.slice(0, 20);
+        if (!searchQuery) return currentData.slice();
         return currentData.filter(song =>
             song.id.toString().includes(searchQuery) ||
             song.title.toLowerCase().includes(searchQuery.toLowerCase())
         ).slice(0, 50);
-    }, [searchQuery, currentData, currentBook]);
+    }, [searchQuery, currentData]);
 
     const handleNext = () => {
         if (currentIndex < currentData.length - 1) {
@@ -68,11 +68,80 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
         }
     };
 
+    const bookStyles: Record<string, { bg: string; border: string; accent: string }> = {
+        ALKITAB: { bg: 'bg-[#1e293b]', border: 'border-slate-800', accent: 'text-[#FFD700]' },
+        BIBEL: { bg: 'bg-[#2d3a5a]', border: 'border-[#1e253a]', accent: 'text-[#FFD700]' },
+        KJ: { bg: 'bg-[#15803d]', border: 'border-[#14532d]', accent: 'text-[#fbbf24]' },
+        BE: { bg: 'bg-[#1e293b]', border: 'border-slate-900', accent: 'text-slate-100' },
+        BN: { bg: 'bg-[#2563eb]', border: 'border-[#1e40af]', accent: 'text-[#FFD700]' }
+    };
+
+
+    if (!currentBook) {
+        return (
+            <div className="fixed lg:absolute inset-0 z-[60] bg-[#f8f9fa] flex flex-col">
+                <header className="flex-none border-b border-slate-100 px-4 h-14 flex items-center">
+
+                    <button onClick={onBack} className="p-2 -ml-2 rounded-full text-slate-600">
+                        <ArrowLeft size={20} />
+                    </button>
+                    <span className="ml-1 text-s font-bold uppercase  text-slate-900">
+                        Pilih Buku Lagu
+                    </span>
+                </header>
+
+                <div className="flex-1 overflow-y-auto">
+                    <div className="max-w-md mx-auto py-10 px-6">
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-10 justify-items-center">
+                            {(Object.keys(books) as BookType[]).map((key) => {
+                                const style = bookStyles[key] || bookStyles.ALKITAB;
+                                return (
+                                    <button
+                                        key={key}
+                                        onClick={() => {
+                                            setCurrentBook(key);
+                                            setCurrentIndex(0);
+                                            setIsSongSelectOpen(true);
+                                        }}
+                                        className="flex flex-col items-center justify-center gap-4 group active:scale-95 transition-transform w-full"
+                                    >
+                                        <div className={`relative w-32 h-44 ${style.bg} rounded-sm overflow-hidden border-l-[5px] ${style.border}`}>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/5"></div>
+
+                                            <div className="absolute inset-x-0 top-6 flex flex-col items-center px-2">
+                                                <span className={`${style.accent} text-[13px] font-bold tracking-[0.15em] font-serif text-center uppercase leading-tight`}>
+                                                    {books[key].label}
+                                                </span>
+                                                <div className={`w-8 h-[1px] ${style.accent} opacity-30 mt-2`}></div>
+                                            </div>
+
+                                            <div className="absolute bottom-3 right-3 opacity-60">
+                                                <div className="w-2 h-2 rounded-full border border-[#FFFFFF]/90 shadow-[0_0_3px_rgba(255,215,0,0.4)]"></div>
+                                            </div>
+
+                                            <div className="absolute right-0 inset-y-0 w-[2px] bg-white/10"></div>
+                                        </div>
+
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-800 font-serif text-center leading-none">
+                                                {books[key].label}
+                                            </span>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="fixed lg:absolute inset-0 z-[60] bg-[#f8f9fa] flex flex-col overflow-hidden animate-in slide-in-from-right lg:slide-in-from-none duration-300">
             <header className="flex-none bg-white border-b border-slate-100 px-4 h-14 flex items-center justify-between">
                 <div className="flex items-center">
-                    <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
+                    <button onClick={() => setCurrentBook(null)} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
                         <ArrowLeft size={20} />
                     </button>
                 </div>
@@ -161,13 +230,22 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
             {isSongSelectOpen && (
                 <div className="absolute inset-0 z-[100] bg-white flex flex-col animate-in slide-in-from-bottom duration-300">
-                    <div className="h-14 border-b border-slate-100 flex items-center justify-between px-6 flex-none bg-white">
-                        <span className="text-xs font-black uppercase tracking-widest text-slate-900">Cari Nomor {currentBook}</span>
-                        <button onClick={() => setIsSongSelectOpen(false)} className="p-2 -mr-2 hover:bg-slate-100 rounded-full transition-colors">
-                            <X size={20} className="text-slate-900" />
+
+                    <div className="h-14 border-b border-slate-100 flex items-center px-4 flex-none bg-white">
+                        <button
+                            onClick={() => {
+                                setIsSongSelectOpen(false);
+                                setCurrentBook(null);
+                            }}
+                            className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600"
+                        >
+                            <ArrowLeft size={20} />
                         </button>
+                        <span className="ml-1 text-s font-bold uppercase  text-slate-900">
+                            Cari Nomor {currentBook}
+                        </span>
                     </div>
-                    <div className="p-4 bg-slate-50 border-b border-slate-100 flex-none relative">
+                    <div className="p-4 bg-white  flex-none relative">
                         <Search size={18} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="text"

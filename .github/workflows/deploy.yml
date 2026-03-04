@@ -28,6 +28,9 @@ jobs:
           VITE_IBADAH_CSV_URL: ${{ secrets.VITE_IBADAH_CSV_URL }}
           VITE_FUNGSIONARIS_TSV_URL: ${{ secrets.VITE_FUNGSIONARIS_TSV_URL }}
           VITE_OTHER_URL: ${{ secrets.VITE_OTHER_URL }}
+          VITE_2048_URL: ${{ secrets.VITE_2048_URL }}
+          VITE_SALT_URL: ${{ secrets.VITE_SALT_URL }}
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -1,6 +1,6 @@
 // AlkitabCard.tsx
 import React, { useState, useEffect, useMemo } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Book, BookOpen } from 'lucide-react';
 
 interface AlkitabVerse {
     id: number;
@@ -15,9 +15,9 @@ interface AlkitabCardProps {
 }
 
 const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
-    const [version, setVersion] = useState<'TB' | 'BT'>('TB');
+    const [version, setVersion] = useState<'TB' | 'BT' | null>(null);
     const [isVersionOpen, setIsVersionOpen] = useState(false);
-    const [isSelectorOpen, setIsSelectorOpen] = useState(false);
+    const [isSelectorOpen, setIsSelectorOpen] = useState(true);
     const [selectorTab, setSelectorTab] = useState<'kitab' | 'pasal' | 'ayat'>('kitab');
 
     const [alkitabData, setAlkitabData] = useState<AlkitabVerse[]>([]);
@@ -108,7 +108,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     ];
 
     useEffect(() => {
+        if (!version) return;
         const loadData = async () => {
+            setLoading(true);
             try {
                 const fileName = version === 'TB' ? 'tb.csv' : 'btv3.csv';
                 const response = await fetch(`/${fileName}`);
@@ -191,8 +193,72 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     };
 
     const getNamaKitab = (key: string) => {
-        return namaFullKitab[key] ? namaFullKitab[key][version] : key;
+        if (!version || !namaFullKitab[key]) return key;
+        return namaFullKitab[key][version];
     };
+
+    const versions = [
+        { id: 'TB' as const, label: 'ALKITAB', sub: 'Terjemahan Baru (TB)' },
+        { id: 'BT' as const, label: 'BIBEL', sub: 'Batak Toba (BT)' }
+    ];
+
+
+    if (!version) {
+        return (
+            <div className="fixed lg:absolute inset-0 z-[120] bg-[#f8f9fa] flex flex-col animate-in slide-in-from-right duration-300">
+                <header className="flex-none  border-b border-slate-100 px-4 h-14 flex items-center">
+                    <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full text-slate-600">
+                        <ArrowLeft size={20} />
+                    </button>
+                    <span className="ml-1 text-s font-bold uppercase  text-slate-900">
+                        Pilih Bahasa
+                    </span>
+                </header>
+
+                <div className="flex-1 overflow-y-auto">
+                    <div className="max-w-xs mx-auto py-10 px-5 w-full">
+                        <div className="flex flex-row justify-center gap-9">
+                            {versions.map((v) => (
+                                <button
+                                    key={v.id}
+                                    onClick={() => {
+                                        setVersion(v.id);
+                                        setIsSelectorOpen(true);
+                                    }}
+                                    className="flex flex-col items-center justify-center gap-4 group active:scale-95 transition-transform"
+                                >
+                                    <div className="relative w-32 h-44 bg-[#1e293b] rounded-sm border-l-4 border-slate-800">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent"></div>
+
+                                        <div className="absolute inset-x-0 top-6 flex flex-col items-center gap-1.5">
+                                            <span className="text-[#FFD700] text-[15px] font-bold tracking-[0.2em] font-serif border-b border-[#FFD700]/30 pb-1 px-2">
+                                                {v.label}
+                                            </span>
+                                            <span className="text-[#FFD700]/60 text-[6.5px] font-medium uppercase tracking-[0.1em] font-serif text-center leading-tight px-1">
+                                                {v.id === 'TB' ? 'Terjemahan Baru' : 'Batak Toba'}
+                                            </span>
+                                        </div>
+
+                                        <div className="absolute bottom-3 right-3 opacity-60">
+                                            <div className="w-2 h-2 rounded-full border border-[#FFD700]/90 shadow-[0_0_3px_rgba(255,215,0,0.4)]"></div>
+                                        </div>
+
+                                        <div className="absolute right-0 inset-y-0 w-[1px] bg-white/10"></div>
+                                    </div>
+
+                                    <div className="flex flex-col items-center gap-1">
+                                        <span className="text-[10px] font-medium text-slate-900 uppercase tracking-tight">
+                                            {v.sub}
+                                        </span>
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
 
@@ -277,7 +343,19 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
             {isSelectorOpen && (
                 <div className="fixed lg:absolute inset-0 z-[100] bg-white flex flex-col">
                     <header className="flex-none bg-white border-b border-slate-100 px-4 h-14 flex items-center justify-between">
-                        <button onClick={() => setIsSelectorOpen(false)} className="p-2 -ml-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
+                        <button
+                            onClick={() => {
+                                if (selectorTab === 'kitab') {
+                                    setVersion(null);
+                                    setIsSelectorOpen(true);
+                                } else if (selectorTab === 'pasal') {
+                                    setSelectorTab('kitab');
+                                } else {
+                                    setSelectorTab('pasal');
+                                }
+                            }}
+                            className="p-2 -ml-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors"
+                        >
                             <ArrowLeft size={20} />
                         </button>
 
@@ -328,7 +406,7 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                 <div>
                                     <h3 className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4 px-1">Perjanjian Lama</h3>
                                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                                        {kitabGrup.pl.map(k => (
+                                        {daftarPL.map(k => (
                                             <button
                                                 key={k}
                                                 onClick={() => { setCurrentKitab(k); setSelectorTab('pasal'); }}
@@ -358,15 +436,19 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
 
                         {selectorTab === 'pasal' && (
                             <div className="grid grid-cols-5 gap-2 pb-10">
-                                {listPasal.map(p => (
-                                    <button
-                                        key={p}
-                                        onClick={() => { setCurrentPasal(p); setSelectorTab('ayat'); }}
-                                        className={`aspect-square flex items-center justify-center text-sm font-bold border rounded-xl transition-all ${currentPasal === p ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
-                                    >
-                                        {p}
-                                    </button>
-                                ))}
+                                {listPasal.length > 0 ? (
+                                    listPasal.map(p => (
+                                        <button
+                                            key={p}
+                                            onClick={() => { setCurrentPasal(p); setSelectorTab('ayat'); }}
+                                            className={`aspect-square flex items-center justify-center text-sm font-bold border rounded-xl transition-all ${currentPasal === p ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
+                                        >
+                                            {p}
+                                        </button>
+                                    ))
+                                ) : (
+                                    <div className="col-span-5 text-center py-10 text-slate-400 text-xs font-bold uppercase">Memuat Pasal...</div>
+                                )}
                             </div>
                         )}
 

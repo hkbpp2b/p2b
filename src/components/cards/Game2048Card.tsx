@@ -6,6 +6,9 @@ interface Game2048CardProps {
     onBack: () => void;
 }
 
+const SHEET_URL = import.meta.env.VITE_2048_URL;
+const SALT = import.meta.env.VITE_SALT_URL;
+
 const Game2048Card = ({ onBack }: Game2048CardProps) => {
     const [grid, setGrid] = useState<number[][]>(Array(4).fill(0).map(() => Array(4).fill(0)));
     const [score, setScore] = useState(0);
@@ -13,11 +16,24 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
     const [topScores, setTopScores] = useState<{ name: string, score: number }[]>([]);
     const [playerName, setPlayerName] = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+
+    const fetchTopScores = useCallback(async () => {
+        try {
+            const response = await fetch(SHEET_URL);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const text = await response.text();
+            if (text.trim().startsWith('<!doctype')) return;
+            const data = JSON.parse(text);
+            if (Array.isArray(data)) setTopScores(data);
+        } catch (error) {
+            console.error("Error fetching scores:", error);
+        }
+    }, []);
 
     useEffect(() => {
-        const saved = localStorage.getItem('2048_top_scores');
-        if (saved) setTopScores(JSON.parse(saved));
-    }, []);
+        fetchTopScores();
+    }, [fetchTopScores]);
 
     const addTile = useCallback((board: number[][]) => {
         const emptyTiles = [];
@@ -41,7 +57,8 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
         setGameOver(false);
         setSubmitted(false);
         setPlayerName('');
-    }, [addTile]);
+        fetchTopScores();
+    }, [addTile, fetchTopScores]);
 
     useEffect(() => {
         initGame();
@@ -66,7 +83,6 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
         setGrid(prevGrid => {
             let board = JSON.parse(JSON.stringify(prevGrid));
             let changed = false;
-
             if (direction === 'LEFT' || direction === 'RIGHT') {
                 for (let i = 0; i < 4; i++) {
                     const oldRow = [...board[i]];
@@ -87,7 +103,6 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                     if (JSON.stringify(oldCol) !== JSON.stringify(newCol)) changed = true;
                 }
             }
-
             if (changed) {
                 addTile(board);
                 let canMove = false;
@@ -107,9 +122,7 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                e.preventDefault();
-            }
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
             switch (e.key) {
                 case 'ArrowUp': move('UP'); break;
                 case 'ArrowDown': move('DOWN'); break;
@@ -136,39 +149,53 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
         }
     };
 
-    const saveScore = () => {
-        if (!playerName.trim()) return;
-        const newScores = [...topScores, { name: playerName, score }].sort((a, b) => b.score - a.score).slice(0, 5);
-        setTopScores(newScores);
-        localStorage.setItem('2048_top_scores', JSON.stringify(newScores));
-        setSubmitted(true);
+    const saveScore = async () => {
+        if (!playerName.trim() || score === 0 || isLoading) return;
+
+        setIsLoading(true);
+        const securityToken = btoa(`${playerName}-${score}-${SALT}`);
+
+        try {
+            const response = await fetch(SHEET_URL, {
+                method: 'POST',
+                body: JSON.stringify({ name: playerName, score: score, token: securityToken }),
+            });
+
+            const result = await response.json();
+
+            if (result.status === "success") {
+                setSubmitted(true);
+                setTimeout(() => {
+                    fetchTopScores();
+                    setIsLoading(false);
+                }, 1500);
+            } else {
+                alert(result.message || "Nama tidak diperbolehkan!");
+                setPlayerName('');
+                setIsLoading(false);
+            }
+        } catch (error) {
+            console.error("Save error:", error);
+            setIsLoading(false);
+        }
     };
 
     return (
         <div className="fixed lg:absolute inset-0 z-[60] bg-white flex flex-col overflow-hidden animate-in slide-in-from-right lg:slide-in-from-none duration-300">
-            <header className="flex-none h-14 border-b border-slate-100 flex items-center px-4 bg-white">
-                <button onClick={onBack} className="p-2 -ml-2 text-slate-600 hover:bg-slate-50 rounded-full transition-colors">
+            <header className="flex-none border-b border-slate-100 px-4 h-14 flex items-center">
+                <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full text-slate-600">
                     <ArrowLeft size={20} />
                 </button>
-
             </header>
-
             <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col items-center p-6 select-none">
                 <div className="w-full max-w-[280px] mb-6">
-                    <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">
-                        2048 <br />
-                    </h1>
+                    <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">2048</h1>
                     <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Score Record</p>
                         <span className="text-2xl font-black text-black">{score}</span>
                     </div>
                 </div>
-
-                <div
-                    className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none"
-                    onTouchStart={handleTouchStart}
-                    onTouchEnd={handleTouchEnd}
-                >
+                <div className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                     <div className="grid grid-cols-4 gap-1">
                         {grid.map((row, r) => row.map((val, c) => (
                             <div key={`${r}-${c}`} className={`w-[60px] h-[60px] flex items-center justify-center text-lg font-black transition-all duration-100 ${val === 0 ? 'bg-slate-50' : 'bg-black text-white scale-95'}`}>
@@ -176,7 +203,6 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                             </div>
                         )))}
                     </div>
-
                     {gameOver && (
                         <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-50 p-4 text-center">
                             <p className="font-black text-xl uppercase tracking-tighter mb-2 text-black">Game Over</p>
@@ -184,20 +210,21 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                                 <div className="w-full">
                                     <input
                                         type="text"
-                                        placeholder="Enter Name"
+                                        placeholder="Nama Kamu"
                                         className="w-full border-2 border-black p-2 text-[10px] font-black uppercase outline-none mb-2 focus:bg-slate-50"
                                         value={playerName}
                                         onChange={(e) => setPlayerName(e.target.value)}
                                         maxLength={10}
                                     />
-                                    <button onClick={saveScore} className="w-full bg-black text-white py-2 text-[10px] font-black uppercase mb-2 active:scale-95 transition-transform">Save Score</button>
+                                    <button onClick={saveScore} disabled={isLoading} className="w-full bg-black text-white py-2 text-[10px] font-black uppercase mb-2 active:scale-95 transition-transform disabled:opacity-50">
+                                        {isLoading ? 'Checking...' : 'Save Score'}
+                                    </button>
                                 </div>
                             ) : <p className="text-[10px] font-bold uppercase mb-4 text-blue-600">Score Saved!</p>}
                             <button onClick={initGame} className="w-full px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase active:bg-black active:text-white transition-colors">Retry</button>
                         </div>
                     )}
                 </div>
-
                 <div className="w-full max-w-[280px] pb-10">
                     <h3 className="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 mb-3">Top Scorer</h3>
                     {topScores.length === 0 ? (

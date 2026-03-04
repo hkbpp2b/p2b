@@ -108,7 +108,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
     };
 
     return (
-        <div className="relative min-h-[100dvh] lg:h-full w-full bg-white">
+        <div className="relative min-h-[100dvh] lg:h-full w-full">
             <div className="h-full border-slate-900 pb-32 pt-8 px-5 space-y-10">
                 <header className="text-center space-y-1">
                     <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Aplikasi</h2>
