@@ -30,6 +30,7 @@ jobs:
           VITE_OTHER_URL: ${{ secrets.VITE_OTHER_URL }}
           VITE_2048_URL: ${{ secrets.VITE_2048_URL }}
           VITE_SALT_URL: ${{ secrets.VITE_SALT_URL }}
+          VITE_TSV_PELAYAN_URL: ${{ secrets.VITE_TSV_PELAYAN_URL }}
 
       - uses: actions/upload-pages-artifact@v3
         with:

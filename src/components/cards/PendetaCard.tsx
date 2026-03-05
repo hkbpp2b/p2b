@@ -87,7 +87,7 @@ const PendetaCard = () => {
     return (
         <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
             <div className="mb-8 text-center">
-                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Pendeta Kami</h3>
+                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Pendeta Kami</h3>
             </div>
 
             <div className="space-y-4">
@@ -97,7 +97,7 @@ const PendetaCard = () => {
                         onClick={() => setSelected(pdt)}
                         className="flex flex-col items-center py-6 px-4 rounded-[2rem] border border-slate-50 bg-slate-50/50 active:scale-95 transition-all cursor-pointer group"
                     >
-                        <p className="text-[14px] font-black text-blue-600 uppercase tracking-[0.2em] mb-3">
+                        <p className="text-[14px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3">
                             {pdt.role}
                         </p>
 

@@ -1,71 +1,174 @@
-import React from 'react';
-
+// JadwalCard.tsx
+import React, { useState, useEffect } from 'react';
 const JadwalCard = () => {
+    const [selectedJadwal, setSelectedJadwal] = useState<string | null>(null);
+    const [dataPelayan, setDataPelayan] = useState<any>({});
+    const [tanggalMinggu, setTanggalMinggu] = useState<string>("");
+    const [loading, setLoading] = useState(true);
 
     const LIVE_URL = "https://www.youtube.com/@hkbpperumnas2bekasi/live";
+    const TSV_URL = import.meta.env.VITE_TSV_PELAYAN_URL;
 
-    const getNextSunday = () => {
-        const now = new Date();
-        const nextSunday = new Date();
-        nextSunday.setDate(now.getDate() + (7 - now.getDay()) % 7);
-        return nextSunday.toLocaleDateString('id-ID', {
-            weekday: 'long',
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
-        });
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(TSV_URL);
+                const text = await response.text();
+                const rows = text.split('\n').map(row =>
+                    row.split('\t').map(cell => cell.replace(/[\r\n]+/g, " ").trim())
+                );
+
+                if (rows.length > 1) {
+                    setTanggalMinggu(rows[1][0] || "");
+                }
+
+                const mappedData = {
+                    "06.00": formatDetail(rows, 2),
+                    "10.00": formatDetail(rows, 3),
+                    "18.00": formatDetail(rows, 4),
+                    "08.00": formatDetail(rows, 5),
+                    "remaja": formatDetail(rows, 6)
+                };
+                setDataPelayan(mappedData);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const formatDetail = (rows: string[][], colIndex: number) => {
+        const details = [];
+        for (let i = 1; i < rows.length; i++) {
+            const label = rows[i][1];
+            const name = rows[i][colIndex];
+            if (label && name && name.length > 1) {
+                details.push({ label, name });
+            }
+        }
+        return details;
     };
 
     const jadwal = [
-        { name: "Kebaktian Umum", time: "06.00", desc: "Bahasa Batak" },
-        { name: "Sekolah Minggu", time: "08.00", desc: "Bahasa Indonesia" },
-        { name: "Kebaktian Umum", time: "10.00", desc: "Bahasa Batak" },
-        { name: "Kebaktian Live", time: "10.00", desc: "YouTube HKBP P2B", isLive: true, link: LIVE_URL },
-        { name: "Kebaktian Remaja", time: "10.00", desc: "Bahasa Indonesia" },
-        { name: "Kebaktian Sore", time: "18.00", desc: "Bahasa Indonesia" }
+        { id: "06.00", name: "Ibadah Subuh", time: "06.00" },
+        { id: "08.00", name: "Sekolah Minggu", time: "08.00" },
+        { id: "10.00", name: "Ibadah Pagi", time: "10.00" },
+        { id: "10.00_live", name: "Livestreaming", time: "10.00", isLive: true, link: LIVE_URL },
+        { id: "remaja", name: "Ibadah Remaja", time: "10.00" },
+        { id: "18.00", name: "Ibadah Sore", time: "18.00" }
     ];
 
+    const toggleDropdown = (id: string) => {
+        setSelectedJadwal(selectedJadwal === id ? null : id);
+    };
+
     return (
-        <div
-            className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 relative overflow-hidden"
-            style={{
-                background: `linear-gradient(135deg, #ffffff 0%, #ffffff 100%)`
-            }}
-        >
-            <div className="mb-6 text-center">
-                <h3 className="text-xl font-black text-blue-700 tracking-tighter uppercase mb-1">Jadwal Kebaktian</h3>
-                <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em]">{getNextSunday()}</p>
+        <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
+            <div className="mb-8 text-center">
+                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Ibadah Minggu</h3>
+                <p className="text-[12px] text-slate-900 font-bold uppercase tracking-[0.1em]">{tanggalMinggu}</p>
             </div>
+            <div className="space-y-3">
+                {jadwal.map((item, i) => {
+                    const isActive = selectedJadwal === item.id;
+                    return (
+                        <div key={i} className="group">
+                            <button
+                                onClick={() => toggleDropdown(item.id)}
+                                className={`w-full flex items-center justify-between p-4 px-6 rounded-[2rem] transition-all duration-300 active:scale-[0.97] group border ${isActive
+                                    ? "bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-200"
+                                    : item.isLive
+                                        ? "bg-white border-red-100 hover:border-red-200 text-slate-900"
+                                        : "bg-white border-slate-100 hover:border-slate-300 text-slate-900"
+                                    }`}
+                            >
+                                <div className="flex items-center gap-4">
+                                    <div className="text-left flex flex-col gap-0.5">
+                                        <span className={`text-[11px] font-bold uppercase tracking-[0.15em] ${isActive ? "text-slate-400" : "text-slate-900"}`}>
+                                            {item.time}
+                                        </span>
+                                        <span className="text-[13px] font-black uppercase tracking-tight">
+                                            {item.name}
+                                        </span>
+                                    </div>
+                                </div>
 
-            <div className="space-y-2">
-                {jadwal.map((item, i) => (
-                    <div
-                        key={i}
-                        onClick={() => item.isLive && window.open(item.link, '_blank')}
-                        className={`flex justify-between items-center p-5 rounded-[2rem] border border-transparent bg-slate-50 transition-all duration-200 ${item.isLive ? "cursor-pointer active:scale-95 active:border-red-200" : ""
-                            }`}
-                    >
-                        <div className="text-left">
-                            <div className="flex items-center gap-2">
-                                <span className={`block font-black text-[14px] uppercase tracking-tight ${item.isLive ? "text-red-600" : "text-slate-900"}`}>
-                                    {item.name}
-                                </span>
-                            </div>
-                            <span className={`text-[10px] font-black uppercase tracking-widest ${item.isLive ? "text-red-400" : "text-slate-400"}`}>
-                                {item.desc}
-                            </span>
-                        </div>
+                                <div className={`transition-all duration-300 ${isActive ? "rotate-180" : "opacity-40 group-hover:opacity-100"}`}>
+                                    <svg
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="3"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <path d="M6 9l6 6 6-6" />
+                                    </svg>
+                                </div>
+                            </button>
 
-                        <div className="text-right">
-                            <span className={`block font-black text-xl tracking-tighter leading-none ${item.isLive ? "text-red-600" : "text-slate-900"}`}>
-                                {item.time}
-                            </span>
-                            <span className={`text-[9px] font-black uppercase tracking-widest ${item.isLive ? "text-red-400" : "text-slate-400"}`}>
-                                WIB
-                            </span>
+                            {isActive && (
+                                <div className="mt-3 mx-1 p-5 bg-white rounded-[2rem] border border-slate-100 shadow-[inset_0_2px_8px_rgba(0,0,0,0,02)] animate-in fade-in zoom-in-95 duration-400">
+                                    {item.isLive ? (
+                                        <div className="flex flex-col items-center py-4">
+                                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-6 text-center leading-relaxed">
+                                                Livestreaming Ibadah <br /> via YouTube
+                                            </p>
+                                            <button
+                                                onClick={() => window.open(item.link, '_blank')}
+                                                className="w-full bg-red-600 text-white py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-red-100"
+                                            >
+                                                <span className="text-[12px] font-black uppercase tracking-widest">Buka Youtube</span>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-5">
+                                            <div className="flex flex-col items-center gap-1 border-b border-slate-50 pb-4">
+                                                <span className="text-[12px] font-black text-slate-900 uppercase tracking-tight">Pelayan {item.name}</span>
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">{tanggalMinggu}</span>
+                                            </div>
+
+                                            <div className="divide-y divide-slate-50">
+                                                {loading ? (
+                                                    <div className="py-10 flex justify-center">
+                                                    </div>
+                                                ) : dataPelayan[item.id] && dataPelayan[item.id].length > 0 ? (
+                                                    dataPelayan[item.id].map((p: any, idx: number) => (
+                                                        <div key={idx} className="py-3.5 first:pt-0 last:pb-0">
+                                                            <div className="flex gap-4">
+                                                                <div className="w-24 shrink-0 pt-0.5">
+                                                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider leading-none block">
+                                                                        {p.label}
+                                                                    </span>
+                                                                </div>
+                                                                <div className="flex-grow space-y-2">
+                                                                    {p.name.split(',').map((name: string, nameIdx: number) => (
+                                                                        <div key={nameIdx} className="flex items-center gap-2">
+                                                                            <span className="text-[11px] font-bold text-slate-700 leading-none tracking-tight">
+                                                                                {name.trim()}
+                                                                            </span>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    ))
+                                                ) : (
+                                                    <div className="py-8 text-center">
+                                                        <p className="text-[10px] font-bold text-slate-300 uppercase tracking-widest">Belum ada data pelayan</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
         </div>
     );
