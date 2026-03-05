@@ -1,62 +1,49 @@
-# ⛪ HKBP Perumnas 2 Bekasi - Digital Services
+# Web App Gereja
 
-Aplikasi Mobile Web resmi **HKBP Perumnas 2 Bekasi** yang dirancang sebagai pusat informasi dan pelayanan digital bagi seluruh jemaat. Akses semua kebutuhan ibadah kini lebih mudah, cepat, dan bisa dilakukan dari mana saja melalui smartphone.
+Deskripsi singkat: Aplikasi berbasis web untuk manajemen data jemaat dan akses literatur rohani (Alkitab & Buku Ende) yang dirancang dengan antarmuka modern dan responsif.
 
----
+## Teknologi yang Digunakan
 
-### 🌟 Fitur Utama Untuk Jemaat
+* **Core**: [React.js](https://reactjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+* **Build Tool**: [Vite](https://vitejs.dev/)
+* **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+* **Icons**: [Lucide React](https://lucide.dev/)
+* **CI/CD**: GitHub Actions
 
-Aplikasi ini dibagi menjadi beberapa menu utama yang mudah diakses:
+## Fitur Utama
 
-* ** Beranda (Home)**
-    * **Info Terbaru:** Lihat berita atau acara penting gereja melalui slide gambar.
-    * **Renungan Harian:** Firman Tuhan harian lengkap dengan ayat dan kutipan untuk mengawali hari Anda.
-    * **Jadwal Ibadah:** Jadwal lengkap mulai dari Ibadah Subuh, Sekolah Minggu, hingga Ibadah Sore (Bahasa Batak & Indonesia).
-    * **Profil Pendeta:** Mengenal para pelayan (Pendeta) yang melayani di gereja kita.
+* **E-Bible & Songbook**: Akses cepat ke data Alkitab dan Buku Ende secara digital.
+* **Manajemen Data**: Formulir input data jemaat yang terstruktur.
+* **Multi-Layout**: Tampilan yang dioptimalkan khusus untuk perangkat Desktop dan Mobile.
+* **Integrasi Pembayaran**: Siap untuk tampilan QRIS dan GPN.
 
-* ** Persembahan (Giving)**
-    * Memberikan persembahan kini lebih praktis melalui **QRIS**. Cukup simpan gambar QR atau scan langsung dari aplikasi bank/e-wallet Anda. Tersedia juga nomor rekening resmi gereja.
+## Struktur Folder Penting
 
-* ** Warta & Acara**
-    * Baca **Warta Jemaat** mingguan langsung di aplikasi tanpa harus mencari fisik kertasnya. Anda juga bisa melihat arsip warta minggu-minggu sebelumnya.
+* `src/components/cards`: Berisi komponen kartu untuk fitur utama (Alkitab, Form Data, dll).
+* `src/assets`: Berisi database JSON untuk konten aplikasi dan aset gambar.
 
-* ** Layanan Aplikasi Digital**
-    * **Alkitab Digital:** Membaca Firman Tuhan (Tersedia versi Terjemahan Baru & Batak Toba).
-    * **Buku Ende:** Lirik lagu pujian lengkap untuk mendukung ibadah Anda.
+## Cara Instalasi & Menjalankan
 
+1.  **Clone Repositori**
+    ```bash
+    git clone [https://github.com/username/webperum2.git](https://github.com/username/webperum2.git)
+    cd webperum2
+    ```
 
-* ** Menu Layanan Jemaat**
-    * **Pendataan Jemaat:** Daftar atau perbarui data keluarga Anda secara mandiri.
-    * **Permohonan Doa & Konseling:** Butuh dukungan doa atau layanan sakramen? Kirimkan permohonan Anda langsung melalui formulir digital.
-    * **Kotak Saran:** Kami sangat menghargai masukan Anda demi kemajuan pelayanan gereja kita.
+2.  **Instal Dependencies**
+    ```bash
+    npm install
+    ```
 
----
+3.  **Jalankan Mode Pengembangan**
+    ```bash
+    npm run dev
+    ```
+    Buka `http://localhost:5173` di browser Anda.
 
-###  Keunggulan Aplikasi
+4.  **Build untuk Produksi**
+    ```bash
+    npm run build
+    ```
 
-1.  **Ringan & Cepat:** Tidak perlu download/instal, cukup buka melalui browser (Chrome/Safari).
-2.  **Hemat Kuota:** Dirancang khusus agar tidak memakan banyak data internet.
-3.  **Update Real-Time:** Informasi warta dan renungan diperbarui otomatis setiap minggu oleh admin.
-4.  **Responsif:** Tampilan otomatis menyesuaikan layar HP Anda agar nyaman dibaca.
-
----
-
-###  Cara Menggunakan
-
-1.  Buka link aplikasi yang dibagikan oleh pengurus gereja.
-2.  Gunakan **Navigasi di bagian bawah** layar untuk berpindah antar halaman.
-3.  Untuk fitur **Warta**, Anda bisa memperbesar tampilan dokumen agar lebih jelas terbaca.
-4.  Jika ingin memberikan masukan, silakan pilih menu **Lainnya** lalu klik **Kritik & Saran**.
-
----
-
-###  Catatan Pengembangan (Developer)
-
-Aplikasi ini dikembangkan menggunakan teknologi modern:
-* **Framework:** React (Vite) + TypeScript.
-* **Styling:** Tailwind CSS (Modern & Clean UI).
-* **Icons:** Lucide React.
-
-
----
-*Crafted with ❤️ by Mulmed Team HKBP Perumnas 2 Bekasi.*
+## Crafted with ❤️ by Mulmed Team HKBP Perumnas 2 Bekasi
