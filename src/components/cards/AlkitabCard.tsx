@@ -175,10 +175,16 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
 
 
     const kitabGrup = useMemo(() => {
+        if (alkitabData.length === 0) {
+            return {
+                pl: daftarPL,
+                pb: daftarPB
+            };
+        }
         const unik = Array.from(new Set(alkitabData.map(v => v.kitab)));
         return {
-            pl: unik.filter(k => daftarPL.includes(k)),
-            pb: unik.filter(k => daftarPB.includes(k))
+            pl: daftarPL.filter(k => unik.includes(k)),
+            pb: daftarPB.filter(k => unik.includes(k))
         };
     }, [alkitabData]);
 
