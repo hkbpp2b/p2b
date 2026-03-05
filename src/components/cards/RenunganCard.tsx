@@ -159,7 +159,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                     {data.topik}
                                 </h1>
                                 <div className="border-l-[3px] border-slate-900 pl-5 py-1">
-                                    <p className="text-[16px] md:text-[24px] font-bold text-slate-900 text-justify leading-snug mb-3">
+                                    <p className="text-[16px] pr-6 md:text-[24px] font-bold text-slate-900 text-left leading-snug mb-3">
                                         {data.kutipan}
                                     </p>
                                     <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em]">
@@ -180,7 +180,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             )}
 
                             <div>
-                                <p className="text-[15px] p-6 md:text-[16px] font-medium text-slate-900 leading-[1.7] text-justify whitespace-pre-line">
+                                <p className="text-[15px] p-2 md:text-[16px] font-medium text-slate-900 leading-[1.7] text-left whitespace-pre-line">
                                     {data.isi}
                                 </p>
                             </div>
