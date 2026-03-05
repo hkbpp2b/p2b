@@ -12,7 +12,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const [data, setData] = useState<any>(cachedRenungan);
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [showAmin, setShowAmin] = useState(false);
+
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const TSV_URL = import.meta.env.VITE_TSV_RENUNGAN_URL;
@@ -44,10 +44,11 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                         ayat: cols[1],
                         kutipan: cols[2],
                         topik: cols[3],
-                        isi: cols[4],
-                        bukuEnde: cols[5],
+                        isi: cols[4].replace(/\[br\]/g, '\n'),
+                        bukuEnde: cols[5].replace(/\[br\]/g, '\n'),
                         lirikEnde: cols[6]
                     };
+
                     setData(result);
                     cachedRenungan = result;
                 }
@@ -82,7 +83,6 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
         if (!scrollRef.current) return;
         const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
         setIsScrolled(scrollTop > 20);
-        setShowAmin(scrollTop + clientHeight > scrollHeight - 80);
     };
 
     const closeRenungan = () => {
@@ -152,38 +152,35 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                     <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
                         <div className="max-w-2xl mx-auto w-full px-6 pt-8 pb-32 flex flex-col">
                             <div className="mb-10">
-                                <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2">
+                                <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.4em] mb-2">
                                     {data.tanggal}
                                 </p>
                                 <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-8">
                                     {data.topik}
                                 </h1>
                                 <div className="border-l-[3px] border-slate-900 pl-5 py-1">
-                                    <p className="text-[19px] md:text-[24px] font-black text-slate-900 italic leading-snug mb-3">
-                                        "{data.kutipan}"
+                                    <p className="text-[16px] md:text-[24px] font-bold text-slate-900 text-justify leading-snug mb-3">
+                                        {data.kutipan}
                                     </p>
                                     <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em]">
-                                        — {data.ayat}
+                                        {data.ayat}
                                     </p>
                                 </div>
                             </div>
 
                             {data.bukuEnde && (
                                 <div className="mb-10 p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <h5 className="text-[9px] font-black text-blue-600 uppercase tracking-[0.2em] mb-3">
-                                        Buku Ende / HKBP
-                                    </h5>
-                                    <p className="text-[16px] font-black text-slate-900 mb-2">
+                                    <p className="text-[16px] font-black text-slate-900 mb-2 whitespace-pre-line">
                                         {data.bukuEnde}
                                     </p>
-                                    <p className="text-[15px] font-medium text-slate-600 leading-relaxed italic whitespace-pre-line">
+                                    <p className="text-[15px] font-bold text-slate-600 leading-relaxed italic whitespace-pre-line">
                                         {data.lirikEnde}
                                     </p>
                                 </div>
                             )}
 
                             <div>
-                                <p className="text-[17px] md:text-[18px] font-medium text-slate-800 leading-[1.7] text-left whitespace-pre-line">
+                                <p className="text-[15px] p-6 md:text-[16px] font-medium text-slate-900 leading-[1.7] text-justify whitespace-pre-line">
                                     {data.isi}
                                 </p>
                             </div>
