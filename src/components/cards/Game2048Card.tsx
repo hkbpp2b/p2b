@@ -180,6 +180,25 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
         }
     };
 
+    const getTileStyle = (val: number) => {
+        const styles: { [key: number]: string } = {
+            0: 'bg-slate-100/50 text-transparent border-none',
+            2: 'bg-sky-400 text-white shadow-sm',
+            4: 'bg-emerald-500 text-white shadow-sm',
+            8: 'bg-violet-500 text-white shadow-sm',
+            16: 'bg-amber-600 text-white shadow-sm',
+            32: 'bg-teal-600 text-white shadow-sm',
+            64: 'bg-indigo-600 text-white shadow-sm',
+            128: 'bg-lime-600 text-white shadow-sm',
+            256: 'bg-fuchsia-600 text-white shadow-sm',
+            512: 'bg-cyan-700 text-white shadow-sm',
+            1024: 'bg-orange-700 text-white shadow-sm',
+            2048: 'bg-slate-900 text-white ring-2 ring-sky-400 ring-offset-2 shadow-xl',
+        };
+
+        return styles[val] || 'bg-slate-800 text-white';
+    };
+
     return (
         <div className="fixed lg:absolute inset-0 z-[60] bg-white flex flex-col overflow-hidden animate-in slide-in-from-right lg:slide-in-from-none duration-300">
             <header className="flex-none border-b border-slate-100 px-4 h-14 flex items-center">
@@ -198,7 +217,10 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                 <div className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                     <div className="grid grid-cols-4 gap-1">
                         {grid.map((row, r) => row.map((val, c) => (
-                            <div key={`${r}-${c}`} className={`w-[60px] h-[60px] flex items-center justify-center text-lg font-black transition-all duration-100 ${val === 0 ? 'bg-slate-50' : 'bg-black text-white scale-95'}`}>
+                            <div
+                                key={`${r}-${c}`}
+                                className={`w-[60px] h-[60px] flex items-center justify-center text-lg font-black transition-all duration-100 ${val !== 0 ? 'scale-95' : ''} ${getTileStyle(val)}`}
+                            >
                                 {val !== 0 ? val : ''}
                             </div>
                         )))}
