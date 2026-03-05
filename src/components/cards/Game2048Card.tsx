@@ -210,7 +210,7 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                                 <div className="w-full">
                                     <input
                                         type="text"
-                                        placeholder="Nama Kamu"
+                                        placeholder="Nama Anda"
                                         className="w-full border-2 border-black p-2 text-[10px] font-black uppercase outline-none mb-2 focus:bg-slate-50"
                                         value={playerName}
                                         onChange={(e) => setPlayerName(e.target.value)}
