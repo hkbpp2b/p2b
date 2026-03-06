@@ -19,6 +19,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const audioContextRef = useRef<AudioContext | null>(null);
     const playerRef = useRef<any>(null);
     const instrumentRef = useRef<any>(null);
+    const activeNotesRef = useRef<Map<string, any>>(new Map());
 
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -103,6 +104,13 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
         }
     };
 
+    const stopMidi = () => {
+        playerRef.current?.stop();
+        activeNotesRef.current.forEach(node => node.stop());
+        activeNotesRef.current.clear();
+        setIsPlaying(false);
+    };
+
     const playMidi = async () => {
         if (isPlaying) {
             stopMidi();
@@ -120,7 +128,6 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             }
 
             const songId = cleanNumber.padStart(3, '0');
-
             const midiUrl = `/music/BE${songId}.mid`;
 
             const response = await fetch(midiUrl);
@@ -128,28 +135,40 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             const arrayBuffer = await response.arrayBuffer();
 
             playerRef.current = new MidiPlayer.Player((event: any) => {
+                if (!instrumentRef.current || !audioContextRef.current) return;
+
+                const key = `${event.noteName}_${event.channel}`;
+
                 if (event.name === 'Note on' && event.velocity > 0) {
-                    instrumentRef.current?.play(event.noteName, audioContextRef.current?.currentTime, {
-                        gain: (event.velocity / 128) * 5,
-                    });
+                    activeNotesRef.current.get(key)?.stop();
+                    const node = instrumentRef.current.play(
+                        event.noteName,
+                        audioContextRef.current.currentTime,
+                        { gain: (event.velocity / 128) * 5 }
+                    );
+                    if (node) activeNotesRef.current.set(key, node);
+                } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
+                    activeNotesRef.current.get(key)?.stop();
+                    activeNotesRef.current.delete(key);
                 }
             });
 
             playerRef.current.loadArrayBuffer(arrayBuffer);
             playerRef.current.play();
             setIsPlaying(true);
-            playerRef.current.on('endOfFile', () => setIsPlaying(false));
+
+            playerRef.current.on('endOfFile', () => {
+                activeNotesRef.current.forEach(node => node.stop());
+                activeNotesRef.current.clear();
+                setIsPlaying(false);
+            });
+
         } catch (error) {
             console.error('Error playing MIDI:', error);
             alert(`File musik BE${data.nomorEnde.padStart(3, '0')} tidak ditemukan.`);
         } finally {
             setIsLoadingMidi(false);
         }
-    };
-
-    const stopMidi = () => {
-        playerRef.current?.stop();
-        setIsPlaying(false);
     };
 
     const handleScroll = () => {
@@ -257,8 +276,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                                 : 'bg-blue-600 text-white'
                                                 } disabled:opacity-50`}
                                         >
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'
-                                                }`}>
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'}`}>
                                                 {isLoadingMidi ? (
                                                     <Loader2 size={16} className="animate-spin" />
                                                 ) : isPlaying ? (

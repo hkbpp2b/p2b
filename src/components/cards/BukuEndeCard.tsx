@@ -36,6 +36,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
     const audioContextRef = useRef<AudioContext | null>(null);
     const playerRef = useRef<any>(null);
     const instrumentRef = useRef<any>(null);
+    const activeNotesRef = useRef<Map<string, any>>(new Map());
 
     const books: Record<BookType, { label: string; data: SongData[] }> = {
         BE: { label: 'Buku Ende', data: BUKU_ENDE_DATA as SongData[] },
@@ -70,6 +71,13 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
         }
     };
 
+    const stopMidi = () => {
+        playerRef.current?.stop();
+        activeNotesRef.current.forEach(node => node.stop());
+        activeNotesRef.current.clear();
+        setIsPlaying(false);
+    };
+
     const playMidi = async () => {
         if (isPlaying) {
             stopMidi();
@@ -81,36 +89,56 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
             await initAudio();
 
             const songId = currentSong.id.padStart(3, '0');
-            const filePrefix = currentBook === 'BN' ? 'BE' : currentBook;
-            const midiUrl = `/music/${filePrefix}${songId}.mid`;
+            const bookPrefix = currentBook === 'BN' ? 'BE' : currentBook;
+            const midiUrl = `/music/${bookPrefix}${songId}.mid`;
 
             const response = await fetch(midiUrl);
             if (!response.ok) throw new Error('MIDI file not found');
             const arrayBuffer = await response.arrayBuffer();
 
             playerRef.current = new MidiPlayer.Player((event: any) => {
+                if (!instrumentRef.current || !audioContextRef.current) return;
+
+                const key = `${event.noteName}_${event.channel}`;
+
                 if (event.name === 'Note on' && event.velocity > 0) {
-                    instrumentRef.current?.play(event.noteName, audioContextRef.current?.currentTime, {
-                        gain: (event.velocity / 128) * 5,
-                    });
+                    // Stop note yang sama kalau masih berbunyi (avoid overlap)
+                    activeNotesRef.current.get(key)?.stop();
+
+                    const node = instrumentRef.current.play(
+                        event.noteName,
+                        audioContextRef.current.currentTime,
+                        { gain: (event.velocity / 128) * 5 }
+                    );
+                    if (node) activeNotesRef.current.set(key, node);
+
+                } else if (
+                    event.name === 'Note off' ||
+                    (event.name === 'Note on' && event.velocity === 0)
+                ) {
+                    // Hentikan note saat ada Note Off
+                    activeNotesRef.current.get(key)?.stop();
+                    activeNotesRef.current.delete(key);
                 }
             });
 
             playerRef.current.loadArrayBuffer(arrayBuffer);
             playerRef.current.play();
             setIsPlaying(true);
-            playerRef.current.on('endOfFile', () => setIsPlaying(false));
+
+            playerRef.current.on('endOfFile', () => {
+                // Bersihkan semua note yang masih aktif saat lagu selesai
+                activeNotesRef.current.forEach(node => node.stop());
+                activeNotesRef.current.clear();
+                setIsPlaying(false);
+            });
+
         } catch (error) {
             console.error('Error playing MIDI:', error);
             alert('Gagal memutar musik. Pastikan file MIDI tersedia.');
         } finally {
             setIsLoadingMidi(false);
         }
-    };
-
-    const stopMidi = () => {
-        playerRef.current?.stop();
-        setIsPlaying(false);
     };
 
     const handleNext = () => {

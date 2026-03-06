@@ -1,7 +1,9 @@
 // App.tsx
-import { useState, useEffect } from 'react';
-import { Home } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Home, Play, Square, Loader2 } from 'lucide-react';
 import { Instagram, Youtube, Facebook, Music2 } from 'lucide-react';
+import MidiPlayer from 'midi-player-js';
+import Soundfont from 'soundfont-player';
 import Layout from './components/Layout';
 import ProfileTab from './components/tabs/ProfileTab';
 import IbadahTab from './components/tabs/IbadahTab';
@@ -18,6 +20,13 @@ function App() {
   const [loadedTabs, setLoadedTabs] = useState<string[]>(['profil']);
   const [selectedDetail, setSelectedDetail] = useState<any>(null);
 
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isLoadingMidi, setIsLoadingMidi] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const playerRef = useRef<any>(null);
+  const instrumentRef = useRef<any>(null);
+  const activeNotesRef = useRef<Map<string, any>>(new Map());
+
   const titles: Record<string, string> = {
     profil: 'HKBP P2B',
     warta: 'COMINGSOON',
@@ -29,6 +38,16 @@ function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [activeTab]);
+
+  useEffect(() => {
+    stopMidi();
+  }, [selectedDetail]);
+
+  useEffect(() => {
+    return () => {
+      stopMidi();
+    };
+  }, []);
 
   useEffect(() => {
     const backgroundQueue = ['giving', 'ibadah', 'warta', 'other'];
@@ -50,6 +69,81 @@ function App() {
     }
   }, []);
 
+  const initAudio = async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    if (!instrumentRef.current) {
+      instrumentRef.current = await Soundfont.instrument(audioContextRef.current, 'acoustic_grand_piano');
+    }
+  };
+
+  const stopMidi = () => {
+    playerRef.current?.stop();
+    activeNotesRef.current.forEach(node => node.stop());
+    activeNotesRef.current.clear();
+    setIsPlaying(false);
+  };
+
+  const playMidi = async () => {
+    if (isPlaying) {
+      stopMidi();
+      return;
+    }
+
+    try {
+      setIsLoadingMidi(true);
+      await initAudio();
+
+      const cleanNumber = selectedDetail.nomorEnde.replace(/\D/g, '');
+      if (!cleanNumber) {
+        alert("error_hubungi_admin");
+        return;
+      }
+
+      const songId = cleanNumber.padStart(3, '0');
+      const midiUrl = `/music/BE${songId}.mid`;
+
+      const response = await fetch(midiUrl);
+      if (!response.ok) throw new Error('MIDI file not found');
+      const arrayBuffer = await response.arrayBuffer();
+
+      playerRef.current = new MidiPlayer.Player((event: any) => {
+        if (!instrumentRef.current || !audioContextRef.current) return;
+
+        const key = `${event.noteName}_${event.channel}`;
+
+        if (event.name === 'Note on' && event.velocity > 0) {
+          activeNotesRef.current.get(key)?.stop();
+          const node = instrumentRef.current.play(
+            event.noteName,
+            audioContextRef.current.currentTime,
+            { gain: (event.velocity / 128) * 5 }
+          );
+          if (node) activeNotesRef.current.set(key, node);
+        } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
+          activeNotesRef.current.get(key)?.stop();
+          activeNotesRef.current.delete(key);
+        }
+      });
+
+      playerRef.current.loadArrayBuffer(arrayBuffer);
+      playerRef.current.play();
+      setIsPlaying(true);
+
+      playerRef.current.on('endOfFile', () => {
+        activeNotesRef.current.forEach(node => node.stop());
+        activeNotesRef.current.clear();
+        setIsPlaying(false);
+      });
+
+    } catch (error) {
+      console.error('Error playing MIDI:', error);
+      alert(`File musik BE${selectedDetail.nomorEnde.padStart(3, '0')} tidak ditemukan.`);
+    } finally {
+      setIsLoadingMidi(false);
+    }
+  };
 
   const renderRightWindow = () => {
     if (!selectedDetail) {
@@ -153,14 +247,14 @@ function App() {
               {selectedDetail.tanggal}
             </p>
 
-            <h2 className="text-4xl font-black text-slate-900 tracking-tighter uppercase leading-[0.95] mb-8">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-[0.95] mb-8">
               {isRenungan ? selectedDetail.topik : selectedDetail.judul}
             </h2>
 
             {isRenungan && (
               <div className="border-l-[4px] border-slate-900 pl-6 py-2 mb-10">
-                <p className="text-[22px] font-black text-slate-900 italic leading-snug mb-3">
-                  "{selectedDetail.kutipan}"
+                <p className="text-[18px] font-black text-slate-900 italic leading-snug mb-3">
+                  {selectedDetail.kutipan}
                 </p>
                 <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.2em]">
                   — {selectedDetail.ayat}
@@ -173,16 +267,39 @@ function App() {
                 <h5 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">
                   Buku Ende / HKBP
                 </h5>
-                <p className="text-[18px] font-black text-slate-900 mb-3">
+                <p className="text-[18px] font-black text-slate-900 mb-4">
                   {selectedDetail.bukuEnde}
                 </p>
+
+                <button
+                  onClick={playMidi}
+                  disabled={isLoadingMidi}
+                  className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full mb-6 transition-all ${isPlaying
+                    ? 'bg-red-50 text-red-600 border border-red-100'
+                    : 'bg-blue-600 text-white'
+                    } disabled:opacity-50`}
+                >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'}`}>
+                    {isLoadingMidi ? (
+                      <Loader2 size={16} className="animate-spin" />
+                    ) : isPlaying ? (
+                      <Square size={14} fill="currentColor" />
+                    ) : (
+                      <Play size={14} fill="currentColor" className="ml-0.5" />
+                    )}
+                  </div>
+                  <span className="text-[11px] font-black uppercase tracking-widest">
+                    BE NO.{selectedDetail.nomorEnde}
+                  </span>
+                </button>
+
                 <p className="text-[16px] font-medium text-slate-600 leading-relaxed italic whitespace-pre-line">
                   {selectedDetail.lirikEnde}
                 </p>
               </div>
             )}
 
-            <p className="text-[19px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
+            <p className="text-[16px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
               {isRenungan ? selectedDetail.isi : selectedDetail.deskripsi}
             </p>
           </div>
@@ -198,7 +315,6 @@ function App() {
       title={titles[activeTab]}
       detailContent={renderRightWindow()}
     >
-
       <div className="max-w-3xl mx-auto w-full pt-0 h-full flex flex-col">
         <div className="w-full flex-1">
           {loadedTabs.includes('profil') && (
