@@ -37,9 +37,6 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
     const playerRef = useRef<any>(null);
     const instrumentRef = useRef<any>(null);
 
-    const [duration, setDuration] = useState(0);
-    const [currentTime, setCurrentTime] = useState(0);
-
     const books: Record<BookType, { label: string; data: SongData[] }> = {
         BE: { label: 'Buku Ende', data: BUKU_ENDE_DATA as SongData[] },
         BN: { label: 'Buku Nyanyian HKBP', data: BUKU_NYANYIAN_DATA as SongData[] },
@@ -84,7 +81,8 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
             await initAudio();
 
             const songId = currentSong.id.padStart(3, '0');
-            const midiUrl = `/music/${currentBook}${songId}.mid`;
+            const filePrefix = currentBook === 'BN' ? 'BE' : currentBook;
+            const midiUrl = `/music/${filePrefix}${songId}.mid`;
 
             const response = await fetch(midiUrl);
             if (!response.ok) throw new Error('MIDI file not found');
@@ -279,7 +277,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                                     disabled={isLoadingMidi}
                                     className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-sm transition-all ${isPlaying
                                         ? 'bg-red-50 text-red-600 border border-red-100'
-                                        : 'bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700'
+                                        : 'bg-blue-600 text-white'
                                         } disabled:opacity-50`}
                                 >
                                     {isLoadingMidi ? (

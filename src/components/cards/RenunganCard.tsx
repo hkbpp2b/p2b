@@ -1,6 +1,7 @@
-// RenunganCard.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, ArrowLeft } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Play, Square, Loader2 } from 'lucide-react';
+import MidiPlayer from 'midi-player-js';
+import Soundfont from 'soundfont-player';
 
 let cachedRenungan: any = null;
 
@@ -12,6 +13,12 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const [data, setData] = useState<any>(cachedRenungan);
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isLoadingMidi, setIsLoadingMidi] = useState(false);
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const playerRef = useRef<any>(null);
+    const instrumentRef = useRef<any>(null);
 
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -61,12 +68,19 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     }, []);
 
     useEffect(() => {
+        return () => {
+            stopMidi();
+        };
+    }, []);
+
+    useEffect(() => {
         if (isOpen) {
             document.body.classList.add('modal-open');
             document.body.style.overflow = 'hidden';
             window.history.pushState({ renunganOpen: true }, "");
 
             const handleBackInRenungan = () => {
+                stopMidi();
                 setIsOpen(false);
                 document.body.classList.remove('modal-open');
             };
@@ -80,13 +94,72 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
         }
     }, [isOpen]);
 
+    const initAudio = async () => {
+        if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        }
+        if (!instrumentRef.current) {
+            instrumentRef.current = await Soundfont.instrument(audioContextRef.current, 'acoustic_grand_piano');
+        }
+    };
+
+    const playMidi = async () => {
+        if (isPlaying) {
+            stopMidi();
+            return;
+        }
+
+        try {
+            setIsLoadingMidi(true);
+            await initAudio();
+            const cleanNumber = data.nomorEnde.replace(/\D/g, '');
+
+            if (!cleanNumber) {
+                alert("error_hubungi_admin");
+                return;
+            }
+
+            const songId = cleanNumber.padStart(3, '0');
+
+            const midiUrl = `/music/BE${songId}.mid`;
+
+            const response = await fetch(midiUrl);
+            if (!response.ok) throw new Error('MIDI file not found');
+            const arrayBuffer = await response.arrayBuffer();
+
+            playerRef.current = new MidiPlayer.Player((event: any) => {
+                if (event.name === 'Note on' && event.velocity > 0) {
+                    instrumentRef.current?.play(event.noteName, audioContextRef.current?.currentTime, {
+                        gain: (event.velocity / 128) * 5,
+                    });
+                }
+            });
+
+            playerRef.current.loadArrayBuffer(arrayBuffer);
+            playerRef.current.play();
+            setIsPlaying(true);
+            playerRef.current.on('endOfFile', () => setIsPlaying(false));
+        } catch (error) {
+            console.error('Error playing MIDI:', error);
+            alert(`File musik BE${data.nomorEnde.padStart(3, '0')} tidak ditemukan.`);
+        } finally {
+            setIsLoadingMidi(false);
+        }
+    };
+
+    const stopMidi = () => {
+        playerRef.current?.stop();
+        setIsPlaying(false);
+    };
+
     const handleScroll = () => {
         if (!scrollRef.current) return;
-        const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
+        const { scrollTop } = scrollRef.current;
         setIsScrolled(scrollTop > 20);
     };
 
     const closeRenungan = () => {
+        stopMidi();
         setIsOpen(false);
     };
 
@@ -170,13 +243,45 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             </div>
 
                             {data.bukuEnde && (
-                                <div className="mb-10 p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                                    <p className="text-[16px] font-black text-slate-900 mb-2 whitespace-pre-line">
-                                        {data.bukuEnde}
-                                    </p>
-                                    <p className="text-[15px] font-bold text-slate-600 leading-relaxed italic whitespace-pre-line">
-                                        {data.lirikEnde}
-                                    </p>
+                                <div className="mb-10 p-6 bg-slate-50 rounded-3xl text-center border border-slate-100">
+                                    <div className="flex flex-col items-center gap-4 text-center">
+                                        <p className="text-[16px] font-black text-slate-900 whitespace-pre-line leading-tight">
+                                            {data.bukuEnde}
+                                        </p>
+
+                                        <button
+                                            onClick={playMidi}
+                                            disabled={isLoadingMidi}
+                                            className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full transition-all ${isPlaying
+                                                ? 'bg-red-50 text-red-600 border border-red-100'
+                                                : 'bg-blue-600 text-white'
+                                                } disabled:opacity-50`}
+                                        >
+                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'
+                                                }`}>
+                                                {isLoadingMidi ? (
+                                                    <Loader2 size={16} className="animate-spin" />
+                                                ) : isPlaying ? (
+                                                    <Square size={14} fill="currentColor" />
+                                                ) : (
+                                                    <Play size={14} fill="currentColor" className="ml-0.5" />
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col items-start leading-none">
+                                                <span className="text-[11px] font-black uppercase tracking-widest">
+                                                    {isPlaying ? '' : ''} BE NO.{data.nomorEnde}
+                                                </span>
+                                            </div>
+                                        </button>
+                                    </div>
+
+                                    <div className="mt-8 text-center flex flex-col gap-4">
+                                        {data.lirikEnde.split('\n').map((line, index) => (
+                                            <p key={index} className="text-[16px] font-bold text-slate-900 italic">
+                                                {line}
+                                            </p>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
 
