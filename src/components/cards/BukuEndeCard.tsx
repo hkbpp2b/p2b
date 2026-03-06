@@ -1,6 +1,8 @@
 // BukuEndeCard.tsx
-import React, { useState, useMemo } from 'react';
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Search, ChevronDown, BookOpen } from 'lucide-react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Search, ChevronDown, Play, Square, Loader2 } from 'lucide-react';
+import MidiPlayer from 'midi-player-js';
+import Soundfont from 'soundfont-player';
 import BUKU_ENDE_DATA from '../../assets/bev1.json';
 import BUKU_NYANYIAN_DATA from '../../assets/bnv1.json';
 import KIDUNG_JEMAAT_DATA from '../../assets/kjv2.json';
@@ -29,6 +31,15 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
     const [currentBook, setCurrentBook] = useState<BookType | null>(null);
     const [isBookDropdownOpen, setIsBookDropdownOpen] = useState(false);
 
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [isLoadingMidi, setIsLoadingMidi] = useState(false);
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const playerRef = useRef<any>(null);
+    const instrumentRef = useRef<any>(null);
+
+    const [duration, setDuration] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+
     const books: Record<BookType, { label: string; data: SongData[] }> = {
         BE: { label: 'Buku Ende', data: BUKU_ENDE_DATA as SongData[] },
         BN: { label: 'Buku Nyanyian HKBP', data: BUKU_NYANYIAN_DATA as SongData[] },
@@ -47,14 +58,73 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
         ).slice(0, 50);
     }, [searchQuery, currentData]);
 
+    useEffect(() => {
+        return () => {
+            stopMidi();
+        };
+    }, []);
+
+    const initAudio = async () => {
+        if (!audioContextRef.current) {
+            audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+        }
+        if (!instrumentRef.current) {
+            instrumentRef.current = await Soundfont.instrument(audioContextRef.current, 'acoustic_grand_piano');
+        }
+    };
+
+    const playMidi = async () => {
+        if (isPlaying) {
+            stopMidi();
+            return;
+        }
+
+        try {
+            setIsLoadingMidi(true);
+            await initAudio();
+
+            const songId = currentSong.id.padStart(3, '0');
+            const midiUrl = `/music/${currentBook}${songId}.mid`;
+
+            const response = await fetch(midiUrl);
+            if (!response.ok) throw new Error('MIDI file not found');
+            const arrayBuffer = await response.arrayBuffer();
+
+            playerRef.current = new MidiPlayer.Player((event: any) => {
+                if (event.name === 'Note on' && event.velocity > 0) {
+                    instrumentRef.current?.play(event.noteName, audioContextRef.current?.currentTime, {
+                        gain: (event.velocity / 128) * 5,
+                    });
+                }
+            });
+
+            playerRef.current.loadArrayBuffer(arrayBuffer);
+            playerRef.current.play();
+            setIsPlaying(true);
+            playerRef.current.on('endOfFile', () => setIsPlaying(false));
+        } catch (error) {
+            console.error('Error playing MIDI:', error);
+            alert('Gagal memutar musik. Pastikan file MIDI tersedia.');
+        } finally {
+            setIsLoadingMidi(false);
+        }
+    };
+
+    const stopMidi = () => {
+        playerRef.current?.stop();
+        setIsPlaying(false);
+    };
+
     const handleNext = () => {
         if (currentIndex < currentData.length - 1) {
+            stopMidi();
             setCurrentIndex(prev => prev + 1);
         }
     };
 
     const handlePrev = () => {
         if (currentIndex > 0) {
+            stopMidi();
             setCurrentIndex(prev => prev - 1);
         }
     };
@@ -62,6 +132,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
     const selectSong = (id: string) => {
         const index = currentData.findIndex(s => s.id === id);
         if (index !== -1) {
+            stopMidi();
             setCurrentIndex(index);
             setIsSongSelectOpen(false);
             setSearchQuery('');
@@ -76,12 +147,10 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
         BN: { bg: 'bg-[#2563eb]', border: 'border-[#1e40af]', accent: 'text-[#FFD700]' }
     };
 
-
     if (!currentBook) {
         return (
             <div className="fixed lg:absolute inset-0 z-[60] bg-[#f8f9fa] flex flex-col">
                 <header className="flex-none border-b border-slate-100 px-4 h-14 flex items-center">
-
                     <button onClick={onBack} className="p-2 -ml-2 rounded-full text-slate-600">
                         <ArrowLeft size={20} />
                     </button>
@@ -107,21 +176,17 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                                     >
                                         <div className={`relative w-32 h-44 ${style.bg} rounded-sm overflow-hidden border-l-[5px] ${style.border}`}>
                                             <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/5"></div>
-
                                             <div className="absolute inset-x-0 top-6 flex flex-col items-center px-2">
                                                 <span className={`${style.accent} text-[13px] font-bold tracking-[0.15em] font-serif text-center uppercase leading-tight`}>
                                                     {books[key].label}
                                                 </span>
                                                 <div className={`w-8 h-[1px] ${style.accent} opacity-30 mt-2`}></div>
                                             </div>
-
                                             <div className="absolute bottom-3 right-3 opacity-60">
                                                 <div className="w-2 h-2 rounded-full border border-[#FFFFFF]/90 shadow-[0_0_3px_rgba(255,215,0,0.4)]"></div>
                                             </div>
-
                                             <div className="absolute right-0 inset-y-0 w-[2px] bg-white/10"></div>
                                         </div>
-
                                         <div className="flex flex-col items-center">
                                             <span className="text-[10px] font-black uppercase tracking-widest text-slate-800 font-serif text-center leading-none">
                                                 {books[key].label}
@@ -141,7 +206,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
         <div className="fixed lg:absolute inset-0 z-[60] bg-[#f8f9fa] flex flex-col overflow-hidden animate-in slide-in-from-right lg:slide-in-from-none duration-300">
             <header className="flex-none bg-white border-b border-slate-100 px-4 h-14 flex items-center justify-between">
                 <div className="flex items-center">
-                    <button onClick={() => setCurrentBook(null)} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
+                    <button onClick={() => { stopMidi(); setCurrentBook(null); }} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
                         <ArrowLeft size={20} />
                     </button>
                 </div>
@@ -185,6 +250,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                                 <button
                                     key={key}
                                     onClick={() => {
+                                        stopMidi();
                                         setCurrentBook(key);
                                         setCurrentIndex(0);
                                         setIsBookDropdownOpen(false);
@@ -201,10 +267,32 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
             <div className="flex-1 overflow-y-auto bg-white">
                 <div className="max-w-2xl mx-auto p-4 space-y-10 pb-32">
-                    <div className="text-center space-y-2">
+                    <div className="text-center space-y-4">
                         <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight leading-tight px-4">
                             {currentSong.title}
                         </h1>
+
+                        {(currentBook === 'BE' || currentBook === 'BN') && (
+                            <div className="flex justify-center">
+                                <button
+                                    onClick={playMidi}
+                                    disabled={isLoadingMidi}
+                                    className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold text-sm transition-all ${isPlaying
+                                        ? 'bg-red-50 text-red-600 border border-red-100'
+                                        : 'bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700'
+                                        } disabled:opacity-50`}
+                                >
+                                    {isLoadingMidi ? (
+                                        <Loader2 size={18} className="animate-spin" />
+                                    ) : isPlaying ? (
+                                        <Square size={18} fill="currentColor" />
+                                    ) : (
+                                        <Play size={18} fill="currentColor" />
+                                    )}
+                                    {isLoadingMidi ? 'Memuat...' : isPlaying ? 'Berhenti' : 'Putar Musik'}
+                                </button>
+                            </div>
+                        )}
                     </div>
 
                     <div className="space-y-12">
@@ -230,12 +318,11 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
             {isSongSelectOpen && (
                 <div className="absolute inset-0 z-[100] bg-white flex flex-col animate-in slide-in-from-bottom duration-300">
-
                     <div className="h-14 border-b border-slate-100 flex items-center px-4 flex-none bg-white">
                         <button
                             onClick={() => {
                                 setIsSongSelectOpen(false);
-                                setCurrentBook(null);
+                                if (!currentBook) setCurrentBook(null);
                             }}
                             className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600"
                         >

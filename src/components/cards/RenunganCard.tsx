@@ -45,8 +45,9 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                         kutipan: cols[2],
                         topik: cols[3],
                         isi: cols[4].replace(/\[br\]/g, '\n'),
-                        bukuEnde: cols[5].replace(/\[br\]/g, '\n'),
-                        lirikEnde: cols[6]
+                        nomorEnde: cols[5],
+                        bukuEnde: cols[6].replace(/\[br\]/g, '\n'),
+                        lirikEnde: cols[7]
                     };
 
                     setData(result);
