@@ -191,7 +191,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                     <h3 className="text-xl font-black text-white tracking-tighter uppercase mb-1">
                         Renungan Harian
                     </h3>
-                    <p className="text-[12px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                    <p className="text-[12px] font-black text-slate-100 uppercase tracking-[0.2em]">
                         {data.tanggal}
                     </p>
                 </div>
@@ -206,8 +206,8 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                 <h4 className="text-[18px] font-black text-white leading-tight tracking-tight uppercase">
                                     {data.topik}
                                 </h4>
-                                <p className="text-[15px] font-semibold text-slate-100 leading-snug italic">
-                                    "{data.kutipan}"
+                                <p className="text-[15px] font-semibold text-slate-300 leading-snug italic">
+                                    {data.kutipan}
                                 </p>
                                 <p className="text-[14px] font-black text-blue-400 uppercase tracking-widest pt-1">
                                     — {data.ayat}
