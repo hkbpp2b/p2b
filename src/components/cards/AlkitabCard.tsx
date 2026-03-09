@@ -54,8 +54,8 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
         "Yeh": { TB: "Yehezkiel", BT: "Hesekiel" },
         "Dan": { TB: "Daniel", BT: "Daniel" },
         "Hos": { TB: "Hosea", BT: "Hosea" },
-        "Yoel": { TB: "Yoel", BT: "Joel" },
-        "Amos": { TB: "Amos", BT: "Amos" },
+        "Yoe": { TB: "Yoel", BT: "Joel" },
+        "Amo": { TB: "Amos", BT: "Amos" },
         "Oba": { TB: "Obaja", BT: "Obaja" },
         "Yun": { TB: "Yunus", BT: "Jona" },
         "Mik": { TB: "Mikha", BT: "Mika" },
@@ -97,8 +97,8 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     const daftarPL = [
         "Kej", "Kel", "Ima", "Bil", "Ula", "Yos", "Hak", "Rut", "1Sa", "2Sa",
         "1Ra", "2Ra", "1Ta", "2Ta", "Ezr", "Neh", "Est", "Ayb", "Mzm",
-        "Ams", "Pkh", "Kid", "Yes", "Yer", "Rat", "Yeh", "Dan", "Hos", "Yoel",
-        "Amos", "Oba", "Yun", "Mik", "Nah", "Hab", "Zef", "Hag", "Zak", "Mal"
+        "Ams", "Pkh", "Kid", "Yes", "Yer", "Rat", "Yeh", "Dan", "Hos", "Yoe",
+        "Amo", "Oba", "Yun", "Mik", "Nah", "Hab", "Zef", "Hag", "Zak", "Mal"
     ];
 
     const daftarPB = [
