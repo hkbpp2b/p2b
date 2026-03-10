@@ -28,7 +28,7 @@ function App() {
   const activeNotesRef = useRef<Map<string, any>>(new Map());
 
   const titles: Record<string, string> = {
-    profil: 'HKBP P2B',
+    profil: 'HKBP Perumnas 2 Bekasi',
     warta: 'COMINGSOON',
     ibadah: 'WARTA dan ACARA',
     giving: 'PERSEMBAHAN',
