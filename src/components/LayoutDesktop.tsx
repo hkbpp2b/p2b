@@ -46,7 +46,7 @@ const LayoutDesktop = ({ children, detailContent, activeTab, setActiveTab, menus
 
                 <div className="flex-1 flex justify-center items-center">
                     <h1 className="font-black text-xl tracking-tight text-blue-900 uppercase leading-none whitespace-nowrap">
-                        HKBP Perumnas 2 Bekasi
+                        DEV Test
                     </h1>
                 </div>
 

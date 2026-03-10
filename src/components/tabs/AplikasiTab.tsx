@@ -5,6 +5,14 @@ import AlkitabCard from '../cards/AlkitabCard';
 import BukuEndeCard from '../cards/BukuEndeCard';
 import Game2048Card from '../cards/Game2048Card';
 import SaranForm from '../cards/SaranForm';
+import MusicPlayerMini from '../cards/MusicPlayerMini';
+
+import BUKU_ENDE_DATA from '../../assets/bev1.json';
+
+interface ProfileTabProps {
+    onHeroSelect: (data: any) => void;
+}
+
 
 interface AplikasiTabProps {
     activeTab?: string;
@@ -12,6 +20,7 @@ interface AplikasiTabProps {
 
 const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
     const [activeApp, setActiveApp] = useState<string | null>(null);
+    const randomId = String(BUKU_ENDE_DATA[Math.floor(Math.random() * BUKU_ENDE_DATA.length)].id);
 
     const BibleCrossIcon = ({ size = 24 }) => (
         <svg
@@ -128,6 +137,11 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             <span className="text-[10px] font-black uppercase tracking-wider text-slate-900">{app.name}</span>
                         </button>
                     ))}
+
+                </div>
+
+                <div className="absolute bottom-26 left-1/2 -translate-x-1/2 w-full flex justify-center">
+                    <MusicPlayerMini initialNomorEnde={randomId} />
                 </div>
 
                 <button
@@ -146,16 +160,19 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                         <ChevronRight size={16} />
                     </div>
                 </button>
+
             </div>
 
-            {activeApp && (
-                <div className="fixed inset-0 z-[100] lg:absolute lg:inset-0 lg:z-[40] bg-white overflow-y-auto px-5 pt-8 animate-in slide-in-from-right duration-300">
-                    <div className="w-full">
-                        {renderActiveApp()}
+            {
+                activeApp && (
+                    <div className="fixed inset-0 z-[100] lg:absolute lg:inset-0 lg:z-[40] bg-white overflow-y-auto px-5 pt-8 animate-in slide-in-from-right duration-300">
+                        <div className="w-full">
+                            {renderActiveApp()}
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };
 

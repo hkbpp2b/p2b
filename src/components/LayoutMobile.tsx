@@ -29,11 +29,11 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                     }`}>
                     <h1 className={`text-blue-900 font-black tracking-tighter uppercase ${isScrolled ? 'text-lg tracking-[0.3em]' : 'text-4xl'
                         }`}>
-                        {isScrolled ? title : 'HKBP'}
+                        {isScrolled ? title : 'DEV'}
                     </h1>
                     {!isScrolled && (
                         <p className="text-slate-900 font-bold tracking-[0.4em] uppercase text-xs mt-2">
-                            Perumnas 2 Bekasi
+                            Test
                         </p>
                     )}
                 </header>
