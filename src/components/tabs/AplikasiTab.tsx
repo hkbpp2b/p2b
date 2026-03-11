@@ -1,18 +1,13 @@
 // AplikasiTab.tsx
-import React, { useState, useEffect } from 'react';
-import { Gamepad2, Lightbulb, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Lightbulb, ChevronRight } from 'lucide-react';
 import AlkitabCard from '../cards/AlkitabCard';
 import BukuEndeCard from '../cards/BukuEndeCard';
 import Game2048Card from '../cards/Game2048Card';
 import SaranForm from '../cards/SaranForm';
-import MusicPlayerMini from '../cards/MusicPlayerMini';
+
 
 import BUKU_ENDE_DATA from '../../assets/bev1.json';
-
-interface ProfileTabProps {
-    onHeroSelect: (data: any) => void;
-}
-
 
 interface AplikasiTabProps {
     activeTab?: string;
@@ -20,39 +15,20 @@ interface AplikasiTabProps {
 
 const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
     const [activeApp, setActiveApp] = useState<string | null>(null);
+    const [showMusicPlayer, setShowMusicPlayer] = useState<boolean>(false);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
     const randomId = String(BUKU_ENDE_DATA[Math.floor(Math.random() * BUKU_ENDE_DATA.length)].id);
 
     const BibleCrossIcon = ({ size = 24 }) => (
-        <svg
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#FFD700"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-        >
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#FFD700" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 2v20" />
             <path d="M7 8h10" />
         </svg>
     );
 
     const BibleCircleIcon = ({ size = 24 }) => (
-        <svg
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-            className="rounded-md"
-        >
-            <path
-                d="M 2 24 C 2 10 12 0 12 0 C 12 0 22 10 22 24"
-                stroke="white"
-                strokeWidth="2"
-                strokeOpacity="0.8"
-                fill="none"
-            />
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className="rounded-md">
+            <path d="M 2 24 C 2 10 12 0 12 0 C 12 0 22 10 22 24" stroke="white" strokeWidth="2" strokeOpacity="0.8" fill="none" />
             <g stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="18" r="4" />
                 <path d="M12 6.5v7.5M9 8.8h6" />
@@ -60,45 +36,30 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
         </svg>
     );
 
-
     const Game2048Icon = ({ size = 24 }) => (
-        <svg
-            width={size}
-            height={size}
-            viewBox="0 0 24 24"
-            fill="none"
-        >
-            <text
-                x="12"
-                y="11"
-                fill="black"
-                fontSize="12"
-                textAnchor="middle"
-                fontWeight="1000"
-                fontFamily="Arial, sans-serif"
-                style={{ letterSpacing: '-0.5px' }}
-            >
-                20
-            </text>
-
-            <text
-                x="12"
-                y="22"
-                fill="black"
-                fontSize="12"
-                textAnchor="middle"
-                fontWeight="1000"
-                fontFamily="Arial, sans-serif"
-                style={{ letterSpacing: '-0.5px' }}
-            >
-                48
-            </text>
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+            <text x="12" y="11" fill="black" fontSize="12" textAnchor="middle" fontWeight="1000" fontFamily="Arial, sans-serif" style={{ letterSpacing: '-0.5px' }}>20</text>
+            <text x="12" y="22" fill="black" fontSize="12" textAnchor="middle" fontWeight="1000" fontFamily="Arial, sans-serif" style={{ letterSpacing: '-0.5px' }}>48</text>
         </svg>
     );
 
     useEffect(() => {
         setActiveApp(null);
     }, [activeTab]);
+
+    const handleTouchStart = (id: string) => {
+        if (id === 'ende') {
+            timerRef.current = setTimeout(() => {
+                setShowMusicPlayer(true);
+            }, 700);
+        }
+    };
+
+    const handleTouchEnd = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
+    };
 
     const apps = [
         { id: 'alkitab', name: "Alkitab", icon: <BibleCrossIcon size={24} />, color: "bg-slate-900" },
@@ -124,29 +85,32 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                     <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Layanan Aplikasi Digital</p>
                 </header>
 
-                <div className="grid grid-cols-3 gap-6">
+                <div className="grid grid-cols-3 gap-6 relative">
                     {apps.map((app) => (
-                        <button
-                            key={app.id}
-                            onClick={() => setActiveApp(app.id)}
-                            className="flex flex-col items-center gap-3 group"
-                        >
-                            <div className={`w-16 h-16 ${app.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-active:scale-90 transition-transform`}>
-                                {app.icon}
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-900">{app.name}</span>
-                        </button>
+                        <div key={app.id} className="flex flex-col items-center gap-3">
+                            <button
+                                onClick={() => setActiveApp(app.id)}
+                                onMouseDown={() => handleTouchStart(app.id)}
+                                onMouseUp={handleTouchEnd}
+                                onMouseLeave={handleTouchEnd}
+                                onTouchStart={() => handleTouchStart(app.id)}
+                                onTouchEnd={handleTouchEnd}
+                                className="flex flex-col items-center gap-3 group"
+                            >
+                                <div className={`w-16 h-16 ${app.color} rounded-2xl flex items-center justify-center text-white shadow-lg group-active:scale-90 transition-transform`}>
+                                    {app.icon}
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-wider text-slate-900">{app.name}</span>
+                            </button>
+                        </div>
                     ))}
 
-                </div>
 
-                <div className="absolute bottom-26 left-1/2 -translate-x-1/2 w-full flex justify-center">
-                    <MusicPlayerMini initialNomorEnde={randomId} />
                 </div>
 
                 <button
                     onClick={() => setActiveApp('saran')}
-                    className="w-full flex items-center justify-between p-5 rounded-[2rem] border border-slate-400/20 transition-all hover:bg-slate-100 active:scale-[0.97] active:bg-slate-200 group"
+                    className="absolute bottom-1 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-md flex items-center justify-between p-3 rounded-[2rem] border border-slate-400/20 transition-all hover:bg-slate-100 active:scale-[0.97] active:bg-slate-200 group"
                 >
                     <div className="flex items-center gap-4">
                         <div className="w-5 h-5 rounded-full flex items-center justify-center text-slate-900/20 group-hover:rotate-12 transition-transform">
@@ -156,23 +120,20 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             <p className="text-[10px] text-slate-900/20 font-bold uppercase tracking-tight">Kirim masukan/perbaikan</p>
                         </div>
                     </div>
-                    <div className=" border-slate-100 text-slate-900/20 group-hover:text-slate-900 transition-colors">
+                    <div className="border-slate-100 text-slate-900/20 group-hover:text-slate-900 transition-colors">
                         <ChevronRight size={16} />
                     </div>
                 </button>
-
             </div>
 
-            {
-                activeApp && (
-                    <div className="fixed inset-0 z-[100] lg:absolute lg:inset-0 lg:z-[40] bg-white overflow-y-auto px-5 pt-8 animate-in slide-in-from-right duration-300">
-                        <div className="w-full">
-                            {renderActiveApp()}
-                        </div>
+            {activeApp && (
+                <div className="fixed inset-0 z-[100] lg:absolute lg:inset-0 lg:z-[40] bg-white overflow-y-auto px-5 pt-8 animate-in slide-in-from-right duration-300">
+                    <div className="w-full">
+                        {renderActiveApp()}
                     </div>
-                )
-            }
-        </div >
+                </div>
+            )}
+        </div>
     );
 };
 
