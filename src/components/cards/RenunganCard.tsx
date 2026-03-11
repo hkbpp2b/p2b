@@ -304,7 +304,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             )}
 
                             <div>
-                                <p className="text-[15px] p-2 md:text-[16px] font-medium text-slate-900 leading-[1.7] text-left whitespace-pre-line">
+                                <p className="text-[16px] p-2 md:text-[16px] font-medium text-slate-900 leading-[1.7] text-left whitespace-pre-line">
                                     {data.isi}
                                 </p>
                             </div>
