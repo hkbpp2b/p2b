@@ -12,7 +12,7 @@ interface ProfileTabProps {
 
 const ProfileTab = ({ onHeroSelect }: ProfileTabProps) => {
     return (
-        <div className="animate-in fade-in duration-500 pb-24 px-4 space-y-4 bg-slate-50 overflow-y-auto h-full no-scrollbar">
+        <div className="pb-24 px-4 space-y-4  overflow-y-auto h-full no-scrollbar">
             <HeroCard onSelect={onHeroSelect} />
             <RenunganCard onSelect={onHeroSelect} />
             <JadwalCard />

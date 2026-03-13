@@ -224,7 +224,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             </div>
 
             {isOpen && (
-                <div className="fixed inset-0 z-[9999] flex flex-col animate-in slide-in-from-right duration-500 bg-white lg:hidden">
+                <div className="fixed inset-0 h-full z-[9999] flex flex-col animate-in slide-in-from-right duration-500 bg-white lg:hidden">
                     <header className="flex-none bg-white border-b border-slate-100 px-2 h-12 flex items-center">
                         <div className="flex-1 flex items-center">
                             <button onClick={closeRenungan} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-900">

@@ -21,11 +21,11 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col md:hidden">
+        <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col md:hidden">
             {isHomePage && (
                 <header className={`fixed top-0 left-0 right-0 z-[100] flex flex-col items-center justify-center ${isScrolled
-                    ? 'py-5 bg-white border-b border-slate-200/60 shadow-sm'
-                    : 'py-12 bg-slate-50'
+                    ? 'py-5 bg-slate-50 border-b border-slate-200/60 shadow-[0_4px_20px_-5px_rgba(0,0,0,0.1)]'
+                    : 'py-12 '
                     }`}>
                     <h1 className={`text-blue-900 font-black tracking-tighter uppercase ${isScrolled ? 'text-lg tracking-[0.3em]' : 'text-4xl'
                         }`}>
@@ -43,7 +43,7 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                 {children}
             </main>
 
-            <nav className="fixed bottom-0 left-0 right-0 z-[110] bg-white border-t border-slate-100 pt-3 pb-2 shadow-[0_-4px_20px_rgba(0,0,0,0.03)]">
+            <nav className="fixed bottom-0 left-0 right-0 z-[110] pt-1.5 pb-1.5 bg-white border-t border-slate-200/60 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)]">
                 <div className="grid grid-cols-5 w-full max-w-md mx-auto items-end">
                     {menus.map((m) => {
                         const isActive = activeTab === m.id;
@@ -51,7 +51,7 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                             <button
                                 key={m.id}
                                 onClick={() => setActiveTab(m.id)}
-                                className="flex flex-col items-center justify-center pb-1"
+                                className="flex flex-col items-center justify-center pb-2"
                             >
                                 <div className={`mb-1 ${isActive ? 'text-blue-600' : 'text-slate-900 opacity-40'}`}>
                                     {m.id === 'profil' ? (
