@@ -233,76 +233,86 @@ function App() {
 
     return (
       <div className="flex flex-col h-full bg-white overflow-y-auto no-scrollbar">
-        <div className="sticky top-0 z-10 flex justify-end p-12 pointer-events-none"></div>
+        <div className="sticky top-0 z-10 flex justify-end p-15 pointer-events-none"></div>
 
         <div className="-mt-14">
           {!isRenungan && selectedDetail.url && (
-            <div className="w-full aspect-video shrink-0 bg-slate-100 mb-10">
-              <img src={selectedDetail.url} className="w-full h-full object-cover" alt="" />
+            <div className="max-w-max aspect-video shrink-0 bg-slate-100 mb-10">
+              <img src={selectedDetail.url} className="max-w-max h-full object-cover" alt="" />
             </div>
           )}
 
           <div className="p-10 pt-0">
-            <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.3em] mb-3">
+            <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.4em] mb-2">
               {selectedDetail.tanggal}
             </p>
 
-            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-[0.95] mb-8">
+            <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-8">
               {isRenungan ? selectedDetail.topik : selectedDetail.judul}
             </h2>
 
             {isRenungan && (
-              <div className="border-l-[4px] border-slate-900 pl-6 py-2 mb-10">
-                <p className="text-[18px] font-black text-slate-900 italic leading-snug mb-3">
+              <div className="border-l-[3px] border-slate-900 pl-5 py-1 mb-10">
+                <p className="text-[18px] font-bold text-slate-900 leading-snug mb-3">
                   {selectedDetail.kutipan}
                 </p>
                 <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.2em]">
-                  — {selectedDetail.ayat}
+                  {selectedDetail.ayat}
                 </p>
               </div>
             )}
 
             {isRenungan && selectedDetail.bukuEnde && (
-              <div className="mb-10 p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
-                <h5 className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">
-                  Buku Ende / HKBP
-                </h5>
-                <p className="text-[18px] font-black text-slate-900 mb-4">
-                  {selectedDetail.bukuEnde}
-                </p>
+              <div className="mb-10 p-8 bg-slate-50 rounded-3xl text-center border border-slate-100">
+                <div className="flex flex-col items-center gap-4 text-center">
+                  <p className="text-[18px] font-black text-slate-900 mb-4">
+                    {selectedDetail.bukuEnde}
+                  </p>
 
-                <button
-                  onClick={playMidi}
-                  disabled={isLoadingMidi}
-                  className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full mb-6 transition-all ${isPlaying
-                    ? 'bg-red-50 text-red-600 border border-red-100'
-                    : 'bg-blue-600 text-white'
-                    } disabled:opacity-50`}
-                >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'}`}>
-                    {isLoadingMidi ? (
-                      <Loader2 size={16} className="animate-spin" />
-                    ) : isPlaying ? (
-                      <Square size={14} fill="currentColor" />
-                    ) : (
-                      <Play size={14} fill="currentColor" className="ml-0.5" />
-                    )}
-                  </div>
-                  <span className="text-[11px] font-black uppercase tracking-widest">
-                    BE NO.{selectedDetail.nomorEnde}
-                  </span>
-                </button>
+                  <button
+                    onClick={playMidi}
+                    disabled={isLoadingMidi}
+                    className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full mb-6 transition-all ${isPlaying
+                      ? 'bg-red-50 text-red-600 border border-red-100'
+                      : 'bg-blue-600 text-white'
+                      } disabled:opacity-50`}
+                  >
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'}`}>
+                      {isLoadingMidi ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : isPlaying ? (
+                        <Square size={14} fill="currentColor" />
+                      ) : (
+                        <Play size={14} fill="currentColor" className="ml-0.5" />
+                      )}
+                    </div>
+                    <span className="text-[11px] font-black uppercase tracking-widest">
+                      BE NO.{selectedDetail.nomorEnde}
+                    </span>
+                  </button>
+                </div>
 
-                <p className="text-[16px] font-medium text-slate-600 leading-relaxed italic whitespace-pre-line">
-                  {selectedDetail.lirikEnde}
-                </p>
+
+
+
+                <div className="mt-8 text-center flex flex-col gap-4">
+                  {selectedDetail.lirikEnde.split('\n').map((line, index) => (
+                    <p key={index} className="text-[16px] font-bold text-slate-900 italic">
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
             )}
+
 
             <p className="text-[16px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
               {isRenungan ? selectedDetail.isi : selectedDetail.deskripsi}
             </p>
+
+
           </div>
+
         </div>
       </div>
     );
