@@ -1,6 +1,8 @@
 // AlkitabCard.tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Book, BookOpen } from 'lucide-react';
+import tbData from '../../assets/tb.json';
+import btData from '../../assets/btv3.json';
 
 interface AlkitabVerse {
     id: number;
@@ -24,6 +26,10 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
     const [currentKitab, setCurrentKitab] = useState('Kej');
     const [currentPasal, setCurrentPasal] = useState(1);
     const [loading, setLoading] = useState(true);
+
+
+
+
 
     const namaFullKitab: Record<string, { TB: string; BT: string }> = {
         "Kej": { TB: "Kejadian", BT: "1 Musa" },
@@ -109,63 +115,30 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
 
     useEffect(() => {
         if (!version) return;
-        const loadData = async () => {
-            setLoading(true);
-            try {
-                const fileName = version === 'TB' ? 'tb.csv' : 'btv3.csv';
-                const response = await fetch(`/${fileName}`);
-                const rawData = await response.text();
-                const lines = rawData.split(/\r?\n/);
-                const parsed: AlkitabVerse[] = [];
-
-                for (let i = 1; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    if (!line) continue;
-                    const match = line.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
-                    if (match && match.length >= 5) {
-                        parsed.push({
-                            id: parseInt(match[0]),
-                            kitab: match[1],
-                            pasal: parseInt(match[2]),
-                            ayat: parseInt(match[3]),
-                            firman: match[4].replace(/^"|"$/g, '').replace(/""/g, '"')
-                        });
-                    }
-                }
-                setAlkitabData(parsed);
-                setLoading(false);
-            } catch (error) {
-                setLoading(false);
-            }
-        };
-        loadData();
+        setLoading(true);
+        const data = version === 'TB' ? tbData : btData;
+        setAlkitabData(data as any);
+        setLoading(false);
     }, [version]);
 
-    const listPasal = useMemo(() => {
-        if (alkitabData.length === 0) return [];
-        const pasals = alkitabData
-            .filter(v => v.kitab === currentKitab)
-            .map(v => v.pasal);
-        return Array.from(new Set(pasals)).sort((a, b) => a - b);
+    const dataKitabSekarang = useMemo(() => {
+        return alkitabData.find((k: any) => k.kitab === currentKitab);
     }, [alkitabData, currentKitab]);
 
+    const listPasal = useMemo(() => {
+        if (!dataKitabSekarang) return [];
+        return dataKitabSekarang.pasals.map((p: any) => p.pasal);
+    }, [dataKitabSekarang]);
+
     const maxPasal = useMemo(() => {
-        return listPasal.length > 0 ? listPasal[listPasal.length - 1] : 1;
+        return listPasal.length > 0 ? Math.max(...listPasal) : 1;
     }, [listPasal]);
 
-    useEffect(() => {
-        if (loading || alkitabData.length === 0) return;
-
-        const isPasalValid = listPasal.includes(currentPasal);
-
-        if (!isPasalValid) {
-            setCurrentPasal(1);
-        }
-    }, [currentKitab, listPasal]);
-
     const versesInPasal = useMemo(() => {
-        return alkitabData.filter(v => v.kitab === currentKitab && v.pasal === currentPasal);
-    }, [alkitabData, currentKitab, currentPasal]);
+        if (!dataKitabSekarang) return [];
+        const pasalData = dataKitabSekarang.pasals.find((p: any) => p.pasal === currentPasal);
+        return pasalData ? pasalData.ayats : [];
+    }, [dataKitabSekarang, currentPasal]);
 
     useEffect(() => {
         if (listPasal.length > 0 && !listPasal.includes(currentPasal)) {
@@ -173,22 +146,13 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
         }
     }, [currentKitab, listPasal, currentPasal]);
 
-
     const kitabGrup = useMemo(() => {
-        if (alkitabData.length === 0) {
-            return {
-                pl: daftarPL,
-                pb: daftarPB
-            };
-        }
-        const unik = Array.from(new Set(alkitabData.map(v => v.kitab)));
+        const unik = alkitabData.map((v: any) => v.kitab);
         return {
             pl: daftarPL.filter(k => unik.includes(k)),
             pb: daftarPB.filter(k => unik.includes(k))
         };
     }, [alkitabData]);
-
-
 
     const scrollToAyat = (ayatNum: number) => {
         setIsSelectorOpen(false);
@@ -412,9 +376,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                 <div>
                                     <h3 className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4 px-1">Perjanjian Lama</h3>
                                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                                        {daftarPL.map(k => (
+                                        {daftarPL.map((k) => (
                                             <button
-                                                key={k}
+                                                key={`pl-${k}`}
                                                 onClick={() => { setCurrentKitab(k); setSelectorTab('pasal'); }}
                                                 className={`p-3 text-left text-[11px] font-bold uppercase border rounded-xl transition-all ${currentKitab === k ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
                                             >
@@ -426,9 +390,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                                 <div>
                                     <h3 className="text-[11px] font-black text-red-600 uppercase tracking-[0.2em] mb-4 px-1">Perjanjian Baru</h3>
                                     <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                                        {kitabGrup.pb.map(k => (
+                                        {kitabGrup.pb.map((k) => (
                                             <button
-                                                key={k}
+                                                key={`pb-${k}`}
                                                 onClick={() => { setCurrentKitab(k); setSelectorTab('pasal'); }}
                                                 className={`p-3 text-left text-[11px] font-bold uppercase border rounded-xl transition-all ${currentKitab === k ? 'border-red-600 bg-red-50 text-red-700' : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
                                             >
@@ -443,9 +407,9 @@ const AlkitabCard = ({ onBack }: AlkitabCardProps) => {
                         {selectorTab === 'pasal' && (
                             <div className="grid grid-cols-5 gap-2 pb-10">
                                 {listPasal.length > 0 ? (
-                                    listPasal.map(p => (
+                                    listPasal.map((p) => (
                                         <button
-                                            key={p}
+                                            key={`pasal-${p}`}
                                             onClick={() => { setCurrentPasal(p); setSelectorTab('ayat'); }}
                                             className={`aspect-square flex items-center justify-center text-sm font-bold border rounded-xl transition-all ${currentPasal === p ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
                                         >

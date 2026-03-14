@@ -90,7 +90,9 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
             const songId = currentSong.id.padStart(3, '0');
             const bookPrefix = currentBook === 'BN' ? 'BE' : currentBook;
-            const midiUrl = `/music/${bookPrefix}${songId}.mid`;
+
+            const midiModule = await import(`../../assets/music/${bookPrefix}${songId}.mid`);
+            const midiUrl = midiModule.default;
 
             const response = await fetch(midiUrl);
             if (!response.ok) throw new Error('MIDI file not found');
@@ -102,7 +104,6 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                 const key = `${event.noteName}_${event.channel}`;
 
                 if (event.name === 'Note on' && event.velocity > 0) {
-                    // Stop note yang sama kalau masih berbunyi (avoid overlap)
                     activeNotesRef.current.get(key)?.stop();
 
                     const node = instrumentRef.current.play(
@@ -116,7 +117,6 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                     event.name === 'Note off' ||
                     (event.name === 'Note on' && event.velocity === 0)
                 ) {
-                    // Hentikan note saat ada Note Off
                     activeNotesRef.current.get(key)?.stop();
                     activeNotesRef.current.delete(key);
                 }
@@ -127,7 +127,6 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
             setIsPlaying(true);
 
             playerRef.current.on('endOfFile', () => {
-                // Bersihkan semua note yang masih aktif saat lagu selesai
                 activeNotesRef.current.forEach(node => node.stop());
                 activeNotesRef.current.clear();
                 setIsPlaying(false);
@@ -135,7 +134,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
         } catch (error) {
             console.error('Error playing MIDI:', error);
-            alert('Gagal memutar musik. Pastikan file MIDI tersedia.');
+            alert('Gagal memutar musik. Pastikan file MIDI tersedia di assets.');
         } finally {
             setIsLoadingMidi(false);
         }

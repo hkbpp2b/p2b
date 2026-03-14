@@ -128,7 +128,8 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             }
 
             const songId = cleanNumber.padStart(3, '0');
-            const midiUrl = `/music/BE${songId}.mid`;
+            const midiModule = await import(`../../assets/music/BE${songId}.mid`);
+            const midiUrl = midiModule.default;
 
             const response = await fetch(midiUrl);
             if (!response.ok) throw new Error('MIDI file not found');

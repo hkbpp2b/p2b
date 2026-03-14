@@ -237,8 +237,12 @@ function App() {
 
         <div className="-mt-14">
           {!isRenungan && selectedDetail.url && (
-            <div className="max-w-max aspect-video shrink-0 bg-slate-100 mb-10">
-              <img src={selectedDetail.url} className="max-w-max h-full object-cover" alt="" />
+            <div className="w-full aspect-full mb-10">
+              <img
+                src={selectedDetail.url}
+                className="w-full h-full object-contain"
+                alt="Detail content"
+              />
             </div>
           )}
 
