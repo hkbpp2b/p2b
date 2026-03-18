@@ -169,6 +169,7 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
     return (
         <>
             <div className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-3 transition-all bg-white">
+
                 <div className="rounded-[2rem] overflow-hidden aspect-[4/3] relative bg-slate-900 group">
                     <div
                         ref={sliderRef}

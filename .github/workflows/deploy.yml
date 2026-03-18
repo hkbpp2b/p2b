@@ -31,7 +31,9 @@ jobs:
           VITE_2048_URL: ${{ secrets.VITE_2048_URL }}
           VITE_SALT_URL: ${{ secrets.VITE_SALT_URL }}
           VITE_TSV_PELAYAN_URL: ${{ secrets.VITE_TSV_PELAYAN_URL }}
+          VITE_TSV_SLIDE_URL: ${{ secrets.VITE_TSV_SLIDE_URL }}
 
+        
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -47,7 +47,6 @@ const GivingTab = () => {
         const textArea = document.createElement("textarea");
         textArea.value = text;
 
-        // Pastikan tidak terlihat dan tidak merusak layout
         textArea.style.position = "fixed";
         textArea.style.left = "-9999px";
         textArea.style.top = "0";

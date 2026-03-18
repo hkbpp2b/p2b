@@ -1,5 +1,5 @@
 // OtherTab.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { UserPlus, MessageSquareHeart, MessageCircleWarning, HeartHandshake, ChevronRight } from 'lucide-react';
 import DataJemaatForm from '../cards/DataJemaatForm';
 import DoaForm from '../cards/DoaForm';
@@ -84,8 +84,8 @@ const OtherTab = ({ onSelectContent }: OtherTabProps) => {
                             key={service.id}
                             onClick={() => handleServiceClick(service)}
                             className={`w-full p-6 rounded-[2.5rem] flex items-center gap-5 group active:scale-[0.98] transition-all shadow-sm hover:shadow-md border ${isActive
-                                    ? "bg-blue-900 border-transparent text-white scale-[1.02] shadow-xl"
-                                    : "bg-white border-slate-100 text-slate-900"
+                                ? "bg-blue-900 border-transparent text-white scale-[1.02] shadow-xl"
+                                : "bg-white border-slate-100 text-slate-900"
                                 }`}
                         >
                             <div className={`h-14 w-14 rounded-3xl flex items-center justify-center shrink-0 transition-colors ${isActive ? "bg-blue-800" : service.color

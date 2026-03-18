@@ -104,8 +104,6 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             </button>
                         </div>
                     ))}
-
-
                 </div>
 
                 <button
