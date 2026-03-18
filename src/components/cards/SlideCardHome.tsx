@@ -161,7 +161,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
             </div>
 
             <div className="mb-8 text-center pt-2">
-                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Wawasan Iman</h3>
+                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Wawasan Iman2</h3>
             </div>
 
             <div className="rounded-[2rem] overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none">
