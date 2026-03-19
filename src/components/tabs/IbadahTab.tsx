@@ -14,13 +14,13 @@ const IbadahTab = ({ onSelectContent, scrollToWawasan, onScrollDone }: IbadahTab
 
     useEffect(() => {
         if (scrollToWawasan) {
-            // Beri sedikit delay agar komponen dipastikan sudah 'block' (muncul) sebelum scroll
+
             const timer = setTimeout(() => {
                 wawasanRef.current?.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
-                onScrollDone?.(); // Reset state shouldScroll di App.tsx menjadi false
+                onScrollDone?.();
             }, 100);
             return () => clearTimeout(timer);
         }

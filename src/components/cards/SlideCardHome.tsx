@@ -53,7 +53,6 @@ const PDFCoverHome = ({ url }: { url: string }) => {
                     }}
                 />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent z-10" />
         </div>
     );
 };
@@ -70,6 +69,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const [dragDistance, setDragDistance] = useState(0);
 
     const TSV_URL = import.meta.env.VITE_TSV_SLIDE_URL;
 
@@ -117,6 +117,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
 
     const handleMouseDown = (e: React.MouseEvent) => {
         setIsDragging(true);
+        setDragDistance(0);
         setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
         setScrollLeft(sliderRef.current?.scrollLeft || 0);
     };
@@ -126,15 +127,33 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
         e.preventDefault();
         const x = e.pageX - (sliderRef.current?.offsetLeft || 0);
         const walk = (x - startX) * 2;
+        setDragDistance(Math.abs(walk));
         if (sliderRef.current) {
             sliderRef.current.scrollLeft = scrollLeft - walk;
         }
     };
 
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
     const handleScroll = () => {
-        if (sliderRef.current) {
+        if (sliderRef.current && sliderRef.current.offsetWidth > 0) {
             const index = Math.round(sliderRef.current.scrollLeft / sliderRef.current.offsetWidth);
-            setCurrentSlide(index);
+            if (index !== currentSlide) {
+                setCurrentSlide(index);
+            }
+        }
+    };
+
+    const handleClick = (e: React.MouseEvent) => {
+        if (dragDistance > 10) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        if (onNavigate) {
+            onNavigate();
         }
     };
 
@@ -146,22 +165,23 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
 
     return (
         <div
-            onClick={onNavigate}
+            onClick={handleClick}
             className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-3 bg-white relative cursor-pointer active:scale-95 transition-transform duration-200"
         >
             <div className="absolute -top-1 -right-1 z-40 scale-90 pointer-events-none">
                 <div className="relative flex items-center justify-center">
-                    <svg viewBox="0 0 100 100" className="w-16 h-16 fill-blue-800 drop-shadow-md">
+                    <svg viewBox="0 25 90 100" className="w-16 h-16 fill-red-500 drop-shadow-md">
                         <path d="M50 5L55 18L68 14L69 27L82 27L79 40L91 44L85 55L94 66L81 70L81 83L68 82L61 94L50 88L39 94L32 82L19 83L19 70L6 66L15 55L9 44L21 40L18 27L31 27L32 14L45 18Z" />
                     </svg>
-                    <span className="absolute text-white text-[9px] font-bold tracking-widest">
-                        Baru
+                    <span className="absolute right-4.5 top-3 text-white text-[9px] font-bold tracking-widest">
+                        baru
                     </span>
                 </div>
             </div>
 
-            <div className="mb-8 text-center pt-2">
-                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Wawasan Iman</h3>
+            <div className="mb-2 text-center pointer-events-none">
+                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Wawasan Iman</h3>
+                <p className="text-[12px] text-slate-800 font-bold uppercase tracking-[0.1em]">{slides[currentSlide]?.judul}</p>
             </div>
 
             <div className="rounded-[2rem] overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none">
@@ -169,8 +189,8 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
                     ref={sliderRef}
                     onScroll={handleScroll}
                     onMouseDown={handleMouseDown}
-                    onMouseLeave={() => setIsDragging(false)}
-                    onMouseUp={() => setIsDragging(false)}
+                    onMouseLeave={handleMouseUp}
+                    onMouseUp={handleMouseUp}
                     onMouseMove={handleMouseMove}
                     className={`flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar ${isDragging ? 'select-none' : ''}`}
                     style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
@@ -178,7 +198,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
                     {slides.map((slide, idx) => (
                         <div
                             key={idx}
-                            className="w-full h-full shrink-0 snap-center relative transition-transform duration-200"
+                            className="w-full h-full shrink-0 snap-center relative"
                         >
                             <PDFCoverHome url={slide.linkPdf} />
                         </div>
@@ -189,12 +209,6 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
                     {slides.map((_, idx) => (
                         <div key={idx} className={`h-1 rounded-full transition-all duration-500 ${idx === currentSlide ? 'w-6 bg-white' : 'w-1.5 bg-white/30'}`} />
                     ))}
-                </div>
-
-                <div className="absolute bottom-6 left-6 right-6 text-left z-20 pointer-events-none">
-                    <h3 className="text-white text-[16px] font-black uppercase tracking-tight leading-none line-clamp-2">
-                        {slides[currentSlide]?.judul}
-                    </h3>
                 </div>
             </div>
         </div>

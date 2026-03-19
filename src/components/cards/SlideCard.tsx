@@ -1,6 +1,7 @@
-// slidecard.tsx
+// SlideCard.tsx
+
 import React, { useState, useEffect } from 'react';
-import { Loader2, ChevronDown, FileText, ChevronRight } from 'lucide-react';
+import { Loader2, ChevronDown, FileText } from 'lucide-react';
 
 let cachedSlideData: any[] | null = null;
 
@@ -11,6 +12,7 @@ const GoogleDriveImage = ({ url, name, className }: { url: string | null, name: 
     useEffect(() => {
         if (!url || url === "#") {
             setLoading(false);
+            setImgSrc(null);
             return;
         }
 
@@ -44,16 +46,18 @@ const GoogleDriveImage = ({ url, name, className }: { url: string | null, name: 
                     <Loader2 className="animate-spin text-slate-300" size={12} />
                 </div>
             )}
-            <img
-                src={imgSrc || ''}
-                alt={name}
-                className={`w-full h-full object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}
-                onLoad={() => setLoading(false)}
-                onError={() => {
-                    setLoading(false);
-                    setImgSrc(null);
-                }}
-            />
+            {imgSrc && (
+                <img
+                    src={imgSrc}
+                    alt={name}
+                    className={`w-full h-full object-cover transition-opacity duration-300 ${loading ? 'opacity-0' : 'opacity-100'}`}
+                    onLoad={() => setLoading(false)}
+                    onError={() => {
+                        setLoading(false);
+                        setImgSrc(null);
+                    }}
+                />
+            )}
         </div>
     );
 };
@@ -65,6 +69,7 @@ const PDFCover = ({ url }: { url: string }) => {
     useEffect(() => {
         if (!url || url === "#") {
             setLoading(false);
+            setImgSrc(null);
             return;
         }
 
@@ -75,9 +80,11 @@ const PDFCover = ({ url }: { url: string }) => {
                 setImgSrc(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`);
             } else {
                 setLoading(false);
+                setImgSrc(null);
             }
         } else {
             setLoading(false);
+            setImgSrc(null);
         }
     }, [url]);
 
@@ -135,8 +142,8 @@ const SlideCard = () => {
                         return {
                             judul: cols[0] || "Untitled Presentation",
                             penulis: cols[1] || "Anonymous",
-                            fotoPenulis: cols[2] || null,
-                            linkPdf: cols[3] || "#"
+                            fotoPenulis: (cols[2] && cols[2] !== "") ? cols[2] : null,
+                            linkPdf: (cols[3] && cols[3] !== "") ? cols[3] : "#"
                         };
                     });
                     setSlides(parsed);
@@ -194,8 +201,6 @@ const SlideCard = () => {
                                         <span>{slide.penulis}</span>
                                     </div>
                                 </div>
-
-
                             </div>
                         </a>
                     </div>
@@ -208,7 +213,7 @@ const SlideCard = () => {
                         onClick={handleLoadMore}
                         className="flex items-center gap-2 px-10 py-3.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all text-xs font-bold uppercase tracking-widest text-slate-900 shadow-sm active:scale-95"
                     >
-                        Lihat lainnya
+                        Liat lainnya
                         <ChevronDown size={16} strokeWidth={3} />
                     </button>
                 </div>

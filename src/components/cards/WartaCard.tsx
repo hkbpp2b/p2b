@@ -114,7 +114,10 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
     );
 
     const sections = [
-        { title: "Warta Jemaat", items: [{ label: "Warta Mingguan", id: data?.warta, icon: <Newspaper size={20} />, primary: true }] },
+        {
+            title: "Warta Jemaat",
+            items: [{ label: "Warta Mingguan", id: data?.warta, icon: <Newspaper size={20} />, primary: true }]
+        },
         {
             title: "Tata Ibadah", items: [
                 { label: "Ibadah Umum", id: data?.umum, icon: <BookOpen size={18} /> },
@@ -134,7 +137,7 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">{data?.tanggal}</p>
             </header>
 
-            <div className="space-y-10">
+            <div className="space-y-4">
                 {sections.map((section, sIdx) => (
                     <div key={sIdx} className="space-y-4">
                         <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-[0.25em] pl-1">{section.title}</h3>
@@ -171,58 +174,57 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                                                 </a>
                                             </div>
                                         )}
+
+                                        {item.primary && (
+                                            <div className="mt-3">
+                                                <button
+                                                    onClick={handleToggleArsip}
+                                                    className={`w-full py-3 flex items-center justify-center gap-2  transition-colors ${showArsip
+                                                        ? " text-slate-900"
+                                                        : " text-slate-400"
+                                                        }`}
+                                                >
+                                                    <ChevronDown size={14} className={`${showArsip ? "rotate-180" : ""}`} />
+                                                    <span className="text-[10px] font-black uppercase tracking-[0.15em]">
+                                                        {showArsip ? "Tutup Arsip" : "Arsip Warta"}
+                                                    </span>
+                                                </button>
+
+                                                {showArsip && (
+                                                    <div className="mt-2 space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                        {loadingArsip ? (
+                                                            <div className="flex justify-center py-6">
+                                                                <Loader2 className="animate-spin text-slate-300" size={20} />
+                                                            </div>
+                                                        ) : (
+                                                            <div className="grid gap-2">
+                                                                {arsip.map((archiveItem, idx) => (
+                                                                    <a
+                                                                        key={idx}
+                                                                        href={`https://drive.google.com/file/d/${archiveItem.warta}/view`}
+                                                                        target="_blank"
+                                                                        rel="noopener noreferrer"
+                                                                        className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 hover:bg-white transition-all"
+                                                                    >
+                                                                        <div className="flex flex-col">
+                                                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{archiveItem.tanggal}</span>
+                                                                            <span className="text-[11px] font-black text-slate-800 uppercase">{archiveItem.minggu}</span>
+                                                                        </div>
+                                                                        <Download size={14} className="text-slate-400" />
+                                                                    </a>
+                                                                ))}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
                 ))}
-
-                <div className="pt-4">
-                    <button
-                        onClick={handleToggleArsip}
-                        className={`w-full py-4 flex items-center justify-center gap-2 border-2 border-dashed rounded-3xl ${showArsip
-                            ? "border-slate-900 text-slate-900 bg-slate-50"
-                            : "border-slate-200 text-slate-400 hover:text-slate-900 hover:border-slate-900"
-                            }`}
-                    >
-                        <ChevronDown size={18} className={`${showArsip ? "rotate-180" : ""}`} />
-                        <span className="text-[11px] font-black uppercase tracking-[0.2em]">
-                            {showArsip ? "Tutup Arsip" : "Arsip Warta"}
-                        </span>
-                    </button>
-
-                    {showArsip && (
-                        <div className="mt-4 space-y-4">
-                            <h3 className="text-[12px] font-black text-slate-700 uppercase tracking-[0.25em] pl-1 border-l-4 border-slate-200 ml-1">
-                                Arsip Warta Jemaat
-                            </h3>
-                            {loadingArsip ? (
-                                <div className="flex justify-center py-10">
-                                    <Loader2 className="animate-spin text-slate-300" size={24} />
-                                </div>
-                            ) : (
-                                <div className="grid gap-2">
-                                    {arsip.map((item, idx) => (
-                                        <a
-                                            key={idx}
-                                            href={`https://drive.google.com/file/d/${item.warta}/view`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200"
-                                        >
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-bold text-slate-800 uppercase tracking-tight">{item.tanggal}</span>
-                                                <span className="text-[12px] font-black text-slate-800 uppercase">{item.minggu}</span>
-                                            </div>
-                                            <Download size={16} className="text-slate-400" />
-                                        </a>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
-                </div>
             </div>
         </div>
     );
