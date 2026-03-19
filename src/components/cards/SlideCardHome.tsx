@@ -174,7 +174,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
                         <path d="M50 5L55 18L68 14L69 27L82 27L79 40L91 44L85 55L94 66L81 70L81 83L68 82L61 94L50 88L39 94L32 82L19 83L19 70L6 66L15 55L9 44L21 40L18 27L31 27L32 14L45 18Z" />
                     </svg>
                     <span className="absolute right-4.5 top-3 text-white text-[9px] font-bold tracking-widest">
-                        baru
+                        Baru
                     </span>
                 </div>
             </div>
