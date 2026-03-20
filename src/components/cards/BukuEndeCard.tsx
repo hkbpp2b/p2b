@@ -4,7 +4,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Search, ChevronDown, Play, Square
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
 import BUKU_ENDE_DATA from '../../assets/bev2.json';
-import BUKU_NYANYIAN_DATA from '../../assets/bnv1.json';
+import BUKU_NYANYIAN_DATA from '../../assets/bnv2.json';
 import KIDUNG_JEMAAT_DATA from '../../assets/kjv2.json';
 
 interface SongVerse {
