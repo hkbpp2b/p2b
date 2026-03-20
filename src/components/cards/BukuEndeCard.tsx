@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { ArrowLeft, ChevronLeft, ChevronRight, Search, ChevronDown, Play, Square, Loader2 } from 'lucide-react';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
-import BUKU_ENDE_DATA from '../../assets/bev1.json';
+import BUKU_ENDE_DATA from '../../assets/bev2.json';
 import BUKU_NYANYIAN_DATA from '../../assets/bnv1.json';
 import KIDUNG_JEMAAT_DATA from '../../assets/kjv2.json';
 

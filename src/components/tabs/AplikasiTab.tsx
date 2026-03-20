@@ -7,7 +7,7 @@ import Game2048Card from '../cards/Game2048Card';
 import SaranForm from '../cards/SaranForm';
 
 
-import BUKU_ENDE_DATA from '../../assets/bev1.json';
+import BUKU_ENDE_DATA from '../../assets/bev2.json';
 
 interface AplikasiTabProps {
     activeTab?: string;
