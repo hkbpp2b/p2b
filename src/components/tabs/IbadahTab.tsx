@@ -32,8 +32,8 @@ const IbadahTab = ({ onSelectContent, scrollToWawasan, onScrollDone }: IbadahTab
 
             <div ref={wawasanRef} className="space-y-6 pt-12 scroll-mt-24">
                 <header className="text-center space-y-1">
-                    <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Wawasan Iman</h2>
-                    <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Kajian Teologi, Budaya, dan Aliran</p>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Pembinaan</h2>
+                    <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Materi Pembinaan Warga Jemaat</p>
                 </header>
                 <SlideCard />
             </div>

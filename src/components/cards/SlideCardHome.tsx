@@ -1,5 +1,5 @@
 // SlideCardHome.tsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2, FileText } from 'lucide-react';
 
 let cachedSlideHomeData: any[] | null = null;
@@ -9,7 +9,7 @@ const PDFCoverHome = ({ url }: { url: string }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!url || url === "#") {
+        if (!url || url === "#" || url === "-") {
             setLoading(false);
             return;
         }
@@ -62,14 +62,8 @@ interface SlideCardHomeProps {
 }
 
 const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
-    const [slides, setSlides] = useState<any[]>(cachedSlideHomeData || []);
+    const [slide, setSlide] = useState<any>(cachedSlideHomeData ? cachedSlideHomeData[0] : null);
     const [loading, setLoading] = useState(!cachedSlideHomeData);
-    const [currentSlide, setCurrentSlide] = useState(0);
-    const sliderRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
-    const [dragDistance, setDragDistance] = useState(0);
 
     const TSV_URL = import.meta.env.VITE_TSV_SLIDE_URL;
 
@@ -80,17 +74,27 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
                 const response = await fetch(`${TSV_URL}&t=${new Date().getTime()}`);
                 const text = await response.text();
                 const rows = text.split(/\r?\n/).filter(row => row.trim() !== "");
+
                 if (rows.length > 1) {
-                    const parsed = rows.slice(1).map(row => {
-                        const cols = row.split('\t').map(v => v.trim());
-                        return {
+                    const row = rows[1];
+                    const cols = row.split('\t').map(v => v.trim());
+
+                    const isDataEmpty = cols.every(col => col === "-" || col === "");
+
+                    if (isDataEmpty) {
+                        setSlide(null);
+                        cachedSlideHomeData = null;
+                    } else {
+                        const data = {
                             judul: cols[0] || "Untitled Presentation",
                             penulis: cols[1] || "Anonymous",
                             linkPdf: cols[3] || "#"
                         };
-                    });
-                    setSlides(parsed);
-                    cachedSlideHomeData = parsed;
+                        setSlide(data);
+                        cachedSlideHomeData = [data];
+                    }
+                } else {
+                    setSlide(null);
                 }
             } catch (e) {
                 console.error(e);
@@ -101,57 +105,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
         fetchSlides();
     }, [TSV_URL]);
 
-    useEffect(() => {
-        if (slides.length > 1) {
-            const timer = setInterval(() => {
-                if (isDragging) return;
-                const nextSlide = (currentSlide + 1) % slides.length;
-                sliderRef.current?.scrollTo({
-                    left: nextSlide * (sliderRef.current?.offsetWidth || 0),
-                    behavior: 'smooth'
-                });
-            }, 6000);
-            return () => clearInterval(timer);
-        }
-    }, [slides, currentSlide, isDragging]);
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        setIsDragging(true);
-        setDragDistance(0);
-        setStartX(e.pageX - (sliderRef.current?.offsetLeft || 0));
-        setScrollLeft(sliderRef.current?.scrollLeft || 0);
-    };
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const x = e.pageX - (sliderRef.current?.offsetLeft || 0);
-        const walk = (x - startX) * 2;
-        setDragDistance(Math.abs(walk));
-        if (sliderRef.current) {
-            sliderRef.current.scrollLeft = scrollLeft - walk;
-        }
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
-
-    const handleScroll = () => {
-        if (sliderRef.current && sliderRef.current.offsetWidth > 0) {
-            const index = Math.round(sliderRef.current.scrollLeft / sliderRef.current.offsetWidth);
-            if (index !== currentSlide) {
-                setCurrentSlide(index);
-            }
-        }
-    };
-
-    const handleClick = (e: React.MouseEvent) => {
-        if (dragDistance > 10) {
-            e.preventDefault();
-            e.stopPropagation();
-            return;
-        }
+    const handleClick = () => {
         if (onNavigate) {
             onNavigate();
         }
@@ -162,6 +116,8 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
             <Loader2 className="animate-spin text-slate-900" size={24} />
         </div>
     );
+
+    if (!slide) return null;
 
     return (
         <div
@@ -180,35 +136,13 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
             </div>
 
             <div className="mb-2 text-center pointer-events-none">
-                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Wawasan Iman</h3>
-                <p className="text-[12px] text-slate-800 font-bold uppercase tracking-[0.1em]">{slides[currentSlide]?.judul}</p>
+                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Pembinaan Warga Jemaat</h3>
+                <p className="text-[12px] text-slate-800 font-bold uppercase tracking-widest">{slide.judul}</p>
             </div>
 
             <div className="rounded-[2rem] overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none">
-                <div
-                    ref={sliderRef}
-                    onScroll={handleScroll}
-                    onMouseDown={handleMouseDown}
-                    onMouseLeave={handleMouseUp}
-                    onMouseUp={handleMouseUp}
-                    onMouseMove={handleMouseMove}
-                    className={`flex w-full h-full overflow-x-auto snap-x snap-mandatory no-scrollbar ${isDragging ? 'select-none' : ''}`}
-                    style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
-                >
-                    {slides.map((slide, idx) => (
-                        <div
-                            key={idx}
-                            className="w-full h-full shrink-0 snap-center relative"
-                        >
-                            <PDFCoverHome url={slide.linkPdf} />
-                        </div>
-                    ))}
-                </div>
-
-                <div className="absolute top-5 left-6 flex gap-1.5 z-30 pointer-events-none">
-                    {slides.map((_, idx) => (
-                        <div key={idx} className={`h-1 rounded-full transition-all duration-500 ${idx === currentSlide ? 'w-6 bg-white' : 'w-1.5 bg-white/30'}`} />
-                    ))}
+                <div className="w-full h-full relative">
+                    <PDFCoverHome url={slide.linkPdf} />
                 </div>
             </div>
         </div>
