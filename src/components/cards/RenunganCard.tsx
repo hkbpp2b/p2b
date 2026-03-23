@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronRight, ArrowLeft, Play, Square, Loader2 } from 'lucide-react';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
@@ -217,7 +217,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                         </div>
 
                         <div className="flex items-center gap-1 text-white pt-2 border-t border-slate-700/50">
-                            <span className="text-[10px] font-black uppercase tracking-[0.1em]">Baca Selengkapnya</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest">Baca Selengkapnya</span>
                             <ChevronRight size={14} className="text-blue-500" />
                         </div>
                     </div>
@@ -225,7 +225,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             </div>
 
             {isOpen && (
-                <div className="fixed inset-0 h-full z-[9999] flex flex-col animate-in slide-in-from-right duration-500 bg-white lg:hidden">
+                <div className="fixed inset-0 h-full z-9999 flex flex-col animate-in slide-in-from-right duration-500 bg-white lg:hidden">
                     <header className="flex-none bg-white border-b border-slate-100 px-2 h-12 flex items-center">
                         <div className="flex-1 flex items-center">
                             <button onClick={closeRenungan} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-900">
@@ -233,7 +233,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             </button>
                         </div>
                         <div className={`flex flex-col items-center transition-all duration-300 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}>
-                            <h2 className="text-[12px] font-black text-slate-900 tracking-tight uppercase truncate max-w-[180px]">
+                            <h2 className="text-[12px] font-black text-slate-900 tracking-tight uppercase truncate max-w-45">
                                 {data.topik}
                             </h2>
                             <span className="text-[9px] font-bold text-blue-600 uppercase tracking-widest leading-none">
@@ -295,7 +295,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                     </div>
 
                                     <div className="mt-8 text-center flex flex-col gap-4">
-                                        {data.lirikEnde.split('\n').map((line, index) => (
+                                        {data.lirikEnde.split('\n').map((line: string, index: number) => (
                                             <p key={index} className="text-[16px] font-bold text-slate-900 italic">
                                                 {line}
                                             </p>

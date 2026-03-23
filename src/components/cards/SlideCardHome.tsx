@@ -1,5 +1,5 @@
 // SlideCardHome.tsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, FileText } from 'lucide-react';
 
 let cachedSlideHomeData: any[] | null = null;
@@ -136,11 +136,11 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
             </div>
 
             <div className="mb-2 text-center pointer-events-none">
-                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Pembinaan Warga Jemaat</h3>
-                <p className="text-[12px] text-slate-800 font-bold uppercase tracking-widest">{slide.judul}</p>
+                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Pembinaan</h3>
+                <p className="text-[12px] text-slate-800 font-bold uppercase tracking-widest">Materi Pembinaan Warga Jemaat</p>
             </div>
 
-            <div className="rounded-[2rem] overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none">
+            <div className="rounded-4xl overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none">
                 <div className="w-full h-full relative">
                     <PDFCoverHome url={slide.linkPdf} />
                 </div>

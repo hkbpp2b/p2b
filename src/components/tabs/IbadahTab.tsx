@@ -1,5 +1,5 @@
 // IbadahTab.tsx
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import SlideCard from '../cards/SlideCard';
 import WartaCard from '../cards/WartaCard';
 
