@@ -26,6 +26,10 @@ function App() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, [activeTab]);
+
+
+  useEffect(() => {
     stopMidi();
   }, [activeTab, selectedDetail]);
 

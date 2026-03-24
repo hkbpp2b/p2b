@@ -1,6 +1,6 @@
 // components/DetailWindow.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Home, Play, Square, Loader2, Instagram, Youtube, Facebook, Music2 } from 'lucide-react';
+import { Home, Play, Square, Loader2, Instagram, Youtube, Facebook, Music2, X } from 'lucide-react';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
 import DataJemaatForm from '../cards/DataJemaatForm';
@@ -115,6 +115,58 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
         );
     }
 
+    if (selectedDetail.type === 'jadwal') {
+        return (
+            <div className="flex flex-col h-full bg-white overflow-y-auto no-scrollbar p-10">
+                <div className="mb-10 text-center">
+                    <p className="text-[12px] font-black text-slate-900 uppercase tracking-wide">{selectedDetail.tanggal}</p>
+                    <h2 className="text-[34px] font-black text-slate-900 tracking-tight uppercase">{selectedDetail.name}</h2>
+                    <p className="text-[22px] font-bold text-slate-900 tracking-tight">{selectedDetail.time} WIB</p>
+                </div>
+
+                {selectedDetail.isLive ? (
+                    <div className="max-w-md mx-auto w-full p-10 text-center">
+                        <p className="text-sm font-bold uppercase text-slate-600 mb-8">Live Streaming ibadah via Youtube</p>
+                        <button
+                            onClick={() => window.open(selectedDetail.link, '_blank')}
+                            className="w-full bg-red-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-red-100 hover:bg-red-700 transition-all"
+                        >
+                            Buka Youtube
+                        </button>
+                    </div>
+                ) : (
+                    <div className="max-w-2xl mx-auto w-full flex justify-center">
+                        <div className="inline-block">
+                            <div className="grid grid-cols-1 ">
+                                {selectedDetail.pelayan.map((p: any, idx: number) => (
+                                    <div key={idx} className="flex items-start p-3">
+                                        {/* Sisi Kiri: Label */}
+                                        <div className="w-40 shrink-0 text-left pr-6">
+                                            <span className="text-[12px] font-bold text-slate-500 uppercase tracking-widest block mt-1">
+                                                {p.label}
+                                            </span>
+                                        </div>
+
+                                        {/* Sisi Kanan: Nama-nama */}
+                                        <div className="flex-grow pl-6 border-l-2 border-slate-100 min-w-[250px]">
+                                            <div className="space-y-1.5">
+                                                {p.name.split(',').map((n: string, i: number) => (
+                                                    <p key={i} className="text-[15px] font-bold text-slate-900 tracking-tight leading-tight">
+                                                        {n.trim()}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    }
+
     if (selectedDetail.type === 'social') {
         return (
             <div className="flex flex-col h-full bg-white">
@@ -144,11 +196,12 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
 
     if (selectedDetail.type === 'pdf') {
         return (
-            <div className="flex flex-col h-full bg-white p-4">
-                <div className="w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-slate-100 relative flex justify-center">
+            <div className="flex flex-col h-full bg-white p-4 mt-4">
+                <div className="w-full h-full  relative flex justify-center group">
+
                     <iframe
                         src={`https://drive.google.com/file/d/${selectedDetail.id}/preview`}
-                        className="w-[125%] h-[110%] shrink-0 border-none"
+                        className="w-[114%] h-[105%] shrink-0 border-none"
                         style={{ transform: 'translateY(-4.5%)', pointerEvents: 'auto' }}
                         title="PDF Preview"
                     />

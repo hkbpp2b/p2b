@@ -193,28 +193,28 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
             256: 'bg-fuchsia-600 text-white shadow-sm',
             512: 'bg-cyan-700 text-white shadow-sm',
             1024: 'bg-orange-700 text-white shadow-sm',
-            2048: 'bg-slate-900 text-white ring-2 ring-sky-400 ring-offset-2 shadow-xl',
+            2048: 'bg-slate-900 text-white shadow-xl',
         };
 
         return styles[val] || 'bg-slate-800 text-white';
     };
 
     return (
-        <div className="fixed lg:absolute inset-0 z-[60] bg-white flex flex-col overflow-hidden animate-in slide-in-from-right lg:slide-in-from-none duration-300">
-            <header className="flex-none border-b border-slate-100 px-4 h-14 flex items-center">
+        <div className="fixed lg:absolute inset-0 z-[60] flex flex-col">
+            <header className="flex-none  px-4 h-14 flex items-center justify-between">
                 <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full text-slate-600">
                     <ArrowLeft size={20} />
                 </button>
             </header>
-            <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col items-center p-6 select-none">
+            <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col items-center p-6 mb-20 select-none">
                 <div className="w-full max-w-[280px] mb-6">
                     <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">2048</h1>
                     <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Score Record</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Skor saat ini</p>
                         <span className="text-2xl font-black text-black">{score}</span>
                     </div>
                 </div>
-                <div className="relative bg-white border-2 border-black p-1 mb-8 touch-none flex-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+                <div className="relative border-2 border-black p-1 mb-8 touch-none flex-none" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                     <div className="grid grid-cols-4 gap-1">
                         {grid.map((row, r) => row.map((val, c) => (
                             <div
@@ -226,7 +226,7 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                         )))}
                     </div>
                     {gameOver && (
-                        <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center z-50 p-4 text-center">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 p-4 text-center">
                             <p className="font-black text-xl uppercase tracking-tighter mb-2 text-black">Game Over</p>
                             {!submitted ? (
                                 <div className="w-full">
@@ -242,15 +242,15 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                                         {isLoading ? 'Checking...' : 'Save Score'}
                                     </button>
                                 </div>
-                            ) : <p className="text-[10px] font-bold uppercase mb-4 text-blue-600">Score Saved!</p>}
+                            ) : <p className="text-[10px] font-bold uppercase mb-4 text-blue-600">Skor disimpan!</p>}
                             <button onClick={initGame} className="w-full px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase active:bg-black active:text-white transition-colors">Retry</button>
                         </div>
                     )}
                 </div>
                 <div className="w-full max-w-[280px] pb-10">
-                    <h3 className="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 mb-3">Top Scorer</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-widest border-b-2 border-black pb-1 mb-3">Peringkat</h3>
                     {topScores.length === 0 ? (
-                        <p className="text-[10px] text-slate-300 font-bold uppercase italic">No records yet</p>
+                        <p className="text-[10px] text-slate-300 font-bold uppercase italic">...</p>
                     ) : (
                         topScores.map((s, i) => (
                             <div key={i} className="flex justify-between items-center mb-1">

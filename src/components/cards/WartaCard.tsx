@@ -1,6 +1,6 @@
 // WartaCard.tsx
 import React, { useState, useEffect } from 'react';
-import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, ChevronDown } from 'lucide-react';
+import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, ChevronDown, X } from 'lucide-react';
 
 let cachedIbadahData: any = null;
 let cachedArsipData: any[] = [];
@@ -48,6 +48,7 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
     const [loadingArsip, setLoadingArsip] = useState(false);
     const [showArsip, setShowArsip] = useState(false);
     const [openViewerId, setOpenViewerId] = useState<string | null>(null);
+    const [fullscreenFile, setFullscreenFile] = useState<string | null>(null);
 
     const CSV_URL = import.meta.env.VITE_IBADAH_CSV_URL;
 
@@ -104,7 +105,18 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
     };
 
     const handleItemClick = (item: any) => {
-        setOpenViewerId(openViewerId === item.id ? null : item.id);
+        const isMobile = window.innerWidth < 1024;
+
+        if (isMobile) {
+            setOpenViewerId(openViewerId === item.id ? null : item.id);
+        } else {
+            if (onSelectContent) {
+                onSelectContent({
+                    ...item,
+                    type: 'pdf'
+                });
+            }
+        }
     };
 
     if (loading) return (
@@ -115,15 +127,15 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
 
     const sections = [
         {
-            title: "Warta Jemaat",
-            items: [{ label: "Warta Mingguan", id: data?.warta, icon: <Newspaper size={20} />, primary: true }]
+            title: "",
+            items: [{ label: "Warta Jemaat", id: data?.warta, icon: <Newspaper size={20} />, primary: true }]
         },
         {
-            title: "Tata Ibadah", items: [
-                { label: "Ibadah Umum", id: data?.umum, icon: <BookOpen size={18} /> },
-                { label: "Ibadah Remaja", id: data?.remaja, icon: <Users size={18} /> },
-                { label: "Sekolah Minggu", id: data?.sm, icon: <Baby size={18} /> },
-                { label: "Ibadah Sore", id: data?.sore, icon: <Moon size={18} /> },
+            title: "", items: [
+                { label: "Tata Ibadah Umum", id: data?.umum, icon: <BookOpen size={18} /> },
+                { label: "Tata Ibadah Remaja", id: data?.remaja, icon: <Users size={18} /> },
+                { label: "Tata Ibadah Sekolah Minggu", id: data?.sm, icon: <Baby size={18} /> },
+                { label: "Tata Ibadah Sore", id: data?.sore, icon: <Moon size={18} /> },
             ].filter(i => i.id)
         },
         { title: "Dokumen Lainnya", items: data?.lainnya?.map((doc: any) => ({ label: doc.label, id: doc.id, icon: <FileText size={18} /> })) || [] }
@@ -163,15 +175,13 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                                         </button>
 
                                         {isActive && (
-                                            <div className="mt-3 flex justify-center">
-                                                <a
-                                                    href={`https://drive.google.com/file/d/${item.id}/view`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="block w-full max-w-[240px] aspect-[3/4] shadow-lg rounded-2xl overflow-hidden"
+                                            <div className="mt-3 flex justify-center lg:hidden">
+                                                <button
+                                                    onClick={() => setFullscreenFile(item.id)}
+                                                    className="block w-full max-w-[240px] aspect-[3/4] shadow-lg rounded-2xl overflow-hidden text-left"
                                                 >
                                                     <PDFCover id={item.id} />
-                                                </a>
+                                                </button>
                                             </div>
                                         )}
 
@@ -199,19 +209,23 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                                                         ) : (
                                                             <div className="grid gap-2">
                                                                 {arsip.map((archiveItem, idx) => (
-                                                                    <a
+                                                                    <button
                                                                         key={idx}
-                                                                        href={`https://drive.google.com/file/d/${archiveItem.warta}/view`}
-                                                                        target="_blank"
-                                                                        rel="noopener noreferrer"
-                                                                        className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 hover:bg-white transition-all"
+                                                                        onClick={() => {
+                                                                            if (window.innerWidth < 1024) {
+                                                                                setFullscreenFile(archiveItem.warta);
+                                                                            } else if (onSelectContent) {
+                                                                                onSelectContent({ id: archiveItem.warta, type: 'pdf', label: archiveItem.minggu });
+                                                                            }
+                                                                        }}
+                                                                        className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 hover:bg-white transition-all text-left"
                                                                     >
                                                                         <div className="flex flex-col">
                                                                             <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{archiveItem.tanggal}</span>
                                                                             <span className="text-[11px] font-black text-slate-800 uppercase">{archiveItem.minggu}</span>
                                                                         </div>
                                                                         <Download size={14} className="text-slate-400" />
-                                                                    </a>
+                                                                    </button>
                                                                 ))}
                                                             </div>
                                                         )}
@@ -226,6 +240,23 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                     </div>
                 ))}
             </div>
+
+            {fullscreenFile && (
+                <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
+                    <button
+                        onClick={() => setFullscreenFile(null)}
+                        className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="w-full h-full">
+                        <iframe
+                            src={`https://drive.google.com/file/d/${fullscreenFile}/preview`}
+                            className="w-full h-full border-none"
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

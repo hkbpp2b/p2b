@@ -1,7 +1,6 @@
 // SlideCard.tsx
-
 import React, { useState, useEffect } from 'react';
-import { Loader2, ChevronDown, FileText } from 'lucide-react';
+import { Loader2, ChevronDown, X } from 'lucide-react';
 
 let cachedSlideData: any[] | null = null;
 
@@ -89,19 +88,12 @@ const PDFCover = ({ url }: { url: string }) => {
     }, [url]);
 
     return (
-        <div className={`relative w-full aspect-video flex items-center justify-center overflow-hidden sm:rounded-xl ${loading ? 'bg-slate-100' : 'bg-black'}`}>
+        <div className="relative w-full aspect-video flex items-center justify-center overflow-hidden sm:rounded-xl bg-slate-100 border border-slate-200">
             {loading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
                     <Loader2 className="animate-spin text-slate-400" size={24} />
                 </div>
             )}
-
-            {!imgSrc && !loading && (
-                <div className="text-slate-400 flex flex-col items-center gap-2">
-                    <FileText size={40} strokeWidth={1} />
-                </div>
-            )}
-
             {imgSrc && (
                 <img
                     src={imgSrc}
@@ -114,20 +106,30 @@ const PDFCover = ({ url }: { url: string }) => {
                     }}
                 />
             )}
-
             <div className="absolute bottom-2 right-2 bg-black/80 px-1.5 py-0.5 rounded text-[10px] font-bold text-white tracking-widest uppercase">
-                PDF
+                SLIDE
             </div>
         </div>
     );
 };
 
-const SlideCard = () => {
+interface SlideCardProps {
+    onSelectContent?: (content: any) => void;
+}
+
+const SlideCard = ({ onSelectContent }: SlideCardProps) => {
     const [slides, setSlides] = useState<any[]>(cachedSlideData || []);
     const [loading, setLoading] = useState(!cachedSlideData);
     const [visibleCount, setVisibleCount] = useState(3);
+    const [fullscreenFile, setFullscreenFile] = useState<string | null>(null);
 
     const TSV_URL = import.meta.env.VITE_TSV_SLIDE_URL;
+
+    const extractId = (url: string) => {
+        if (!url || url === "#") return null;
+        const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
+        return match ? match[1] : null;
+    };
 
     useEffect(() => {
         if (cachedSlideData) return;
@@ -162,6 +164,26 @@ const SlideCard = () => {
         setVisibleCount((prev) => prev + 3);
     };
 
+    const handleItemClick = (slide: any) => {
+        const fileId = extractId(slide.linkPdf);
+        const isMobile = window.innerWidth < 1024;
+
+        console.log("ID File yang didapat:", fileId); // Cek ini di console browser
+        console.log("Data slide:", slide);
+
+        if (isMobile) {
+            setFullscreenFile(fileId);
+        } else {
+            if (onSelectContent) {
+                onSelectContent({
+                    ...slide,      // Kirim semua data (judul, penulis, dll)
+                    id: fileId,    // ID untuk iframe
+                    type: 'pdf'    // Trigger untuk DetailWindow
+                });
+            }
+        }
+    };
+
     if (loading) return (
         <div className="flex justify-center py-20">
             <Loader2 className="animate-spin text-slate-900" size={32} />
@@ -175,15 +197,9 @@ const SlideCard = () => {
         <div className="w-full max-w-2xl mx-auto">
             <div className="flex flex-col gap-y-10">
                 {visibleSlides.map((slide, index) => (
-                    <div key={index} className="flex flex-col group cursor-pointer">
-                        <a
-                            href={slide.linkPdf}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex flex-col w-full"
-                        >
+                    <div key={index} className="flex flex-col group cursor-pointer" onClick={() => handleItemClick(slide)}>
+                        <div className="flex flex-col w-full">
                             <PDFCover url={slide.linkPdf} />
-
                             <div className="mt-4 px-4 sm:px-0 flex gap-4">
                                 <div className="flex-shrink-0 mt-0.5">
                                     <GoogleDriveImage
@@ -192,8 +208,7 @@ const SlideCard = () => {
                                         className="w-10 h-10 rounded-full"
                                     />
                                 </div>
-
-                                <div className="flex flex-col flex-grow pr-2">
+                                <div className="flex flex-col flex-grow pr-2 text-left">
                                     <h3 className="text-[16px] font-bold leading-tight text-slate-900 line-clamp-2 mb-1">
                                         {slide.judul}
                                     </h3>
@@ -202,7 +217,7 @@ const SlideCard = () => {
                                     </div>
                                 </div>
                             </div>
-                        </a>
+                        </div>
                     </div>
                 ))}
             </div>
@@ -216,6 +231,24 @@ const SlideCard = () => {
                         Liat lainnya
                         <ChevronDown size={16} strokeWidth={3} />
                     </button>
+                </div>
+            )}
+
+            {fullscreenFile && (
+                <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
+                    <button
+                        onClick={() => setFullscreenFile(null)}
+                        className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="w-full h-full">
+                        <iframe
+                            src={`https://drive.google.com/file/d/${fullscreenFile}/preview`}
+                            className="w-full h-full border-none"
+                            allow="autoplay"
+                        />
+                    </div>
                 </div>
             )}
         </div>
