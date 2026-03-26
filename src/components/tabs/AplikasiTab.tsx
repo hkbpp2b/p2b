@@ -33,8 +33,8 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
 
     const Game2048Icon = ({ size = 24 }) => (
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-            <text x="12" y="11" fill="black" fontSize="12" textAnchor="middle" fontWeight="1000" fontFamily="Arial, sans-serif" style={{ letterSpacing: '-0.5px' }}>20</text>
-            <text x="12" y="22" fill="black" fontSize="12" textAnchor="middle" fontWeight="1000" fontFamily="Arial, sans-serif" style={{ letterSpacing: '-0.5px' }}>48</text>
+            <text x="12" y="11" fill="white" fontSize="12" textAnchor="middle" fontWeight="1000" fontFamily="Arial, sans-serif" style={{ letterSpacing: '-0.5px' }}>20</text>
+            <text x="12" y="22" fill="white" fontSize="12" textAnchor="middle" fontWeight="1000" fontFamily="Arial, sans-serif" style={{ letterSpacing: '-0.5px' }}>48</text>
         </svg>
     );
 
@@ -42,10 +42,10 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
         <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
             <path
                 d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
-                fill="red"
+                fill="white"
             />
-            <rect x="11" y="6.5" width="2" height="11" fill="#ffffff" rx="0.5" />
-            <rect x="8" y="8.7" width="8" height="2" fill="#ffffff" rx="0.5" />
+            <rect x="11" y="6.5" width="2" height="11" fill="red" rx="0.5" />
+            <rect x="8" y="8.7" width="8" height="2" fill="red" rx="0.5" />
         </svg>
     );
 
@@ -56,9 +56,9 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
 
     const apps = [
         { id: 'alkitab', name: "Alkitab", icon: <BibleCrossIcon size={24} />, color: "bg-slate-900" },
-        { id: 'ende', name: "Buku Lagu", icon: <BibleCircleIcon size={24} />, color: "bg-yellow-600" },
-        { id: '2048', name: "2048", icon: <Game2048Icon size={24} />, color: "bg-slate-200" },
-        // { id: 'kuis', name: "Kuitab", icon: <QuizAlkitabIcon size={24} />, color: "bg-slate-200" }
+        { id: 'ende', name: "Buku Lagu", icon: <BibleCircleIcon size={24} />, color: "bg-yellow-500" },
+        { id: '2048', name: "2048", icon: <Game2048Icon size={24} />, color: "bg-blue-500" },
+        { id: 'kuis', name: "Kuitab", icon: <QuizAlkitabIcon size={24} />, color: "bg-red-600" }
     ];
 
     const renderActiveApp = () => {

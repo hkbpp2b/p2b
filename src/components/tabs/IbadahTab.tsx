@@ -26,6 +26,8 @@ const IbadahTab = ({ onSelectContent, scrollToWawasan, onScrollDone }: IbadahTab
         }
     }, [scrollToWawasan, onScrollDone]);
 
+
+
     return (
         <div className="animate-in fade-in duration-700 pb-32 pt-8 px-5 space-y-10">
             <WartaCard onSelectContent={onSelectContent} />

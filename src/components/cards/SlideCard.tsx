@@ -132,7 +132,11 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
     };
 
     useEffect(() => {
-        if (cachedSlideData) return;
+        if (cachedSlideData) {
+            setLoading(false);
+            return;
+        }
+
         const fetchSlides = async () => {
             try {
                 const response = await fetch(`${TSV_URL}&t=${new Date().getTime()}`);
@@ -160,6 +164,41 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
         fetchSlides();
     }, [TSV_URL]);
 
+    useEffect(() => {
+        const handlePopState = (e: PopStateEvent) => {
+            // Jika user klik tombol back (browser/hardware), tutup UI modal
+            setFullscreenFile(null);
+            document.body.classList.remove('modal-open');
+        };
+
+        if (fullscreenFile) {
+            document.body.classList.add('modal-open');
+
+            // Push state hanya jika belum ada di state modal slide
+            if (window.history.state?.modal !== 'slide') {
+                window.history.pushState({ modal: 'slide' }, "");
+            }
+
+            window.addEventListener('popstate', handlePopState);
+        }
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+            document.body.classList.remove('modal-open');
+        };
+    }, [fullscreenFile]);
+
+    const closeFullscreen = () => {
+        if (window.history.state?.modal === 'slide') {
+            // Memicu popstate secara otomatis untuk menutup modal via listener
+            window.history.back();
+        } else {
+            // Fallback jika state hilang atau tidak tercatat
+            setFullscreenFile(null);
+            document.body.classList.remove('modal-open');
+        }
+    };
+
     const handleLoadMore = () => {
         setVisibleCount((prev) => prev + 3);
     };
@@ -168,30 +207,27 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
         const fileId = extractId(slide.linkPdf);
         const isMobile = window.innerWidth < 1024;
 
-        console.log("ID File yang didapat:", fileId); // Cek ini di console browser
-        console.log("Data slide:", slide);
-
         if (isMobile) {
             setFullscreenFile(fileId);
         } else {
             if (onSelectContent) {
                 onSelectContent({
-                    ...slide,      // Kirim semua data (judul, penulis, dll)
-                    id: fileId,    // ID untuk iframe
-                    type: 'pdf'    // Trigger untuk DetailWindow
+                    ...slide,
+                    id: fileId,
+                    type: 'pdf'
                 });
             }
         }
     };
+
+    const visibleSlides = slides.slice(0, visibleCount);
+    const hasMore = visibleCount < slides.length;
 
     if (loading) return (
         <div className="flex justify-center py-20">
             <Loader2 className="animate-spin text-slate-900" size={32} />
         </div>
     );
-
-    const visibleSlides = slides.slice(0, visibleCount);
-    const hasMore = visibleCount < slides.length;
 
     return (
         <div className="w-full max-w-2xl mx-auto">
@@ -237,7 +273,7 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
             {fullscreenFile && (
                 <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
                     <button
-                        onClick={() => setFullscreenFile(null)}
+                        onClick={closeFullscreen}
                         className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
                     >
                         <X size={24} />

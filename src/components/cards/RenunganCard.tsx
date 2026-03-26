@@ -1,5 +1,6 @@
+// RenunganCard.jsx
 import { useState, useEffect, useRef } from 'react';
-import { ChevronRight, ArrowLeft, Play, Square, Loader2 } from 'lucide-react';
+import { ChevronRight, ArrowLeft, Play, Square, Loader2, Sun, Moon, Settings, Type } from 'lucide-react';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
 
@@ -13,6 +14,9 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const [data, setData] = useState<any>(cachedRenungan);
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [textSize, setTextSize] = useState(16);
+    const [showSettings, setShowSettings] = useState(false);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoadingMidi, setIsLoadingMidi] = useState(false);
@@ -24,6 +28,14 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const TSV_URL = import.meta.env.VITE_TSV_RENUNGAN_URL;
+
+    const toggleDarkMode = () => {
+        setIsDarkMode(!isDarkMode);
+    };
+
+    const adjustTextSize = (delta: number) => {
+        setTextSize(prev => Math.min(Math.max(prev + delta, 12), 24));
+    };
 
     const handleRenunganClick = () => {
         if (window.innerWidth >= 1024 && onSelect) {
@@ -83,6 +95,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             const handleBackInRenungan = () => {
                 stopMidi();
                 setIsOpen(false);
+                setShowSettings(false);
                 document.body.classList.remove('modal-open');
             };
 
@@ -181,13 +194,14 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const closeRenungan = () => {
         stopMidi();
         setIsOpen(false);
+        setShowSettings(false);
     };
 
     if (!data) return null;
 
     return (
         <>
-            <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-800 bg-slate-900 relative overflow-hidden">
+            <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-200 bg-slate-900 relative overflow-hidden">
                 <div className="mb-6 text-center relative z-10">
                     <h3 className="text-xl font-black text-white tracking-tighter uppercase mb-1">
                         Renungan Harian
@@ -203,109 +217,192 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                 >
                     <div className="space-y-6">
                         <div className="space-y-4">
-                            <div className="space-y-2">
-                                <h4 className="text-[18px] font-black text-white leading-tight tracking-tight uppercase">
+
+
+                            <div className="space-y-3">
+                                <h4 className="text-[20px] font-black text-slate-100 text-left leading-tight tracking-tight uppercase">
                                     {data.topik}
                                 </h4>
-                                <p className="text-[15px] font-semibold text-slate-300 leading-snug italic">
-                                    {data.kutipan}
-                                </p>
-                                <p className="text-[14px] font-black text-blue-400 uppercase tracking-widest pt-1">
-                                    — {data.ayat}
+                                <p className="text-[14px] font-semibold text-slate-100 text-left leading-snug">
+                                    {data.isi.split(" ").slice(0, 20).join(" ")} ...
                                 </p>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-1 text-white pt-2 border-t border-slate-700/50">
-                            <span className="text-[10px] font-black uppercase tracking-widest">Baca Selengkapnya</span>
-                            <ChevronRight size={14} className="text-blue-500" />
+                        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-500 border-b pb-3 ">
+                            <p className="text-[13px] font-black text-blue-400 text-center leading-tight">
+                                {data.ayat}
+                            </p>
+                            <div className="space-y-1 border-l border-slate-500 pl-3">
+                                <p className="text-[13px] font-black text-emerald-400 text-left leading-tight">
+                                    Ende No.{data.nomorEnde}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="flex text-slate-100">
+                            <div className="flex items-center gap-1 cursor-pointer">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-200">Baca Selengkapnya</span>
+                                <ChevronRight size={14} className="text-slate-200" />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {isOpen && (
-                <div className="fixed inset-0 h-full z-9999 flex flex-col animate-in slide-in-from-right duration-500 bg-white lg:hidden">
-                    <header className="flex-none bg-white border-b border-slate-100 px-2 h-12 flex items-center">
+                <div className={`fixed inset-0 h-full z-[9999] flex flex-col animate-in slide-in-from-right duration-500 lg:hidden ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+                    <header className={`flex-none border-b px-2 h-14 flex items-center transition-colors duration-300 relative ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
                         <div className="flex-1 flex items-center">
-                            <button onClick={closeRenungan} className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-900">
+                            <button onClick={closeRenungan} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-slate-800 text-white' : 'hover:bg-slate-100 text-slate-900'}`}>
                                 <ArrowLeft size={22} />
                             </button>
                         </div>
+
                         <div className={`flex flex-col items-center transition-all duration-300 transform ${isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}>
-                            <h2 className="text-[12px] font-black text-slate-900 tracking-tight uppercase truncate max-w-45">
-                                {data.topik}
+                            <h2 className={`text-[14px] font-black tracking-tight uppercase truncate max-w-45 ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                                Renungan Harian
                             </h2>
-                            <span className="text-[9px] font-bold text-blue-600 uppercase tracking-widest leading-none">
-                                {data.ayat}
+                            <span className={`text-[10px] font-bold uppercase tracking-widest leading-none ${isDarkMode ? 'text-slate-400' : 'text-slate-500'}`}>
+                                {data.tanggal}
                             </span>
                         </div>
-                        <div className="flex-1" />
-                    </header>
 
-                    <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
-                        <div className="max-w-2xl mx-auto w-full px-6 pt-8 pb-32 flex flex-col">
-                            <div className="mb-10">
-                                <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.4em] mb-2">
-                                    {data.tanggal}
-                                </p>
-                                <h1 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-8">
-                                    {data.topik}
-                                </h1>
-                                <div className="border-l-[3px] border-slate-900 pl-5 py-1">
-                                    <p className="text-[16px] pr-6 md:text-[24px] font-bold text-slate-900 text-left leading-snug mb-3">
-                                        {data.kutipan}
-                                    </p>
-                                    <p className="text-[11px] font-black text-blue-600 uppercase tracking-[0.2em]">
-                                        {data.ayat}
-                                    </p>
-                                </div>
-                            </div>
+                        <div className="flex-1 flex justify-end relative">
+                            <button
+                                onClick={() => setShowSettings(!showSettings)}
+                                className={`p-2 rounded-full transition-colors ${isDarkMode ? 'text-white hover:bg-slate-800' : 'text-slate-600 hover:bg-slate-100'} ${showSettings ? 'bg-blue-500/10 text-blue-500' : ''}`}
+                            >
+                                <Settings size={22} />
+                            </button>
 
-                            {data.bukuEnde && (
-                                <div className="mb-10 p-6 bg-slate-50 rounded-3xl text-center border border-slate-100">
-                                    <div className="flex flex-col items-center gap-4 text-center">
-                                        <p className="text-[16px] font-black text-slate-900 whitespace-pre-line leading-tight">
-                                            {data.bukuEnde}
-                                        </p>
+                            {showSettings && (
+                                <div
+                                    className={`absolute top-14 right-2 z-50 w-56 rounded-3xl border p-6 shadow-2xl animate-in fade-in zoom-in duration-200 
+            ${isDarkMode
+                                            ? 'bg-slate-900 border-slate-800 text-white'
+                                            : 'bg-white border-slate-200 text-slate-900'
+                                        }`}
+                                >
+                                    <div className="flex flex-col gap-6">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-black uppercase tracking-wider opacity-60">
+                                                Tampilan
+                                            </span>
+                                            <button
+                                                onClick={toggleDarkMode}
+                                                className={`flex items-center justify-center rounded-xl px-4 py-2 transition-colors 
+            ${isDarkMode
+                                                        ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700'
+                                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                                                    }`}
+                                            >
+                                                {isDarkMode ? <Moon size={18} fill="currentColor" /> : <Sun size={18} fill="currentColor" />}
+                                            </button>
+                                        </div>
 
-                                        <button
-                                            onClick={playMidi}
-                                            disabled={isLoadingMidi}
-                                            className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full transition-all ${isPlaying
-                                                ? 'bg-red-50 text-red-600 border border-red-100'
-                                                : 'bg-blue-600 text-white'
-                                                } disabled:opacity-50`}
-                                        >
-                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'}`}>
-                                                {isLoadingMidi ? (
-                                                    <Loader2 size={16} className="animate-spin" />
-                                                ) : isPlaying ? (
-                                                    <Square size={14} fill="currentColor" />
-                                                ) : (
-                                                    <Play size={14} fill="currentColor" className="ml-0.5" />
-                                                )}
+                                        <div className="space-y-3">
+                                            <span className="text-xs font-black uppercase tracking-wider opacity-60">
+                                                Ukuran Teks
+                                            </span>
+                                            <div className="flex items-center gap-3">
+                                                <button
+                                                    onClick={() => adjustTextSize(-1)}
+                                                    className={`flex-1 rounded-xl py-2 font-black transition-colors 
+              ${isDarkMode ? 'bg-slate-800 hover:bg-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                                                >
+                                                    -
+                                                </button>
+                                                <button
+                                                    onClick={() => adjustTextSize(1)}
+                                                    className={`flex-1 rounded-xl py-2 font-black transition-colors 
+              ${isDarkMode ? 'bg-slate-800 hover:bg-slate-700' : 'bg-slate-100 hover:bg-slate-200'}`}
+                                                >
+                                                    +
+                                                </button>
                                             </div>
-                                            <div className="flex flex-col items-start leading-none">
-                                                <span className="text-[11px] font-black uppercase tracking-widest">
-                                                    {isPlaying ? '' : ''} BE NO.{data.nomorEnde}
-                                                </span>
-                                            </div>
-                                        </button>
-                                    </div>
-
-                                    <div className="mt-8 text-center flex flex-col gap-4">
-                                        {data.lirikEnde.split('\n').map((line: string, index: number) => (
-                                            <p key={index} className="text-[16px] font-bold text-slate-900 italic">
-                                                {line}
-                                            </p>
-                                        ))}
+                                        </div>
                                     </div>
                                 </div>
                             )}
 
-                            <div>
-                                <p className="text-[16px] p-2 md:text-[16px] font-medium text-slate-900 leading-[1.7] text-left whitespace-pre-line">
+                        </div>
+                    </header>
+
+                    <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
+                        <div className="p-4 space-y-4 mb-40 mt-5">
+                            <div className={`p-6 rounded-[2.5rem] shadow-sm border relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+                                <div className="mb-6 text-center relative z-10">
+                                    <h3 className={`text-[24px] font-black tracking-tighter uppercase mb-1 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                                        Renungan Harian
+                                    </h3>
+                                    <p className={`text-[12px] font-black uppercase tracking-[0.2em] ${isDarkMode ? 'text-slate-100' : 'text-slate-500'}`}>
+                                        {data.tanggal}
+                                    </p>
+                                </div>
+
+                                <div className="space-y-6 relative z-10">
+                                    <div className={`p-5 rounded-[2rem] border transition-colors ${isDarkMode ? 'bg-blue-800/10 border-slate-700/50' : 'bg-blue-50/70 border-slate-100'}`}>
+                                        <p style={{ fontSize: `${textSize - 1}px` }} className={`font-black text-center uppercase mb-3 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                            {data.ayat}
+                                        </p>
+                                        <p style={{ fontSize: `${textSize - 1}px` }} className={`font-bold text-center ${isDarkMode ? 'text-blue-100' : 'text-blue-900'}`}>
+                                            {data.kutipan}
+                                        </p>
+                                    </div>
+
+                                    {data.bukuEnde && (
+                                        <div className={`p-3 rounded-[2rem] border transition-colors ${isDarkMode ? 'bg-emerald-800/10 border-slate-700/30' : 'bg-emerald-50/70 border-slate-100'}`}>
+                                            <div className="flex flex-col items-center gap-4 text-center">
+                                                <p style={{ fontSize: `${textSize}px` }} className={`font-black whitespace-pre-line leading-tight ${isDarkMode ? 'text-emerald-300' : 'text-emerald-500'}`}>
+                                                    {data.bukuEnde}
+                                                </p>
+                                                <button
+                                                    onClick={playMidi}
+                                                    disabled={isLoadingMidi}
+                                                    className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full transition-all border ${isPlaying
+                                                        ? 'border-red-500/50 text-red-500 bg-red-500/10'
+                                                        : isDarkMode
+                                                            ? 'border-slate-600 text-emerald-400 bg-slate-800'
+                                                            : 'border-slate-200 text-emerald-600 bg-white shadow-sm'
+                                                        } disabled:opacity-50`}
+                                                >
+                                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isPlaying
+                                                        ? 'bg-red-500 text-white'
+                                                        : isDarkMode
+                                                            ? 'bg-emerald-500/20 text-emerald-400'
+                                                            : 'bg-emerald-600 text-white'
+                                                        }`}>
+                                                        {isLoadingMidi ? (
+                                                            <Loader2 size={16} className="animate-spin" />
+                                                        ) : isPlaying ? (
+                                                            <Square size={14} fill="currentColor" />
+                                                        ) : (
+                                                            <Play size={14} fill="currentColor" className="ml-0.5" />
+                                                        )}
+                                                    </div>
+                                                    <span className="text-[11px] font-black uppercase tracking-widest">
+                                                        BE NO.{data.nomorEnde}
+                                                    </span>
+                                                </button>
+                                            </div>
+                                            <div className="mt-5 space-y-2">
+                                                {data.lirikEnde.split('\n').map((line, index) => (
+                                                    <p key={index} style={{ fontSize: `${textSize - 1}px` }} className={`font-bold text-center ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                                                        {line}
+                                                    </p>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="p-1">
+                                <h4 style={{ fontSize: `${textSize + 10}px` }} className={`font-black text-center leading-tight tracking-tight uppercase p-2 mt-8 mb-4 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                                    {data.topik}
+                                </h4>
+                                <p style={{ fontSize: `${textSize}px` }} className={`font-medium text-left p-4 leading-[1.7] whitespace-pre-line ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
                                     {data.isi}
                                 </p>
                             </div>

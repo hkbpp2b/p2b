@@ -221,67 +221,88 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
         );
     }
 
-    const isRenungan = selectedDetail.type === 'renungan';
+    if (selectedDetail.type === 'renungan') {
+        return (
+            <div className="flex flex-col h-full bg-white overflow-y-auto no-scrollbar p-10">
+                <div className="max-w-3xl mx-auto w-full space-y-10">
 
-    return (
-        <div className="flex flex-col h-full bg-white overflow-y-auto no-scrollbar">
-            <div className="mt-14">
-                {!isRenungan && selectedDetail.url && (
-                    <div className="w-full aspect-video mb-10">
-                        <img src={selectedDetail.url} className="w-full h-full object-contain" alt="Content" />
-                    </div>
-                )}
+                    <div className="p-5">
+                        <div className="mb-4 text-center relative z-10">
+                            <h3 className="text-[28px] font-black text-slate-900 tracking-tighter uppercase mb-1">
+                                Renungan Harian
+                            </h3>
+                            <p className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                                {selectedDetail.tanggal}
+                            </p>
+                        </div>
 
-                <div className="p-10 pt-0">
-                    <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.4em] mb-2">{selectedDetail.tanggal}</p>
-                    <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase leading-none mb-8">
-                        {isRenungan ? selectedDetail.topik : selectedDetail.judul}
-                    </h2>
-
-                    {isRenungan && (
-                        <>
-                            <div className="border-l-[3px] border-slate-900 pl-5 py-1 mb-10">
-                                <p className="text-[18px] font-bold text-slate-900 leading-snug mb-3">{selectedDetail.kutipan}</p>
-                                <p className="text-[12px] font-black text-blue-600 uppercase tracking-[0.2em]">{selectedDetail.ayat}</p>
+                        <div className="space-y-4 relative z-10">
+                            <div className="p-4 rounded-[2.5rem] border border-slate-100 bg-slate-50/50">
+                                <p className="text-[20px] font-black text-center text-slate-900 uppercase mb-4 leading-tight">
+                                    {selectedDetail.ayat}
+                                </p>
+                                <p className="text-[16px] font-bold text-center text-slate-600 leading-relaxed">
+                                    "{selectedDetail.kutipan}"
+                                </p>
                             </div>
 
                             {selectedDetail.bukuEnde && (
-                                <div className="mb-10 p-8 bg-slate-50 rounded-3xl text-center border border-slate-100">
-                                    <p className="text-[16px] font-black text-slate-900 mb-6 whitespace-pre-line leading-tight">
-                                        {selectedDetail.bukuEnde}
-                                    </p>
+                                <div className="p-4 rounded-[2.5rem] border border-blue-50 bg-blue-50/30">
+                                    <div className="flex flex-col items-center gap-6 text-center">
+                                        <p className="text-[20px] font-black text-slate-900 whitespace-pre-line leading-tight">
+                                            {selectedDetail.bukuEnde}
+                                        </p>
 
-                                    <button
-                                        onClick={playMidi}
-                                        disabled={isLoadingMidi}
-                                        className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full mx-auto mb-8 transition-all ${isPlaying ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-blue-600 text-white'
-                                            } disabled:opacity-50`}
-                                    >
-                                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${isPlaying ? 'bg-red-100' : 'bg-white/20'}`}>
-                                            {isLoadingMidi ? <Loader2 size={16} className="animate-spin" /> :
-                                                isPlaying ? <Square size={14} fill="currentColor" /> :
-                                                    <Play size={14} fill="currentColor" className="ml-0.5" />}
-                                        </div>
-                                        <span className="text-[11px] font-black uppercase tracking-widest">BE NO.{selectedDetail.nomorEnde}</span>
-                                    </button>
+                                        <button
+                                            onClick={playMidi}
+                                            disabled={isLoadingMidi}
+                                            className={`flex items-center gap-2 pr-4 pl-1.5 py-1 rounded-full transition-all border shadow-sm active:scale-95 disabled:opacity-50 ${isPlaying
+                                                    ? 'border-red-100 text-red-500 bg-red-50/30'
+                                                    : 'border-slate-200 text-blue-600 bg-white'
+                                                }`}
+                                        >
+                                            <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isPlaying ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'
+                                                }`}>
+                                                {isLoadingMidi ? (
+                                                    <Loader2 size={12} className="animate-spin" />
+                                                ) : isPlaying ? (
+                                                    <Square size={10} fill="currentColor" />
+                                                ) : (
+                                                    <Play size={10} fill="currentColor" className="ml-0.5" />
+                                                )}
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase tracking-widest">
+                                                BE NO.{selectedDetail.nomorEnde}
+                                            </span>
+                                        </button>
+                                    </div>
 
-                                    <div className="flex flex-col gap-4">
-                                        {selectedDetail.lirikEnde?.split('\n').map((line: string, index: number) => (
-                                            <p key={index} className="text-[16px] font-bold text-slate-900 italic">{line}</p>
+                                    <div className="mt-8 space-y-3">
+                                        {selectedDetail.lirikEnde.split('\n').map((line: string, index: number) => (
+                                            <p key={index} className="text-[16px] font-bold text-center text-slate-900 leading-relaxed">
+                                                {line}
+                                            </p>
                                         ))}
                                     </div>
                                 </div>
                             )}
-                        </>
-                    )}
+                        </div>
+                    </div>
 
-                    <p className="text-[16px] font-medium text-slate-900 leading-[1.8] whitespace-pre-line">
-                        {isRenungan ? selectedDetail.isi : selectedDetail.deskripsi}
-                    </p>
+                    <div className="px-1 pb-20">
+                        <h4 className="text-[26px] font-black text-slate-900 leading-[1.1] tracking-tighter uppercase mb-8">
+                            {selectedDetail.topik}
+                        </h4>
+
+                        <p className="text-[16px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
+                            {selectedDetail.isi}
+                        </p>
+                    </div>
+
                 </div>
             </div>
-        </div>
-    );
+        );
+    }
 };
 
 export default DetailWindow;

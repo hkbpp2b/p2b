@@ -54,41 +54,47 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
 
     const keywords = useMemo(() => ({
         PEOPLE: [
-            // Perjanjian Baru (Tambahan)
             "Paulus", "Yesus", "Sostenes", "Krispus", "Gayus", "Apolos", "Kefas", "Stefanus",
             "Timotius", "Silas", "Barnabas", "Lukas", "Markus", "Matius", "Yohanes", "Petrus",
             "Andreas", "Filipus", "Bartolomeus", "Tomas", "Yakobus", "Yudas", "Lazarus",
             "Maria", "Marta", "Nikodemus", "Zakeus", "Pilatus", "Herodes", "Agripa", "Kornelius",
             "Lidia", "Priskila", "Akwila", "Titus", "Filemon", "Ananias", "Safira", "Tabita",
-            "Malkhus", "Simeon", "Elisabet", "Zakharia", "Gamaliel", "Kandake",
-
-            // Perjanjian Lama (Tambahan)
+            "Malkhus", "Simeon", "Elisabet", "Zakharia", "Gamaliel", "Kandake", "Tomas",
+            "Bartimeus", "Yairus", "Malchus", "Klefopas", "Lois", "Eunike", "Stefanus",
             "Adam", "Hawa", "Kain", "Habel", "Nuh", "Abraham", "Ishak", "Yakub", "Yusuf",
             "Musa", "Harun", "Yosua", "Gideon", "Simson", "Samuel", "Saul", "Daud", "Salomo",
             "Elia", "Elisa", "Yesaya", "Yeremia", "Yehezkiel", "Daniel", "Yunus", "Ayub",
             "Boas", "Rut", "Ester", "Mordekhai", "Nehemia", "Ezra", "Metusalah", "Enokh",
             "Melkhisedek", "Ismael", "Labu", "Lea", "Rahel", "Dina", "Potifar", "Miryam",
             "Debora", "Barak", "Delila", "Goliat", "Absalom", "Ratu Syeba", "Nebukadnezar",
-            "Belsyazar", "Koresh"
+            "Belsyazar", "Koresh", "Artahsasta", "Darius", "Ahab", "Izebel", "Obaja",
+            "Hosea", "Yoel", "Amos", "Mikha", "Nahum", "Habakuk", "Zefanya", "Hagai",
+            "Zakharia", "Maleakhi", "Set", "Lamekh", "Terah", "Lot", "Sara", "Ribka",
+            "Bileam", "Balak", "Rahab", "Otniel", "Ehud", "Yefta", "Eli", "Yonatan",
+            "Natan", "Batsyeba", "Rehabeam", "Yerobeam", "Hizkia", "Yosia", "Manasye"
         ],
         PLACES: [
-            // Kota & Wilayah (Tambahan)
             "Korintus", "Yerusalem", "Mesir", "Galilea", "Betlehem", "Nazaret", "Yordan",
             "Efesus", "Roma", "Filipi", "Tesalonika", "Antiohia", "Atena", "Siprus", "Galatia",
             "Kolose", "Babel", "Sodom", "Gomora", "Kanaan", "Sinai", "Yudea", "Samaria",
             "Damaskus", "Tarsus", "Yope", "Kaisarea", "Mekhedonia", "Krete", "Patmos",
             "Asyur", "Persia", "Media", "Edom", "Moab", "Ammon", "Filistin", "Libanon",
-            "Sikhem", "Silo", "Ramot-Gilead",
-
-            // Geografis & Landmark (Tambahan)
+            "Sikhem", "Silo", "Ramot-Gilead", "Gaza", "Askelon", "Asdod", "Ekron", "Gat",
             "Golgota", "Getsemani", "Betania", "Hebron", "Betel", "Yerikho", "Ninive",
             "Tirus", "Sidon", "Karmel", "Horeb", "Hermon", "Efrat", "Ararat", "Moria",
-            "Pisga", "Tabor", "Zaitun", "Khenisaret", "Laut Teberau", "Laut Mati"
+            "Pisga", "Tabor", "Zaitun", "Khenisaret", "Laut Teberau", "Laut Mati",
+            "Emmaus", "Lida", "Troas", "Miletus", "Bereia", "Derbe", "Listra", "Ikonium",
+            "Ur Kasdim", "Haru", "Arnon", "Yabok", "Basan", "Gilead", "Midian", "Kadesh",
+            "Marah", "Elim", "Rafidim", "Nebanya", "Sion", "Lembah Hinom", "Lembah Kidron"
         ],
         OBJECTS: [
-            // Benda & Simbol Penting (Kategori Baru)
             "Bahtera", "Tabut", "Manna", "Gada", "Mezbah", "Kemah Suci", "Bait Allah",
-            "Kemenyan", "Mur", "Dinar", "Talenta", "Syamadan", "Kecapi", "Sangkakala"
+            "Kemenyan", "Mur", "Dinar", "Talenta", "Syamadan", "Kecapi", "Sangkakala",
+            "Pelita", "Gandum", "Anggur", "Minyak Urapan", "Roti", "Jala", "Perahu",
+            "Mahkota Duri", "Salib", "Kain Kafan", "Batu Putih", "Gulungan Kitab",
+            "Zirah", "Pedang Roh", "Ketopong", "Perisai Iman", "Kasut", "Ikat Pinggang",
+            "Buli-buli", "Mezbah Pembakaran Ukupan", "Tutup Pendamaian", "Urim", "Tumim",
+            "Efod", "Jubah", "Tongkat Harun", "Bulu Domba", "Umban", "Kandil"
         ]
     }), []);
 
@@ -315,20 +321,21 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
 
     return (
         <div className="fixed lg:absolute inset-0 z-[60] bg-white flex flex-col overflow-hidden mb-20">
-            <header className="flex-none px-4 h-14 flex items-center justify-between">
-                <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full">
+            <header className="relative flex-none px-4 h-14 flex items-center justify-between">
+                <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full z-10">
                     <ArrowLeft size={20} />
                 </button>
-                <div className="text-right">
-                    <p className="text-[10px] font-black uppercase tracking-[0.1em] leading-none">Score: {score}</p>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <p className="text-[12px] font-black uppercase tracking-[0.1em] leading-none">Skor: {score}</p>
                 </div>
+                <div className="w-9" />
             </header>
 
             <div className="flex-1 overflow-y-auto no-scrollbar p-6 flex flex-col items-center">
                 {!quizOver ? (
                     <div className="w-full max-w-[340px] flex flex-col">
                         <div className="mb-8 text-center">
-                            <h1 className="text-4xl font-black tracking-tighter uppercase leading-none mt-4 mb-3">Kuis Alkitab</h1>
+                            <h1 className="text-4xl font-black tracking-tighter uppercase leading-none mb-3">Kuis Alkitab</h1>
 
                             {/* Indikator Nyawa di bawah Judul */}
                             <div className="flex justify-center gap-1.5">
@@ -374,9 +381,9 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
                         {isAnswered && lives > 0 && (
                             <div className="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                 <div className="p-3">
-                                    <p className="text-[10px] text-center font-extrabold text-slate-900 tracking-widest ">{currentQ.reference}</p>
+                                    <p className="text-[10px] text-center font-extrabold text-slate-900 tracking-widest ">(TB) {currentQ.reference}</p>
                                 </div>
-                                <button onClick={nextQuestion} className="w-full bg-black text-white py-4 font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:bg-slate-800">
+                                <button onClick={nextQuestion} className="w-full bg-black text-white py-4 font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:bg-slate-800 mb-20">
                                     Lanjut
                                 </button>
                             </div>

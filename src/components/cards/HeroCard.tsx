@@ -206,6 +206,7 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
                         </h3>
                     </div>
                 </div>
+
                 <div className="mt-4 px-2 space-y-1 pb-1 text-slate-900">
                     <a href={data?.maps} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-3 rounded-2xl active:bg-slate-50 transition-colors">
                         <MapPin size={18} className="text-red-400 shrink-0" />

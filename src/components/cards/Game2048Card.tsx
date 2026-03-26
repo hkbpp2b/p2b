@@ -210,7 +210,7 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                 <div className="w-full max-w-[280px] mb-6">
                     <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">2048</h1>
                     <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Skor saat ini</p>
+                        <p className="text-[10px] font-bold text-slate-900 uppercase tracking-widest">Skor</p>
                         <span className="text-2xl font-black text-black">{score}</span>
                     </div>
                 </div>

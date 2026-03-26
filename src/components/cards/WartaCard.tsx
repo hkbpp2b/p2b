@@ -119,6 +119,35 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
         }
     };
 
+    useEffect(() => {
+        if (fullscreenFile) {
+            document.body.classList.add('modal-open');
+            if (window.history.state?.modal !== 'pdf') {
+                window.history.pushState({ modal: 'pdf' }, "");
+            }
+
+            const handlePopState = (e: PopStateEvent) => {
+                setFullscreenFile(null);
+                document.body.classList.remove('modal-open');
+            };
+
+            window.addEventListener('popstate', handlePopState);
+            return () => {
+                window.removeEventListener('popstate', handlePopState);
+                document.body.classList.remove('modal-open');
+            };
+        }
+    }, [fullscreenFile]);
+
+    const closeFullscreen = () => {
+        if (window.history.state?.modal === 'pdf') {
+            window.history.back();
+        } else {
+            setFullscreenFile(null);
+            document.body.classList.remove('modal-open');
+        }
+    };
+
     if (loading) return (
         <div className="flex flex-col items-center justify-center py-60">
             <Loader2 className="animate-spin text-slate-900" size={32} />
@@ -138,7 +167,14 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                 { label: "Tata Ibadah Sore", id: data?.sore, icon: <Moon size={18} /> },
             ].filter(i => i.id)
         },
-        { title: "Dokumen Lainnya", items: data?.lainnya?.map((doc: any) => ({ label: doc.label, id: doc.id, icon: <FileText size={18} /> })) || [] }
+        {
+            title: "Dokumen Lain",
+            items: data?.lainnya?.map((doc: any, index: number) => ({
+                label: doc.label,
+                id: doc.id || `extra-${index}`,
+                icon: <FileText size={18} />
+            })) || []
+        }
     ].filter(section => section.items.length > 0);
 
     return (
@@ -152,7 +188,7 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
             <div className="space-y-4">
                 {sections.map((section, sIdx) => (
                     <div key={sIdx} className="space-y-4">
-                        <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-[0.25em] pl-1">{section.title}</h3>
+                        <h3 className="text-[10px] font-black text-slate-400 text-center uppercase tracking-[0.15em]">{section.title}</h3>
                         <div className="grid gap-3">
                             {section.items.map((item: any, iIdx: number) => {
                                 const isActive = openViewerId === item.id;
@@ -244,7 +280,7 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
             {fullscreenFile && (
                 <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
                     <button
-                        onClick={() => setFullscreenFile(null)}
+                        onClick={closeFullscreen}
                         className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
                     >
                         <X size={24} />
