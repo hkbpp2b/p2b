@@ -90,8 +90,8 @@ const PendetaCard = () => {
                                 {/* Kontainer Teks: Rata Kiri */}
                                 <div className="flex flex-col items-start justify-center flex-1">
                                     <p className={`font-black uppercase transition-all duration-300 text-left ${isExpanded
-                                            ? 'text-[14px] text-slate-900'
-                                            : 'text-[13px] text-slate-700'
+                                        ? 'text-[14px] text-slate-900'
+                                        : 'text-[13px] text-slate-700'
                                         }`}
                                     >
                                         {pdt.name}
@@ -100,8 +100,8 @@ const PendetaCard = () => {
 
                                 {/* Ikon Chevron: Tetap di Kanan */}
                                 <div className={`p-2 shrink-0 rounded-full transition-all duration-300 ${isExpanded
-                                        ? 'text-black rotate-180 scale-110'
-                                        : 'text-slate-400 group-active:scale-90'
+                                    ? 'text-black rotate-180 scale-110'
+                                    : 'text-slate-400 group-active:scale-90'
                                     }`}>
                                     <ChevronDown size={16} strokeWidth={3} />
                                 </div>
@@ -120,7 +120,7 @@ const PendetaCard = () => {
 
                                         {/* SLIDE 1: FOTO & NAMA & BIO */}
                                         <div className="w-[calc(100%-24px)] shrink-0 snap-center mb-1">
-                                            <div className="bg-white rounded-[2.5rem] p-6 border border-slate-200 h-[250px] shadow-sm flex flex-col items-center">
+                                            <div className="bg-white rounded-[2.5rem] p-6 h-[250px] shadow-sm flex flex-col items-center">
 
                                                 {/* Foto Profil */}
                                                 <div className="w-[120px] aspect-square rounded-[2rem] overflow-hidden shadow-md bg-slate-200">
@@ -160,25 +160,25 @@ const PendetaCard = () => {
                                         {/* SLIDE 2: DETAIL (DENGAN BATASAN TINGGI) */}
                                         <div className="w-[calc(100%-12px)] shrink-0 snap-center mb-1">
                                             {/* 1. Tentukan tinggi tetap di sini, misal h-[320px] */}
-                                            <div className="bg-white rounded-[2.5rem] pt-6 px-6 border border-slate-200 h-[250px] shadow-sm flex flex-col">
+                                            <div className="bg-white rounded-[2.5rem] pt-6 px-6 h-[250px] shadow-sm flex flex-col">
 
                                                 {/* 2. Wrapper Scroll Utama - flex-1 akan mengambil sisa ruang yang tersedia */}
                                                 <div className="flex-1 overflow-y-auto no-scrollbar pr-1">
 
                                                     {/* Bagian Pendidikan */}
                                                     <div className="mb-6">
-                                                        <div className="flex items-center gap-3 mb-4 sticky top-0 bg-white pb-2 z-20">
-                                                            <p className="text-[10px] font-black text-blue-900 leading-tight uppercase tracking-widest">
+                                                        <div className="flex items-center gap-3 mb-4 sticky top-0 bg-white pb-1 z-20">
+                                                            <p className="text-[10px] font-black text-slate-900 leading-tight uppercase tracking-widest">
                                                                 Pendidikan
                                                             </p>
-                                                            <div className="h-[1px] flex-1 bg-slate-100" />
+                                                            <div className="h-[1px] flex-1 bg-slate-300" />
                                                         </div>
 
                                                         <div className="space-y-3 px-1">
                                                             {pdt.pendidikan.map((edu: string, idx: number) => (
                                                                 <div key={idx} className="flex gap-3 items-start">
-                                                                    <div className="w-1 h-1 rounded-full bg-slate-300 mt-1.5 shrink-0" />
-                                                                    <p className="text-[11px] font-bold text-slate-600 leading-tight uppercase tracking-tight">
+                                                                    <div className="w-1 h-1 rounded-full bg-slate-900 mt-1.5 shrink-0" />
+                                                                    <p className="text-[11px] font-extrabold text-slate-600 leading-tight tracking-tight">
                                                                         {edu}
                                                                     </p>
                                                                 </div>
@@ -188,18 +188,18 @@ const PendetaCard = () => {
 
                                                     {/* Bagian Pelayanan */}
                                                     <div className="relative">
-                                                        <div className="flex items-center gap-3 mb-4 sticky top-0 bg-white pb-2 z-20">
-                                                            <p className="text-[10px] font-black text-blue-900 leading-tight uppercase tracking-widest">
+                                                        <div className="flex items-center gap-3 mb-4 sticky top-0 bg-white pb-1 z-20">
+                                                            <p className="text-[10px] font-black text-slate-900 leading-tight uppercase tracking-widest">
                                                                 Pelayanan
                                                             </p>
-                                                            <div className="h-[1px] flex-1 bg-slate-100" />
+                                                            <div className="h-[1px] flex-1 bg-slate-300" />
                                                         </div>
 
-                                                        <div className="space-y-5 relative px-1">
+                                                        <div className="space-y-5 relative px-1 mb-8">
                                                             {pdt.pelayanan.map((srv: string, idx: number) => (
-                                                                <div key={idx} className="pl-5 relative border-l border-slate-100 ml-0.5">
-                                                                    <div className="absolute left-[-4.5px] top-1.5 w-2 h-2 rounded-full bg-slate-200 border-2 border-white shadow-sm z-10" />
-                                                                    <p className="text-[11px] font-bold text-slate-600 leading-tight uppercase tracking-tight">
+                                                                <div key={idx} className="pl-5 relative border-l border-slate-900 ml-0.5">
+                                                                    <div className="absolute left-[-4.5px] top-1.5 w-2 h-2 rounded-full bg-slate-900 border-2 border-white shadow-sm z-10" />
+                                                                    <p className="text-[11px] font-extrabold text-slate-600 leading-tight tracking-tight">
                                                                         {srv}
                                                                     </p>
                                                                 </div>
