@@ -61,14 +61,14 @@ const PendetaCard = () => {
     const mainHeaderPhoto = pendetaList[0]?.fullImg;
 
     return (
-        <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
+        <div className="p-4 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
             <div className="mb-4 text-center">
                 <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Pendeta</h3>
                 <p className="text-[12px] text-slate-900 font-bold uppercase tracking-[0.1em]">HKBP Perumnas 2 Bekasi</p>
             </div>
 
             {/* Hero Header - Matching HeroCard Style */}
-            <div className="rounded-[2rem] overflow-hidden  aspect-[4/3] relative bg-slate-900 mt-2 mb-4 shadow-inner">
+            <div className="rounded-[2rem] overflow-hidden  aspect-[16/10] relative bg-slate-900 mt-2 mb-4 shadow-xl">
                 <img src={mainHeaderPhoto} className="w-full h-full object-cover scale-125" />
             </div>
 
@@ -105,7 +105,7 @@ const PendetaCard = () => {
                                 <div className="px-2 pb-6 space-y-3">
 
                                     <div className="relative flex flex-col items-center pt-2">
-                                        <div className="w-[120px] aspect-square rounded-[2rem] overflow-hidden shadow-sm bg-slate-200">
+                                        <div className="w-[120px] aspect-square rounded-[2rem] overflow-hidden shadow-inner bg-slate-200">
                                             <img src={pdt.img} className="w-full h-full object-cover" alt={pdt.name} />
                                         </div>
                                         {pdt.bio !== "-" && (

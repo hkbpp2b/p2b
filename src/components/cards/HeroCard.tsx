@@ -171,7 +171,7 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
     return (
         <>
             <div className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-3 transition-all bg-white">
-                <div className="rounded-[2rem] overflow-hidden aspect-[4/3] relative bg-slate-900 group">
+                <div className="rounded-[2rem] overflow-hidden aspect-[4/3] relative bg-slate-900 group shadow-xl">
                     <div
                         ref={sliderRef}
                         onScroll={handleSliderScroll}
@@ -189,7 +189,7 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
                                 onClick={() => handlePhotoClick(slide)}
                             >
                                 <img src={slide.url} className="w-full h-full object-cover" alt="" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent z-10" />
+                                {/* <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent z-10" /> */}
                             </div>
                         ))}
                     </div>

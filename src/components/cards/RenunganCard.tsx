@@ -201,7 +201,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
 
     return (
         <>
-            <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-200 bg-white relative overflow-hidden">
+            <div className="p-4 rounded-[2.5rem] shadow-sm border border-slate-200 bg-white relative overflow-hidden">
                 <div className="mb-4 text-center relative z-10">
                     <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase mb-1">
                         Renungan Harian

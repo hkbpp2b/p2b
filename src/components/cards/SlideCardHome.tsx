@@ -122,7 +122,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
     return (
         <div
             onClick={handleClick}
-            className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-6 bg-white relative cursor-pointer active:scale-95 transition-transform duration-200"
+            className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-4 bg-white relative cursor-pointer active:scale-95 transition-transform duration-200"
         >
             <div className="absolute -top-1 -right-1 z-40 scale-90 pointer-events-none">
                 <div className="relative flex items-center justify-center">
@@ -140,7 +140,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
                 <p className="text-[12px] text-slate-800 font-bold uppercase tracking-widest">Materi Pembinaan Warga Jemaat</p>
             </div>
 
-            <div className="rounded-4xl overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none shadow-md">
+            <div className="rounded-4xl overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none shadow-xl">
                 <div className="w-full h-full relative">
                     <PDFCoverHome url={slide.linkPdf} />
                 </div>
