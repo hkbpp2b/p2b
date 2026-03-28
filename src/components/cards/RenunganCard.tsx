@@ -233,7 +233,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             <p className="text-[13px] font-black text-blue-400 text-center leading-tight">
                                 {data.ayat}
                             </p>
-                            <div className="space-y-1 border-l border-slate-500 pl-3">
+                            <div className="space-y-1 border-l border-slate-500 pl-3 flex justify-center items-center">
                                 <p className="text-[13px] font-black text-emerald-400 text-left leading-tight">
                                     Ende No.{data.nomorEnde}
                                 </p>

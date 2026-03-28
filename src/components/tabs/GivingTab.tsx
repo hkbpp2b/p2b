@@ -79,7 +79,7 @@ const GivingTab = () => {
     };
 
     return (
-        <div className="pb-32 pt-8 px-5 space-y-8 flex flex-col items-center relative">
+        <div className="pb-32 pt-8 px-5 space-y-8 flex flex-col items-center relative transition-all duration-300">
             <header className="text-center space-y-1 w-full">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Persembahan</h2>
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">QRIS dan Rekening Gereja</p>
@@ -103,7 +103,7 @@ const GivingTab = () => {
 
             {isImageOpen && (
                 <div
-                    className="fixed h-full inset-0 z-[999] flex items-center justify-center bg-black"
+                    className="fixed h-full inset-0 z-[999] flex items-center justify-center bg-black "
                     onClick={() => setIsImageOpen(false)}
                 >
                     <button

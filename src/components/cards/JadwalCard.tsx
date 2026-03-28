@@ -84,15 +84,15 @@ const JadwalCard = ({ onSelectDetail, isDesktop }: JadwalCardProps) => {
                 <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Ibadah Minggu</h3>
                 <p className="text-[12px] text-slate-900 font-bold uppercase tracking-[0.1em]">{tanggalMinggu}</p>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-1">
                 {jadwal.map((item, i) => {
                     const isActive = selectedJadwal === item.id;
                     return (
                         <div key={i} className="group">
                             <button
                                 onClick={() => handleClick(item)}
-                                className={`w-full flex items-center justify-between p-4 px-6 rounded-[2rem] transition-all duration-300 active:scale-[0.97] group border ${isActive
-                                    ? "bg-slate-900 border-slate-900 text-white shadow-lg shadow-slate-200"
+                                className={`w-full flex items-center justify-between p-4 px-6 rounded-[2rem] transition-all duration-300 group border ${isActive
+                                    ? "bg-slate-800 border-slate-900 text-white shadow-lg shadow-slate-200"
                                     : item.isLive
                                         ? "bg-white border-red-100 hover:border-red-200 text-slate-900"
                                         : "bg-white border-slate-100 hover:border-slate-300 text-slate-900"
@@ -109,7 +109,7 @@ const JadwalCard = ({ onSelectDetail, isDesktop }: JadwalCardProps) => {
                                     </div>
                                 </div>
 
-                                <div className={`transition-all duration-300 ${isActive ? "rotate-180" : "opacity-40 group-hover:opacity-100"}`}>
+                                <div className={`${isActive ? "rotate-180" : "opacity-40 group-hover:opacity-100"}`}>
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                                         <path d="M6 9l6 6 6-6" />
                                     </svg>
@@ -117,36 +117,37 @@ const JadwalCard = ({ onSelectDetail, isDesktop }: JadwalCardProps) => {
                             </button>
 
                             {!isDesktop && isActive && (
-                                <div className="mt-3 mx-1 p-5 bg-white rounded-[2rem] border border-slate-100 animate-in fade-in zoom-in-95 duration-400">
+                                /* Penambahan max-h-[300px] (bisa disesuaikan) dan overflow-y-auto untuk scroll */
+                                <div className="mt-2 mb-6 px-8 bg-slate-800 rounded-[2rem] max-h-[350px] overflow-y-auto no-scrollbar shadow-xl">
                                     {item.isLive ? (
                                         <div className="flex flex-col items-center py-4">
-                                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.1em] mb-6 text-center leading-relaxed">
+                                            <p className="text-[11px] font-bold text-slate-100 uppercase tracking-[0.1em] my-3 text-center leading-relaxed">
                                                 Livestreaming Ibadah <br /> via YouTube
                                             </p>
                                             <button
                                                 onClick={() => window.open(item.link, '_blank')}
-                                                className="w-full bg-red-600 text-white py-4 px-6 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-[0.98]"
+                                                className="w-full bg-slate-100 text-slate-800 my-4 py-4 px-6 rounded-2xl flex items-center justify-center gap-"
                                             >
                                                 <span className="text-[12px] font-black uppercase tracking-widest">Buka Youtube</span>
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="space-y-5">
-                                            <div className="flex flex-col items-center gap-1 border-b border-slate-50 pb-4">
-                                                <span className="text-[12px] font-black text-slate-900 uppercase tracking-tight">Pelayan {item.name}</span>
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">{tanggalMinggu}</span>
+                                        <div className="space-y-5 mx-2">
+                                            <div className="flex flex-col items-center gap-1  pb-4 sticky z-10">
+                                                <span className="text-[13px] font-black text-slate-100 uppercase tracking-tight mt-8">Pelayan {item.name}</span>
+                                                <span className="text-[11px] font-bold text-slate-100 uppercase tracking-[0.15em]">{tanggalMinggu}</span>
                                             </div>
-                                            <div className="divide-y divide-slate-200">
-                                                {loading ? <div className="py-10 flex justify-center"></div> :
+                                            <div className="divide-y divide-slate-400 mb-12">
+                                                {loading ? <div className="py-10 flex justify-center text-xs text-slate-100">Loading...</div> :
                                                     dataPelayan[item.id]?.map((p: any, idx: number) => (
                                                         <div key={idx} className="py-2 first:pt-0 last:pb-0">
                                                             <div className="flex gap-4">
                                                                 <div className="w-24 shrink-0 pt-0.5">
-                                                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">{p.label}</span>
+                                                                    <span className="text-[10px] font-black text-slate-100 uppercase tracking-wider block">{p.label}</span>
                                                                 </div>
                                                                 <div className="flex-grow space-y-2">
                                                                     {p.name.split(',').map((name: string, nIdx: number) => (
-                                                                        <span key={nIdx} className="text-[11px] font-bold text-slate-700 block">{name.trim()}</span>
+                                                                        <span key={nIdx} className="text-[11px] font-bold text-slate-100 block">{name.trim()}</span>
                                                                     ))}
                                                                 </div>
                                                             </div>

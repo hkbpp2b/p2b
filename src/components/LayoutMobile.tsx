@@ -14,7 +14,7 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
     const isHomePage = activeTab === 'profil';
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col md:hidden">
+        <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col md:hidden  no-scrollbar">
             {/* Header Biasa (Static) - Akan ikut hilang saat scroll ke bawah */}
             {isHomePage && (
                 <header className="flex flex-col items-center justify-center pt-12 pb-6 bg-white">

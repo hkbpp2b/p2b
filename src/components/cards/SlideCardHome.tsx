@@ -126,7 +126,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
         >
             <div className="absolute -top-1 -right-1 z-40 scale-90 pointer-events-none">
                 <div className="relative flex items-center justify-center">
-                    <svg viewBox="0 25 90 100" className="w-16 h-16 fill-red-500 drop-shadow-md">
+                    <svg viewBox="0 25 90 100" className="w-16 h-16 fill-blue-900 drop-shadow-md">
                         <path d="M50 5L55 18L68 14L69 27L82 27L79 40L91 44L85 55L94 66L81 70L81 83L68 82L61 94L50 88L39 94L32 82L19 83L19 70L6 66L15 55L9 44L21 40L18 27L31 27L32 14L45 18Z" />
                     </svg>
                     <span className="absolute right-4.5 top-3 text-white text-[9px] font-bold tracking-widest">
@@ -141,7 +141,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
             </div>
 
             <div className="rounded-4xl overflow-hidden aspect-video relative group bg-slate-900 pointer-events-none shadow-xl">
-                <div className="w-full h-full relative">
+                <div className="w-full h-full relative scale-105">
                     <PDFCoverHome url={slide.linkPdf} />
                 </div>
             </div>
