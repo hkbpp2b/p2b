@@ -122,7 +122,7 @@ const SlideCardHome = ({ onNavigate }: SlideCardHomeProps) => {
     return (
         <div
             onClick={handleClick}
-            className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-3 bg-white relative cursor-pointer active:scale-95 transition-transform duration-200"
+            className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-6 bg-white relative cursor-pointer active:scale-95 transition-transform duration-200"
         >
             <div className="absolute -top-1 -right-1 z-40 scale-90 pointer-events-none">
                 <div className="relative flex items-center justify-center">

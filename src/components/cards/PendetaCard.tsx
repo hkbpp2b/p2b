@@ -17,12 +17,8 @@ const PendetaCard = () => {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
             const fileId = match ? match[1] : null;
             if (!fileId) return url;
-
-            // OPSI A: Gunakan thumbnail dengan resolusi lebih tinggi (Maks 2500)
             return `https://drive.google.com/thumbnail?id=${fileId}&sz=w2500`;
 
-            // OPSI B: Gunakan link Direct Download/View (Resolusi Asli) - Direkomendasikan
-            // return `https://docs.google.com/uc?export=view&id=${fileId}`;
         }
         return url;
     };

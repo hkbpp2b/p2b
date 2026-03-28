@@ -28,8 +28,8 @@ const FungsionarisCard = () => {
             const text = await response.text();
             const rows = text.split(/\r?\n/).filter(row => row.trim() !== "");
 
-            if (rows.length > 5) {
-                const parsedData = rows.slice(5).map(row => {
+            if (rows.length > 1) {
+                const parsedData = rows.slice(1).map(row => {
                     const cols = row.split('\t').map(v => v.trim());
                     return {
                         name: cols[0] || "Nama",
