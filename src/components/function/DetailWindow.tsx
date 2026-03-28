@@ -237,19 +237,19 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
                         </div>
 
                         <div className="space-y-4 relative z-10">
-                            <div className="p-4 rounded-[2.5rem] border border-slate-100 bg-slate-50/50">
-                                <p className="text-[20px] font-black text-center text-slate-900 uppercase mb-4 leading-tight">
+                            <div className="p-4 rounded-[2.5rem] border border-slate-100 bg-blue-800/10">
+                                <p className="text-[20px] font-black text-center text-blue-900 uppercase mb-4 leading-tight">
                                     {selectedDetail.ayat}
                                 </p>
-                                <p className="text-[16px] font-bold text-center text-slate-600 leading-relaxed">
+                                <p className="text-[16px] font-bold text-center text-slate-800 leading-relaxed">
                                     "{selectedDetail.kutipan}"
                                 </p>
                             </div>
 
                             {selectedDetail.bukuEnde && (
-                                <div className="p-4 rounded-[2.5rem] border border-blue-50 bg-blue-50/30">
+                                <div className="p-4 rounded-[2.5rem] border border-blue-50 bg-emerald-800/10">
                                     <div className="flex flex-col items-center gap-6 text-center">
-                                        <p className="text-[20px] font-black text-slate-900 whitespace-pre-line leading-tight">
+                                        <p className="text-[20px] font-black text-emerald-800 whitespace-pre-line leading-tight">
                                             {selectedDetail.bukuEnde}
                                         </p>
 
@@ -257,11 +257,11 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
                                             onClick={playMidi}
                                             disabled={isLoadingMidi}
                                             className={`flex items-center gap-2 pr-4 pl-1.5 py-1 rounded-full transition-all border shadow-sm active:scale-95 disabled:opacity-50 ${isPlaying
-                                                    ? 'border-red-100 text-red-500 bg-red-50/30'
-                                                    : 'border-slate-200 text-blue-600 bg-white'
+                                                ? 'border-red-100 text-red-500 bg-red-50/30'
+                                                : 'border-slate-200 text-emerald-600 bg-white'
                                                 }`}
                                         >
-                                            <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isPlaying ? 'bg-red-500 text-white' : 'bg-blue-600 text-white'
+                                            <div className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${isPlaying ? 'bg-red-500 text-white' : 'bg-emerald-600 text-white'
                                                 }`}>
                                                 {isLoadingMidi ? (
                                                     <Loader2 size={12} className="animate-spin" />
@@ -290,11 +290,11 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
                     </div>
 
                     <div className="px-1 pb-20">
-                        <h4 className="text-[26px] font-black text-slate-900 leading-[1.1] tracking-tighter uppercase mb-8">
+                        <h4 className="text-[26px] font-black text-slate-900 text-center leading-tight tracking-tighter uppercase mb-8">
                             {selectedDetail.topik}
                         </h4>
 
-                        <p className="text-[16px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
+                        <p className="text-[16px] font-medium text-slate-800 leading-[1.7] whitespace-pre-line">
                             {selectedDetail.isi}
                         </p>
                     </div>

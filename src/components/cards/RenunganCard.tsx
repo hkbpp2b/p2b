@@ -343,10 +343,10 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
 
                                 <div className="space-y-6 relative z-10">
                                     <div className={`p-5 rounded-[2rem] border transition-colors ${isDarkMode ? 'bg-blue-800/10 border-slate-700/50' : 'bg-blue-50/70 border-slate-100'}`}>
-                                        <p style={{ fontSize: `${textSize - 1}px` }} className={`font-black text-center uppercase mb-3 ${isDarkMode ? 'text-blue-400' : 'text-blue-600'}`}>
+                                        <p style={{ fontSize: `${textSize - 1}px` }} className={`font-black text-center uppercase mb-3 ${isDarkMode ? 'text-blue-400' : 'text-blue-800'}`}>
                                             {data.ayat}
                                         </p>
-                                        <p style={{ fontSize: `${textSize - 1}px` }} className={`font-bold text-center ${isDarkMode ? 'text-blue-100' : 'text-blue-900'}`}>
+                                        <p style={{ fontSize: `${textSize - 1}px` }} className={`font-bold text-center ${isDarkMode ? 'text-blue-100' : 'text-slate-900'}`}>
                                             {data.kutipan}
                                         </p>
                                     </div>
@@ -354,14 +354,14 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                     {data.bukuEnde && (
                                         <div className={`p-3 rounded-[2rem] border transition-colors ${isDarkMode ? 'bg-emerald-800/10 border-slate-700/30' : 'bg-emerald-50/70 border-slate-100'}`}>
                                             <div className="flex flex-col items-center gap-4 text-center">
-                                                <p style={{ fontSize: `${textSize}px` }} className={`font-black whitespace-pre-line leading-tight ${isDarkMode ? 'text-emerald-300' : 'text-emerald-500'}`}>
+                                                <p style={{ fontSize: `${textSize}px` }} className={`font-black whitespace-pre-line leading-tight ${isDarkMode ? 'text-emerald-300' : 'text-emerald-800'}`}>
                                                     {data.bukuEnde}
                                                 </p>
                                                 <button
                                                     onClick={playMidi}
                                                     disabled={isLoadingMidi}
                                                     className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full transition-all border ${isPlaying
-                                                        ? 'border-red-500/50 text-red-500 bg-red-500/10'
+                                                        ? 'border-emerald-800/10 text-red-500 bg-red-500/10'
                                                         : isDarkMode
                                                             ? 'border-slate-600 text-emerald-400 bg-slate-800'
                                                             : 'border-slate-200 text-emerald-600 bg-white shadow-sm'
