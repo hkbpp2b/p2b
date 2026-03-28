@@ -32,8 +32,8 @@ const FungsionarisCard = () => {
                 const parsedData = rows.slice(1).map(row => {
                     const cols = row.split('\t').map(v => v.trim());
                     return {
-                        name: cols[0] || "Nama",
-                        role: cols[1] || "Fungsionaris",
+                        name: cols[0] || "",
+                        role: cols[1] || "",
                         phone: cols[2] || "",
                         bio: cols[3] || "-",
                         img: formatDriveLink(cols[4]),
