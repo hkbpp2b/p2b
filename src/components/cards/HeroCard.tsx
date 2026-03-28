@@ -185,7 +185,7 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
                         {data?.slides?.map((slide: any, idx: number) => (
                             <div
                                 key={idx}
-                                className="w-full h-full shrink-0 snap-center relative active:scale-95 transition-transform duration-200"
+                                className="w-full h-full shrink-0 snap-center relative active:scale-100 transition-transform duration-200"
                                 onClick={() => handlePhotoClick(slide)}
                             >
                                 <img src={slide.url} className="w-full h-full object-cover" alt="" />
