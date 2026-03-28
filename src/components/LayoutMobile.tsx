@@ -30,8 +30,9 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
 
             {/* Konten Utama: Z-Index lebih tinggi dan Background Putih agar menimpa header */}
             <main
-                className={`relative flex-1 p-4 pb-24 z-10 ${isHomePage ? 'mt-40' : 'mt-4'
-                    }`}
+                className={`relative flex-1  pb-24 z-10 
+        ${isHomePage ? 'mt-40' : 'mt-4'} 
+        bg-white/70 backdrop-blur-md`} // Menggunakan transparansi 70% dan efek blur
             >
                 {children}
             </main>
