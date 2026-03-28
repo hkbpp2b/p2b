@@ -63,14 +63,14 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
             "Bartimeus", "Yairus", "Malchus", "Klefopas", "Lois", "Eunike", "Stefanus",
             "Adam", "Hawa", "Kain", "Habel", "Nuh", "Abraham", "Ishak", "Yakub", "Yusuf",
             "Musa", "Harun", "Yosua", "Gideon", "Simson", "Samuel", "Saul", "Daud", "Salomo",
-            "Elia", "Elisa", "Yesaya", "Yeremia", "Yehezkiel", "Daniel", "Yunus", "Ayub",
+            "Elia", "Eliab", "Elisa", "Yesaya", "Yeremia", "Yehezkiel", "Daniel", "Yunus", "Ayub",
             "Boas", "Rut", "Ester", "Mordekhai", "Nehemia", "Ezra", "Metusalah", "Enokh",
             "Melkhisedek", "Ismael", "Labu", "Lea", "Rahel", "Dina", "Potifar", "Miryam",
             "Debora", "Barak", "Delila", "Goliat", "Absalom", "Ratu Syeba", "Nebukadnezar",
             "Belsyazar", "Koresh", "Artahsasta", "Darius", "Ahab", "Izebel", "Obaja",
             "Hosea", "Yoel", "Amos", "Mikha", "Nahum", "Habakuk", "Zefanya", "Hagai",
-            "Zakharia", "Maleakhi", "Lamekh", "Terah", "Lot", "Sara", "Ribka",
-            "Bileam", "Balak", "Rahab", "Otniel", "Ehud", "Yefta", "Eli", "Yonatan",
+            "Zakharia", "Maleakhi", "Lamekh", "Terah", "Lot", "Sarai", "Ribka",
+            "Bileam", "Balak", "Rahab", "Otniel", "Ehud", "Yefta", "Eli", "Elihoref", "Yonatan",
             "Natan", "Batsyeba", "Rehabeam", "Yerobeam", "Hizkia", "Yosia", "Manasye"
         ],
         PLACES: [
@@ -79,12 +79,12 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
             "Kolose", "Babel", "Sodom", "Gomora", "Kanaan", "Sinai", "Yudea", "Samaria",
             "Damaskus", "Tarsus", "Yope", "Kaisarea", "Mekhedonia", "Krete", "Patmos",
             "Asyur", "Persia", "Media", "Edom", "Moab", "Ammon", "Filistin", "Libanon",
-            "Sikhem", "Silo", "Ramot-Gilead", "Gaza", "Askelon", "Asdod", "Ekron", "Gat",
+            "Sikhem", "Silo", "Ramot-Gilead", "Gaza", "Gazam", "Askelon", "Asdod", "Ekron", "Gat",
             "Golgota", "Getsemani", "Betania", "Hebron", "Betel", "Yerikho", "Ninive",
             "Tirus", "Sidon", "Karmel", "Horeb", "Hermon", "Efrat", "Ararat", "Moria",
             "Pisga", "Tabor", "Zaitun", "Khenisaret", "Laut Teberau", "Laut Mati",
             "Emmaus", "Lida", "Troas", "Miletus", "Bereia", "Derbe", "Listra", "Ikonium",
-            "Ur Kasdim", "Haru", "Arnon", "Yabok", "Basan", "Gilead", "Midian", "Kadesh",
+            "Ur Kasdim", "Arnon", "Yabok", "Basan", "Gilead", "Midian", "Kadesh",
             "Marah", "Elim", "Rafidim", "Nebanya", "Sion", "Lembah Hinom", "Lembah Kidron"
         ],
         OBJECTS: [
