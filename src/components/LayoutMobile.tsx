@@ -33,7 +33,7 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
             </main>
 
             {/* Navbar tetap Fixed di bawah agar mudah diakses jari */}
-            <nav className="fixed bottom-0 left-0 right-0 z-[110] pt-1.5 pb-1.5 bg-white border-t-2 border-slate-200/60">
+            <nav className="fixed bottom-0 left-0 right-0 z-[50] pt-1.5 pb-1.5 bg-white border-t-2 border-slate-200/60">
                 <div className="grid grid-cols-5 w-full max-w-md mx-auto items-end">
                     {menus.map((m) => {
                         const isActive = activeTab === m.id;

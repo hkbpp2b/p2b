@@ -69,7 +69,7 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
             "Debora", "Barak", "Delila", "Goliat", "Absalom", "Ratu Syeba", "Nebukadnezar",
             "Belsyazar", "Koresh", "Artahsasta", "Darius", "Ahab", "Izebel", "Obaja",
             "Hosea", "Yoel", "Amos", "Mikha", "Nahum", "Habakuk", "Zefanya", "Hagai",
-            "Zakharia", "Maleakhi", "Set", "Lamekh", "Terah", "Lot", "Sara", "Ribka",
+            "Zakharia", "Maleakhi", "Lamekh", "Terah", "Lot", "Sara", "Ribka",
             "Bileam", "Balak", "Rahab", "Otniel", "Ehud", "Yefta", "Eli", "Yonatan",
             "Natan", "Batsyeba", "Rehabeam", "Yerobeam", "Hizkia", "Yosia", "Manasye"
         ],
@@ -320,7 +320,7 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
     const currentQ = questions[currentIndex];
 
     return (
-        <div className="fixed lg:absolute inset-0 z-[60] bg-white flex flex-col overflow-hidden mb-20">
+        <div className="fixed lg:absolute inset-0 z-[999] bg-white flex flex-col overflow-hidden ">
             <header className="relative flex-none px-4 h-14 flex items-center justify-between">
                 <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full z-10">
                     <ArrowLeft size={20} />
@@ -331,10 +331,10 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
                 <div className="w-9" />
             </header>
 
-            <div className="flex-1 overflow-y-auto no-scrollbar p-6 flex flex-col items-center">
+            <div className="flex-1 overflow-y-auto no-scrollbar px-10 flex flex-col items-center">
                 {!quizOver ? (
                     <div className="w-full max-w-[340px] flex flex-col">
-                        <div className="mb-8 text-center">
+                        <div className="mb-4 text-center">
                             <h1 className="text-4xl font-black tracking-tighter uppercase leading-none mb-3">Kuis Alkitab</h1>
 
                             {/* Indikator Nyawa di bawah Judul */}
@@ -379,9 +379,9 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
                         </div>
 
                         {isAnswered && lives > 0 && (
-                            <div className="mt-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                <div className="p-3">
-                                    <p className="text-[10px] text-center font-extrabold text-slate-900 tracking-widest ">(TB) {currentQ.reference}</p>
+                            <div className="mt-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <div>
+                                    <p className="text-[10px] text-center font-extrabold text-slate-900 tracking-widest border-t-2 py-4 ">(TB) {currentQ.reference}</p>
                                 </div>
                                 <button onClick={nextQuestion} className="w-full bg-black text-white py-4 font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:bg-slate-800 mb-20">
                                     Lanjut
@@ -418,7 +418,7 @@ const QuizAlkitabCard = ({ onBack }: QuizAlkitabCardProps) => {
                             <button onClick={generateFromLocal} className="w-full bg-white border-2 border-black py-4 font-black uppercase text-[10px] hover:bg-slate-50">Coba Lagi</button>
                         </div>
 
-                        <div className="w-full px-2">
+                        <div className="w-full px-2 mb-20">
                             <div className="flex items-center gap-2 mb-4 border-b-2 border-black pb-2">
                                 <Trophy size={16} />
                                 <h3 className="text-[10px] font-black uppercase tracking-widest">Peringkat</h3>

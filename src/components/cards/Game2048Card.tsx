@@ -206,7 +206,7 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                     <ArrowLeft size={20} />
                 </button>
             </header>
-            <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col items-center p-6 mb-20 select-none">
+            <div className="flex-1 overflow-y-auto no-scrollbar flex flex-col items-center p-6 select-none">
                 <div className="w-full max-w-[280px] mb-6">
                     <h1 className="text-5xl font-black tracking-tighter uppercase leading-[0.8] text-slate-900">2048</h1>
                     <div className="mt-6 flex justify-between items-center border-t-2 border-black pt-2">
