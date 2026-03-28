@@ -180,9 +180,8 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
     return (
         <div className="space-y-10">
             <header className="text-center space-y-1">
-                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Warta dan Acara</h2>
-                <p className="text-[15px] font-bold text-slate-900 uppercase tracking-[0.2em]">{data?.minggu}</p>
-                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">{data?.tanggal}</p>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">WARTA & ACARA</h2>
+                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">{data?.minggu}, {data?.tanggal}</p>
             </header>
 
             <div className="space-y-4">

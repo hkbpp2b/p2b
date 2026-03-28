@@ -7,12 +7,11 @@ import GivingTab from './components/tabs/GivingTab';
 import OtherTab from './components/tabs/OtherTab';
 import AplikasiTab from './components/tabs/AplikasiTab';
 import DetailWindow from './components/function/DetailWindow';
-import { useMidiPlayer } from './components/function/useMidiPlayer';
 
 const TITLES: Record<string, string> = {
   profil: 'HKBP Perumnas 2 Bekasi',
-  warta: 'COMINGSOON',
-  ibadah: 'WARTA dan ACARA',
+  warta: 'WARTA',
+  ibadah: 'APP',
   giving: 'PERSEMBAHAN',
   other: 'LAYANAN'
 };
@@ -21,7 +20,6 @@ function App() {
   const [activeTab, setActiveTab] = useState('profil');
   const [loadedTabs, setLoadedTabs] = useState<string[]>(['profil']);
   const [selectedDetail, setSelectedDetail] = useState<any>(null);
-  const { isPlaying, isLoading, playMidi, stopMidi } = useMidiPlayer();
   const [shouldScroll, setShouldScroll] = useState(false);
 
   useEffect(() => {
@@ -29,9 +27,6 @@ function App() {
   }, [activeTab]);
 
 
-  useEffect(() => {
-    stopMidi();
-  }, [activeTab, selectedDetail]);
 
   useEffect(() => {
     const backgroundQueue = ['giving', 'ibadah', 'warta', 'other'];
@@ -55,7 +50,6 @@ function App() {
         <DetailWindow
           selectedDetail={selectedDetail}
           onBack={() => setSelectedDetail(null)}
-          midiControls={{ isPlaying, isLoading, playMidi }}
         />
       }
     >

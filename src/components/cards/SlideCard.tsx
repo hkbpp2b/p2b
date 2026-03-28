@@ -9,7 +9,7 @@ const GoogleDriveImage = ({ url, name, className }: { url: string | null, name: 
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!url || url === "#") {
+        if (!url || url === "#" || url === "-") {
             setLoading(false);
             setImgSrc(null);
             return;
@@ -66,7 +66,7 @@ const PDFCover = ({ url }: { url: string }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!url || url === "#") {
+        if (!url || url === "#" || url === "-") {
             setLoading(false);
             setImgSrc(null);
             return;
@@ -126,7 +126,7 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
     const TSV_URL = import.meta.env.VITE_TSV_SLIDE_URL;
 
     const extractId = (url: string) => {
-        if (!url || url === "#") return null;
+        if (!url || url === "#" || url === "-") return null;
         const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
         return match ? match[1] : null;
     };
@@ -142,16 +142,21 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
                 const response = await fetch(`${TSV_URL}&t=${new Date().getTime()}`);
                 const text = await response.text();
                 const rows = text.split(/\r?\n/).filter(row => row.trim() !== "");
+
                 if (rows.length > 1) {
-                    const parsed = rows.slice(1).map(row => {
-                        const cols = row.split('\t').map(v => v.trim());
-                        return {
-                            judul: cols[0] || "Untitled Presentation",
-                            penulis: cols[1] || "Anonymous",
-                            fotoPenulis: (cols[2] && cols[2] !== "") ? cols[2] : null,
-                            linkPdf: (cols[3] && cols[3] !== "") ? cols[3] : "#"
-                        };
-                    });
+                    const parsed = rows.slice(1)
+                        .map(row => {
+                            const cols = row.split('\t').map(v => v.trim());
+                            return {
+                                judul: cols[0] || "Untitled Presentation",
+                                penulis: cols[1] || "Anonymous",
+                                fotoPenulis: (cols[2] && cols[2] !== "" && cols[2] !== "-") ? cols[2] : null,
+                                linkPdf: (cols[3] && cols[3] !== "" && cols[3] !== "-") ? cols[3] : "#"
+                            };
+                        })
+                        // FILTER: Hanya tampilkan jika judul bukan "-" dan linkPdf bukan "#" atau "-"
+                        .filter(item => item.judul !== "-" && item.linkPdf !== "#" && item.linkPdf !== "-");
+
                     setSlides(parsed);
                     cachedSlideData = parsed;
                 }
@@ -166,19 +171,15 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
 
     useEffect(() => {
         const handlePopState = (e: PopStateEvent) => {
-            // Jika user klik tombol back (browser/hardware), tutup UI modal
             setFullscreenFile(null);
             document.body.classList.remove('modal-open');
         };
 
         if (fullscreenFile) {
             document.body.classList.add('modal-open');
-
-            // Push state hanya jika belum ada di state modal slide
             if (window.history.state?.modal !== 'slide') {
                 window.history.pushState({ modal: 'slide' }, "");
             }
-
             window.addEventListener('popstate', handlePopState);
         }
 
@@ -190,10 +191,8 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
 
     const closeFullscreen = () => {
         if (window.history.state?.modal === 'slide') {
-            // Memicu popstate secara otomatis untuk menutup modal via listener
             window.history.back();
         } else {
-            // Fallback jika state hilang atau tidak tercatat
             setFullscreenFile(null);
             document.body.classList.remove('modal-open');
         }

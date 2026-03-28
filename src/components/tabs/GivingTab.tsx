@@ -85,7 +85,7 @@ const GivingTab = () => {
         <div className="pb-32 pt-8 px-5 space-y-8 flex flex-col items-center">
             <header className="text-center space-y-1 w-full">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Persembahan</h2>
-                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Metode Non-Tunai</p>
+                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">QRIS dan Rekening Gereja</p>
             </header>
 
             <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden w-full max-w-sm relative p-6 pb-8">
