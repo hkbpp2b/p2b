@@ -11,19 +11,14 @@ interface LayoutMobileProps {
 }
 
 const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: LayoutMobileProps) => {
-    const [isScrolled, setIsScrolled] = useState(false);
     const isHomePage = activeTab === 'profil';
 
-    useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 50);
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col md:hidden">
-            {isHomePage && !isScrolled && (
-                <header className="fixed top-0 left-0 right-0 z-[100] flex flex-col items-center justify-center py-12">
+        <div className="min-h-screen text-slate-900 font-sans flex flex-col md:hidden">
+
+            {/* Header: Posisi Fixed tapi Z-Index Rendah (di bawah konten) */}
+            {isHomePage && (
+                <header className="fixed top-0 left-0 right-0 z-0 flex flex-col items-center justify-center py-12">
                     <h1 className="text-blue-900 font-black tracking-tighter uppercase text-4xl">
                         HKBP
                     </h1>
@@ -33,10 +28,15 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                 </header>
             )}
 
-            <main className={`flex-1 p-4 pb-24 ${!isHomePage ? 'mt-4' : isScrolled ? 'mt-24' : 'mt-36'}`}>
+            {/* Konten Utama: Z-Index lebih tinggi dan Background Putih agar menimpa header */}
+            <main
+                className={`relative flex-1 p-4 pb-24 z-10 ${isHomePage ? 'mt-40' : 'mt-4'
+                    }`}
+            >
                 {children}
             </main>
 
+            {/* Navbar: Harus Z-Index paling tinggi agar selalu di depan */}
             <nav className="fixed bottom-0 left-0 right-0 z-[110] pt-1.5 pb-1.5 bg-white border-t-2 border-slate-200/60">
                 <div className="grid grid-cols-5 w-full max-w-md mx-auto items-end">
                     {menus.map((m) => {
@@ -45,27 +45,22 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                             <button
                                 key={m.id}
                                 onClick={() => setActiveTab(m.id)}
-                                className="flex flex-col items-center justify-center "
+                                className="flex flex-col items-center justify-center focus:outline-none"
                             >
-                                {/* Container Icon dengan ukuran tetap agar sejajar */}
                                 <div className={`mb-2 mt-1 flex items-center justify-center w-9 h-9 ${isActive ? 'text-blue-600' : 'text-slate-900 opacity-40'}`}>
                                     {m.id === 'profil' ? (
                                         <img
                                             src={logoHkbp}
                                             alt="Home"
-                                            // Ukuran disesuaikan agar seimbang dengan icon (sekitar 24px-28px)
                                             className={`w-10 h-10 object-contain ${isActive ? 'opacity-100' : 'opacity-50'}`}
                                         />
                                     ) : (
                                         React.cloneElement(m.icon as React.ReactElement, {
-                                            // Ukuran icon diseragamkan ke 24 (standar navbar)
                                             size: 26,
                                             strokeWidth: isActive ? 3 : 2
                                         } as any)
                                     )}
                                 </div>
-
-
                             </button>
                         );
                     })}
