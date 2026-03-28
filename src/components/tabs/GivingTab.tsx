@@ -88,26 +88,13 @@ const GivingTab = () => {
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">QRIS dan Rekening Gereja</p>
             </header>
 
-            <div className="bg-white rounded-[2rem] shadow-2xl shadow-slate-200 border border-slate-100 overflow-hidden w-full max-w-sm relative p-6 pb-8">
-                <div className="absolute left-0 top-[20%] w-16 h-32 bg-[#ea1c24] z-0" style={{ clipPath: 'polygon(0 0, 100% 50%, 0 100%)' }} />
-                <div className="absolute right-0 bottom-0 w-20 h-20 bg-[#ea1c24] z-0" style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }} />
-
-                <div className="relative z-10 flex flex-col items-center">
-                    <div className="flex justify-between items-center w-full mb-6">
-                        <img src={qrisLogo} alt="QRIS" className="h-4 object-contain" />
-                        <img src={gpnLogo} alt="GPN" className="h-6 object-contain" />
-                    </div>
-                    <div className="text-center mb-4">
-                        <p className="text-[22px] font-black text-slate-900">Persembahan HKBP 2</p>
-                        <p className="text-[14px] font-medium text-slate-500 mt-1 uppercase tracking-tight">NMID: 9360091100010430137</p>
-                    </div>
-                    <div className="bg-white p-2 border-slate-100 border-[12px] border-white shadow-sm w-full aspect-square flex items-center justify-center overflow-hidden relative group">
-                        <img src={qrUtama} alt="QR" className="w-full h-full object-contain scale-110" />
-                    </div>
-                    <div className="mt-6 text-center">
-                        <p className="text-[11px] font-black text-slate-900 uppercase tracking-[0.1em]">Satu QRIS Untuk Semua</p>
-                        <p className="text-[9px] font-bold text-slate-400 mt-1 italic">Cek aplikasi penyelenggara di: www.aspi-qris.id</p>
-                    </div>
+            <div className="relative z-10 flex flex-col items-center">
+                <div className="bg-white shadow-2xl  rounded-[40px] shadow-slate-200 border-2 border-slate-100 overflow-hidden w-full max-w-sm relative">
+                    <img
+                        src={downloadFile}
+                        alt="QRIS HKBP"
+                        className="w-full h-full object-contain scale-100"
+                    />
                 </div>
             </div>
 

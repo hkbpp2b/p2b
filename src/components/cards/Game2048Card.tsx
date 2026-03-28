@@ -200,7 +200,7 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
     };
 
     return (
-        <div className="fixed lg:absolute inset-0 z-[60] flex flex-col">
+        <div className="fixed  lg:absolute inset-0 z-[60] flex flex-col">
             <header className="flex-none  px-4 h-14 flex items-center justify-between">
                 <button onClick={onBack} className="p-2 -ml-2 hover:bg-slate-100 rounded-full text-slate-600">
                     <ArrowLeft size={20} />
@@ -226,24 +226,24 @@ const Game2048Card = ({ onBack }: Game2048CardProps) => {
                         )))}
                     </div>
                     {gameOver && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center z-50 p-4 text-center">
-                            <p className="font-black text-xl uppercase tracking-tighter mb-2 text-black">Game Over</p>
+                        <div className="absolute bg-white inset-0 flex flex-col items-center justify-center z-50 p-4 text-center">
+                            <p className="font-black text-xl uppercase tracking-tighter  mb-2 text-black">Game Over</p>
                             {!submitted ? (
                                 <div className="w-full">
                                     <input
                                         type="text"
-                                        placeholder="Nama Anda"
+                                        placeholder="Nama"
                                         className="w-full border-2 border-black p-2 text-[10px] font-black uppercase outline-none mb-2 focus:bg-slate-50"
                                         value={playerName}
                                         onChange={(e) => setPlayerName(e.target.value)}
                                         maxLength={10}
                                     />
                                     <button onClick={saveScore} disabled={isLoading} className="w-full bg-black text-white py-2 text-[10px] font-black uppercase mb-2 active:scale-95 transition-transform disabled:opacity-50">
-                                        {isLoading ? 'Checking...' : 'Save Score'}
+                                        {isLoading ? 'Checking...' : 'Simpan'}
                                     </button>
                                 </div>
                             ) : <p className="text-[10px] font-bold uppercase mb-4 text-blue-600">Skor disimpan!</p>}
-                            <button onClick={initGame} className="w-full px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase active:bg-black active:text-white transition-colors">Retry</button>
+                            <button onClick={initGame} className="w-full px-5 py-2 border-2 border-black text-black font-black text-[10px] uppercase active:bg-black active:text-white transition-colors">Coba Lagi</button>
                         </div>
                     )}
                 </div>
