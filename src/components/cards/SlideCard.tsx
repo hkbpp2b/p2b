@@ -76,7 +76,7 @@ const PDFCover = ({ url }: { url: string }) => {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
             const fileId = match ? match[1] : null;
             if (fileId) {
-                setImgSrc(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`);
+                setImgSrc(`https://drive.google.com/thumbnail?id=${fileId}&sz=w500`);
             } else {
                 setLoading(false);
                 setImgSrc(null);

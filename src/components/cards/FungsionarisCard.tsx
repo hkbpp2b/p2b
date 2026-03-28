@@ -59,9 +59,11 @@ const FungsionarisCard = () => {
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-center p-6 bg-white active:bg-slate-50 active:scale-[0.99] transition-all relative"
             >
-                <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase text-center">
-                    Fungsionaris
-                </h3>
+                <div className="mb-1 text-center">
+                    <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Fungsionaris</h3>
+                    <p className="text-[12px] text-slate-900 font-bold uppercase tracking-[0.1em]">HKBP Perumnas 2 Bekasi</p>
+                </div>
+
                 <div className="text-slate-400 absolute right-6">
                     {isOpen ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
                 </div>
@@ -94,7 +96,7 @@ const FungsionarisCard = () => {
                                             <h4 className="text-[15px] font-black text-slate-900 uppercase tracking-tight leading-tight truncate">
                                                 {item.name}
                                             </h4>
-                                            <p className="text-[11px] text-blue-600 font-bold uppercase tracking-widest mt-0.5">
+                                            <p className="text-[11px] text-slate-500 font-black uppercase mt-0.5">
                                                 {item.role}
                                             </p>
                                         </div>

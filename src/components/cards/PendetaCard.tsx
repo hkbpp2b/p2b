@@ -1,11 +1,12 @@
+// PendetaCard.tsx
 import React, { useState, useEffect } from 'react';
-import { X, Loader2 } from 'lucide-react';
+import { Loader2, ChevronDown, MessageCircle } from 'lucide-react';
 
 let cachedPendetaData: any[] | null = null;
 
 const PendetaCard = () => {
     const [pendetaList, setPendetaList] = useState<any[]>(cachedPendetaData || []);
-    const [selected, setSelected] = useState<any>(null);
+    const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
     const [loading, setLoading] = useState(!cachedPendetaData);
 
     const TSV_URL = import.meta.env.VITE_TSV_PENDETA_URL;
@@ -15,31 +16,16 @@ const PendetaCard = () => {
         if (url.includes('drive.google.com')) {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
             const fileId = match ? match[1] : null;
-            return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w600` : url;
+            if (!fileId) return url;
+
+            // OPSI A: Gunakan thumbnail dengan resolusi lebih tinggi (Maks 2500)
+            return `https://drive.google.com/thumbnail?id=${fileId}&sz=w2500`;
+
+            // OPSI B: Gunakan link Direct Download/View (Resolusi Asli) - Direkomendasikan
+            // return `https://docs.google.com/uc?export=view&id=${fileId}`;
         }
         return url;
     };
-
-    useEffect(() => {
-        if (selected) {
-            document.body.classList.add('modal-open');
-            window.history.pushState({ modalOpen: true }, "");
-
-            const handlePopState = () => {
-
-                setSelected(null);
-                document.body.classList.remove('modal-open');
-            };
-
-            window.addEventListener('popstate', handlePopState);
-
-            return () => {
-                window.removeEventListener('popstate', handlePopState);
-                document.body.classList.remove('modal-open');
-            };
-        }
-    }, [selected]);
-
 
     useEffect(() => {
         if (cachedPendetaData) return;
@@ -52,131 +38,150 @@ const PendetaCard = () => {
                     const parsedData = rows.slice(1).map(row => {
                         const cols = row.split('\t').map(v => v.trim());
                         return {
-                            name: cols[0] || "Nama",
-                            role: cols[1] || "Pelayan",
-                            phone: cols[2] || "",
-                            bio: cols[3] || "-",
-                            img: formatDriveLink(cols[4]),
-                            pendidikan: cols[5] ? cols[5].split(/[,;\n]/).map(s => s.trim()).filter(Boolean) : [],
-                            pelayanan: cols[6] ? cols[6].split(/[,;\n]/).map(s => s.trim()).filter(Boolean) : []
+                            fullImg: formatDriveLink(cols[0]),
+                            name: cols[1] || "Nama",
+                            role: cols[2] || "Pelayan",
+                            phone: cols[3] || "",
+                            bio: cols[4] || "-",
+                            img: formatDriveLink(cols[5]),
+                            pendidikan: cols[6] ? cols[6].split(/[,;\n]/).map(s => s.trim()).filter(Boolean) : [],
+                            pelayanan: cols[7] ? cols[7].split(/[,;\n]/).map(s => s.trim()).filter(Boolean).reverse() : []
                         };
                     });
-
-                    const topThree = parsedData.slice(0, 3);
-                    cachedPendetaData = topThree;
-                    setPendetaList(topThree);
+                    cachedPendetaData = parsedData;
+                    setPendetaList(parsedData);
                 }
             } catch (e) { console.error(e); } finally { setLoading(false); }
         };
         fetchPendeta();
-    }, []);
-
-    const closeDetail = () => {
-        if (window.history.state?.modalOpen) {
-            window.history.back();
-        } else {
-            setSelected(null);
-            document.body.style.overflow = 'unset';
-        }
-    };
+    }, [TSV_URL]);
 
     if (loading) return (
-        <div className="flex justify-center py-20"><Loader2 className="animate-spin text-slate-900" size={32} /></div>
+        <div className="bg-white rounded-[2.5rem] h-[380px] flex items-center justify-center border border-slate-100 mt-4 shadow-sm">
+            <Loader2 className="animate-spin text-slate-900" size={32} />
+        </div>
     );
+
+    const mainHeaderPhoto = pendetaList[0]?.fullImg;
 
     return (
         <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
-            <div className="mb-8 text-center">
-                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Pendeta Kami</h3>
+            <div className="mb-4 text-center">
+                <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Pendeta</h3>
+                <p className="text-[12px] text-slate-900 font-bold uppercase tracking-[0.1em]">HKBP Perumnas 2 Bekasi</p>
             </div>
 
-            <div className="space-y-4">
-                {pendetaList.map((pdt, i) => (
-                    <div
-                        key={i}
-                        onClick={() => setSelected(pdt)}
-                        className="flex flex-col items-center py-6 px-4 rounded-[2rem] border border-slate-50 bg-slate-50/50 active:scale-95 transition-all cursor-pointer group"
-                    >
-                        <p className="text-[14px] font-black text-slate-900 uppercase tracking-[0.2em] mb-3">
-                            {pdt.role}
-                        </p>
-
-                        {pdt.img && (
-                            <div className="w-20 h-20 mb-3 overflow-hidden rounded-full border-2 border-white shadow-sm transition-transform group-hover:scale-105">
-                                <img src={pdt.img} className="w-full h-full object-cover" alt="pdt" />
-                            </div>
-                        )}
-
-                        <h4 className="text-[16px] font-black text-slate-900 uppercase tracking-tighter text-center leading-tight">
-                            {pdt.name}
-                        </h4>
-                    </div>
-                ))}
+            {/* Hero Header - Matching HeroCard Style */}
+            <div className="rounded-[2rem] overflow-hidden  aspect-[4/3] relative bg-slate-900 mt-2 mb-4 shadow-inner">
+                <img src={mainHeaderPhoto} className="w-full h-full object-cover scale-125" />
             </div>
 
-            {selected && (
-                <div className="fixed inset-0 z-[1000] flex items-end justify-center sm:items-center p-4">
-                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300" onClick={closeDetail} />
-
-                    <div className="relative bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl animate-in slide-in-from-bottom-10 sm:zoom-in-95 duration-300 max-h-[85vh] overflow-hidden flex flex-col">
-
-                        <div className="flex justify-center pt-4 pb-2">
-                            <div className="w-12 h-1 bg-slate-100 rounded-full" />
-                        </div>
-                        <button onClick={closeDetail} className="absolute top-6 right-6 p-2 bg-slate-50 rounded-full text-slate-400 hover:text-slate-900 transition-colors z-50">
-                            <X size={20} strokeWidth={3} />
-                        </button>
-
-                        <div className="overflow-y-auto no-scrollbar px-8 pt-4 pb-10">
-                            <div className="flex flex-col items-center mb-8">
-                                {selected.img && (
-                                    <img src={selected.img} className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-xl mb-6" alt="pdt" />
-                                )}
-                                <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-2">{selected.role}</p>
-                                <h4 className="text-[20px] font-black text-slate-900 uppercase tracking-tighter text-center">{selected.name}</h4>
-                            </div>
-
-                            {selected.bio !== "-" && (
-                                <div className="mb-8 p-6 bg-slate-50 rounded-[2rem] text-center border border-slate-100/50">
-                                    <p className="text-[14px] font-bold text-slate-600 italic leading-relaxed">"{selected.bio}"</p>
-                                </div>
-                            )}
-
-                            <div className="space-y-6">
-                                {selected.pendidikan.length > 0 && (
-                                    <div className="border-l-4 border-blue-600 pl-4">
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Pendidikan</span>
-                                        <div className="space-y-1">
-                                            {selected.pendidikan.map((item: string, idx: number) => (
-                                                <p key={idx} className="text-[12px] font-black text-slate-900 leading-tight">{item}</p>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                                {selected.pelayanan.length > 0 && (
-                                    <div className="border-l-4 border-slate-900 pl-4">
-                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Pelayanan</span>
-                                        <div className="space-y-1">
-                                            {selected.pelayanan.map((item: string, idx: number) => (
-                                                <p key={idx} className="text-[12px] font-black text-slate-900 leading-tight">{item}</p>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="p-8 pt-0">
-                            <a
-                                href={`https://wa.me/${selected.phone.replace(/\D/g, '').replace(/^0/, '62')}`}
-                                className="flex items-center justify-center gap-3 w-full py-5 bg-slate-900 text-white rounded-full text-[12px] font-black uppercase tracking-widest active:scale-95 transition-all shadow-lg"
+            {/* Accordion List */}
+            <div className="space-y-2 px-1 pb-1">
+                {pendetaList.map((pdt, i) => {
+                    const isExpanded = expandedIndex === i;
+                    return (
+                        <div
+                            key={i}
+                            className={`px-1 duration-500 rounded-[2rem] overflow-hidden border ${isExpanded ? 'bg-slate-50 border-slate-200 shadow-inner' : 'bg-white border-slate-100'
+                                }`}
+                        >
+                            {/* Trigger Header */}
+                            <button
+                                onClick={() => setExpandedIndex(isExpanded ? null : i)}
+                                className="w-full flex items-start justify-between p-4 outline-none group"
                             >
-                                Hubungi Pdt
-                            </a>
+                                <div className={`flex flex-col w-full ${isExpanded ? 'items-center' : 'items-start'}`}>
+                                    <p className={`font-black uppercase  ${isExpanded ? 'text-[14px] text-center text-slate-900' : 'text-[12px] text-left text-slate-700'}`}>
+                                        {pdt.name}
+                                    </p>
+                                    <p className={`text-center font-black uppercase ${isExpanded ? 'text-[12px] text-slate-500' : 'text-[10px] text-slate-500'}`}>
+                                        {pdt.role}
+                                    </p>
+                                </div>
+                                <div className={`p-2 rounded-full ${isExpanded ? ' text-black rotate-180 scale-110' : ' text-slate-400 group-active:scale-90'}`}>
+                                    <ChevronDown size={16} strokeWidth={3} />
+                                </div>
+                            </button>
+
+                            {/* Expanded Content */}
+                            <div className={` ease-[cubic-bezier(0.33, 1, 0.68, 1)] ${isExpanded ? 'max-h-[1500px] opacity-100' : 'max-h-0 opacity-0 pointer-events-none'}`}>
+                                <div className="px-2 pb-6 space-y-3">
+
+                                    <div className="relative flex flex-col items-center pt-2">
+                                        <div className="w-[120px] aspect-square rounded-[2rem] overflow-hidden shadow-sm bg-slate-200">
+                                            <img src={pdt.img} className="w-full h-full object-cover" alt={pdt.name} />
+                                        </div>
+                                        {pdt.bio !== "-" && (
+                                            <div className="mt-5 text-center px-4">
+                                                <p className="text-[13px] text-slate-500 font-bold italic leading-relaxed tracking-tight">
+                                                    "{pdt.bio}"
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="grid grid-cols-1 gap-4">
+                                        {/* Pendidikan */}
+                                        <div className="bg-white rounded-3xl p-5 border border-slate-200">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <p className="text-[12px] font-black text-slate-700 leading-tight uppercase tracking-tight">Pendidikan</p>
+                                            </div>
+                                            <div className="space-y-3">
+                                                {pdt.pendidikan.map((edu: string, idx: number) => (
+                                                    <div key={idx} className="flex gap-3 items-start pl-1">
+                                                        <div className="w-1.5 h-1.5 rounded-full bg-slate-600 mt-1.5 shrink-0" />
+                                                        <p className="text-[11px] font-black text-slate-700 leading-tight uppercase tracking-tight">{edu}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="bg-white rounded-3xl p-5 border border-slate-200 relative overflow-hidden">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <p className="text-[12px] font-black text-slate-700 leading-tight uppercase tracking-tight">Pelayanan</p>
+                                            </div>
+
+                                            <div className="max-h-[160px] overflow-y-auto pr-2 custom-scrollbar relative">
+                                                <div className="absolute left-2.5 top-2 bottom-2 w-[2px] bg-slate-100" />
+
+                                                <div className="space-y-6 relative">
+                                                    {pdt.pelayanan.map((srv: string, idx: number) => (
+                                                        <div key={idx} className="pl-8 relative">
+                                                            <div className="absolute left-[7px] top-1.5 w-2.5 h-2.5 rounded-full bg-slate-300 border-2 border-white shadow-sm z-10" />
+                                                            <p className="text-[11px] font-black text-slate-700 leading-tight uppercase tracking-tight">{srv}</p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* WA Button - Matching HeroCard Interaction */}
+                                    <div className="pt-2">
+                                        <a
+                                            href={`https://wa.me/${pdt.phone.replace(/\D/g, '').replace(/^0/, '62')}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 rounded-2xl font-black text-[11px] uppercase border border-slate-200"
+                                        >
+                                            <MessageCircle size={16} />
+                                            Hubungi Pendeta
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            )}
+                    );
+                })}
+            </div>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+            `}</style>
         </div>
     );
 };

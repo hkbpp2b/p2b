@@ -80,7 +80,7 @@ const JadwalCard = ({ onSelectDetail, isDesktop }: JadwalCardProps) => {
 
     return (
         <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-100 bg-white relative overflow-hidden">
-            <div className="mb-8 text-center">
+            <div className="mb-4 text-center">
                 <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Ibadah Minggu</h3>
                 <p className="text-[12px] text-slate-900 font-bold uppercase tracking-[0.1em]">{tanggalMinggu}</p>
             </div>

@@ -201,19 +201,19 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
 
     return (
         <>
-            <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-200 bg-slate-900 relative overflow-hidden">
-                <div className="mb-6 text-center relative z-10">
-                    <h3 className="text-xl font-black text-white tracking-tighter uppercase mb-1">
+            <div className="p-6 rounded-[2.5rem] shadow-sm border border-slate-200 bg-white relative overflow-hidden">
+                <div className="mb-4 text-center relative z-10">
+                    <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase mb-1">
                         Renungan Harian
                     </h3>
-                    <p className="text-[12px] font-black text-slate-100 uppercase tracking-[0.2em]">
+                    <p className="text-[12px] font-black text-slate-800 uppercase tracking-[0.2em]">
                         {data.tanggal}
                     </p>
                 </div>
 
                 <div
                     onClick={handleRenunganClick}
-                    className="p-7 rounded-[2.5rem] bg-slate-800/50 backdrop-blur-sm active:scale-95 transition-all cursor-pointer relative z-10 border border-slate-700/50 hover:border-slate-600 shadow-xl"
+                    className="p-7 rounded-[2.5rem] bg-slate-800 backdrop-blur-sm active:scale-95 transition-all cursor-pointer relative z-10 border border-slate-700/50 hover:border-slate-600 shadow-xl"
                 >
                     <div className="space-y-6">
                         <div className="space-y-4">

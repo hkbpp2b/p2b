@@ -82,10 +82,12 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
         if (url.includes('drive.google.com')) {
             const match = url.match(/\/d\/(.+?)\//) || url.match(/id=(.+?)(&|$)/);
             const fileId = match ? match[1] : null;
-            return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000` : url;
+            return fileId ? `https://drive.google.com/thumbnail?id=${fileId}&sz=w2500` : url;
         }
         return url;
     };
+
+
 
     useEffect(() => {
         if (selectedPhoto) {
@@ -169,7 +171,6 @@ const HeroCard = ({ onSelect }: HeroCardProps) => {
     return (
         <>
             <div className="rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-200 p-3 transition-all bg-white">
-
                 <div className="rounded-[2rem] overflow-hidden aspect-[4/3] relative bg-slate-900 group">
                     <div
                         ref={sliderRef}
