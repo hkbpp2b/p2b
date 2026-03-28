@@ -107,7 +107,7 @@ const GivingTab = () => {
                     onClick={() => setIsImageOpen(false)}
                 >
                     <button
-                        className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+                        className="absolute top-3 right-2 z-[999] p-2 bg-black text-white"
                         onClick={() => setIsImageOpen(false)}
                     >
                         <X size={32} />
@@ -117,7 +117,7 @@ const GivingTab = () => {
                         <img
                             src={downloadFile}
                             alt="QRIS HKBP Full"
-                            className="max-w-full max-h-[70vh] object-contain animate-in zoom-in-95 duration-300"
+                            className="max-w-full max-h-[80vh] object-contain animate-in zoom-in-95 duration-300"
                         />
                         <button
                             onClick={(e) => {
