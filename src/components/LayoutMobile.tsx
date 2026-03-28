@@ -48,18 +48,18 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                                 className="flex flex-col items-center justify-center "
                             >
                                 {/* Container Icon dengan ukuran tetap agar sejajar */}
-                                <div className={`mb-2 mt-1 flex items-center justify-center w-8 h-8 ${isActive ? 'text-blue-600' : 'text-slate-900 opacity-40'}`}>
+                                <div className={`mb-2 mt-1 flex items-center justify-center w-9 h-9 ${isActive ? 'text-blue-600' : 'text-slate-900 opacity-40'}`}>
                                     {m.id === 'profil' ? (
                                         <img
                                             src={logoHkbp}
                                             alt="Home"
                                             // Ukuran disesuaikan agar seimbang dengan icon (sekitar 24px-28px)
-                                            className={`w-9 h-9 object-contain ${isActive ? 'opacity-100' : 'opacity-50'}`}
+                                            className={`w-10 h-10 object-contain ${isActive ? 'opacity-100' : 'opacity-50'}`}
                                         />
                                     ) : (
                                         React.cloneElement(m.icon as React.ReactElement, {
                                             // Ukuran icon diseragamkan ke 24 (standar navbar)
-                                            size: 24,
+                                            size: 26,
                                             strokeWidth: isActive ? 3 : 2
                                         } as any)
                                     )}
