@@ -1,5 +1,5 @@
 // src/components/LayoutMobile.tsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import logoHkbp from '../assets/Logo1.png';
 
 interface LayoutMobileProps {
@@ -14,11 +14,10 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
     const isHomePage = activeTab === 'profil';
 
     return (
-        <div className="min-h-screen text-slate-900 font-sans flex flex-col md:hidden">
-
-            {/* Header: Posisi Fixed tapi Z-Index Rendah (di bawah konten) */}
+        <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col md:hidden">
+            {/* Header Biasa (Static) - Akan ikut hilang saat scroll ke bawah */}
             {isHomePage && (
-                <header className="fixed top-0 left-0 right-0 z-0 flex flex-col items-center justify-center py-12">
+                <header className="flex flex-col items-center justify-center pt-12 pb-6 bg-white">
                     <h1 className="text-blue-900 font-black tracking-tighter uppercase text-4xl">
                         HKBP
                     </h1>
@@ -28,16 +27,12 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                 </header>
             )}
 
-            {/* Konten Utama: Z-Index lebih tinggi dan Background Putih agar menimpa header */}
-            <main
-                className={`relative flex-1  pb-24 z-10 
-        ${isHomePage ? 'mt-40' : 'mt-4'} 
-        bg-white/70 backdrop-blur-md`} // Menggunakan transparansi 70% dan efek blur
-            >
+            {/* Main content tanpa margin top yang besar karena header sudah tidak fixed */}
+            <main className={`flex-1 pb-24 ${!isHomePage ? 'mt-4' : ''}`}>
                 {children}
             </main>
 
-            {/* Navbar: Harus Z-Index paling tinggi agar selalu di depan */}
+            {/* Navbar tetap Fixed di bawah agar mudah diakses jari */}
             <nav className="fixed bottom-0 left-0 right-0 z-[110] pt-1.5 pb-1.5 bg-white border-t-2 border-slate-200/60">
                 <div className="grid grid-cols-5 w-full max-w-md mx-auto items-end">
                     {menus.map((m) => {
@@ -46,7 +41,7 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
                             <button
                                 key={m.id}
                                 onClick={() => setActiveTab(m.id)}
-                                className="flex flex-col items-center justify-center focus:outline-none"
+                                className="flex flex-col items-center justify-center"
                             >
                                 <div className={`mb-2 mt-1 flex items-center justify-center w-9 h-9 ${isActive ? 'text-blue-600' : 'text-slate-900 opacity-40'}`}>
                                     {m.id === 'profil' ? (

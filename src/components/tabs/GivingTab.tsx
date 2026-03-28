@@ -85,7 +85,7 @@ const GivingTab = () => {
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">QRIS dan Rekening Gereja</p>
             </header>
 
-            <div className="relative z-10 flex flex-col items-center group">
+            <div className="relative z-10 flex flex-col items-center group p-5">
                 <div
                     onClick={() => setIsImageOpen(true)}
                     className="bg-white shadow-2xl rounded-[40px] shadow-slate-200 border-2 border-slate-100 overflow-hidden w-full max-w-sm relative cursor-pointer active:scale-95 transition-transform"
@@ -133,7 +133,7 @@ const GivingTab = () => {
                 </div>
             )}
 
-            <div className="w-full space-y-4 pt-4">
+            <div className="w-full space-y-4 pt-4 p-5">
                 <div className="flex items-center justify-center gap-2">
                     <div className="h-px w-8 bg-slate-200" />
                     <span className="text-[15px] font-black text-slate-900 uppercase tracking-[0.1em]">Daftar Rekening</span>

@@ -47,7 +47,7 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
     };
 
     return (
-        <div className="space-y-8 pb-32 pt-4 px-2">
+        <div className="space-y-8 pb-32 pt-4 px-6">
             <button
                 onClick={onBack}
                 className="flex items-center gap-2 text-slate-900 font-black uppercase text-[12px] tracking-[0.2em]"

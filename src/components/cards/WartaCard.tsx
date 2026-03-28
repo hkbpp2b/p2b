@@ -178,7 +178,7 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
     ].filter(section => section.items.length > 0);
 
     return (
-        <div className="space-y-10">
+        <div className="space-y-10 p-5">
             <header className="text-center space-y-1">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter">WARTA & ACARA</h2>
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">{data?.minggu}, {data?.tanggal}</p>
