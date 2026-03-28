@@ -1,6 +1,6 @@
 // GivingTab.tsx
-import React, { useState, useRef } from 'react';
-import { Copy, Wallet, Check, ChevronDown, Download } from 'lucide-react';
+import React, { useState } from 'react';
+import { Copy, Wallet, Check, ChevronDown, Download, X, Maximize2 } from 'lucide-react';
 import qrisLogo from '../../assets/Logo-qris.png';
 import gpnLogo from '../../assets/Logo-gpn.png';
 import qrUtama from '../../assets/qrhuria.png';
@@ -40,18 +40,16 @@ const GIVING_DATA = [
 const GivingTab = () => {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [isImageOpen, setIsImageOpen] = useState(false);
 
     const handleCopy = (text: string, id: string, e: React.MouseEvent) => {
         e.stopPropagation();
-
         const textArea = document.createElement("textarea");
         textArea.value = text;
-
         textArea.style.position = "fixed";
         textArea.style.left = "-9999px";
         textArea.style.top = "0";
         document.body.appendChild(textArea);
-
         textArea.focus();
         textArea.select();
 
@@ -64,7 +62,6 @@ const GivingTab = () => {
         } catch (err) {
             console.error('Gagal menyalin:', err);
         }
-
         document.body.removeChild(textArea);
     };
 
@@ -82,29 +79,59 @@ const GivingTab = () => {
     };
 
     return (
-        <div className="pb-32 pt-8 px-5 space-y-8 flex flex-col items-center">
+        <div className="pb-32 pt-8 px-5 space-y-8 flex flex-col items-center relative">
             <header className="text-center space-y-1 w-full">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Persembahan</h2>
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">QRIS dan Rekening Gereja</p>
             </header>
 
-            <div className="relative z-10 flex flex-col items-center">
-                <div className="bg-white shadow-2xl  rounded-[40px] shadow-slate-200 border-2 border-slate-100 overflow-hidden w-full max-w-sm relative">
+            <div className="relative z-10 flex flex-col items-center group">
+                <div
+                    onClick={() => setIsImageOpen(true)}
+                    className="bg-white shadow-2xl rounded-[40px] shadow-slate-200 border-2 border-slate-100 overflow-hidden w-full max-w-sm relative cursor-pointer active:scale-95 transition-transform"
+                >
                     <img
                         src={downloadFile}
                         alt="QRIS HKBP"
                         className="w-full h-full object-contain scale-100"
                     />
+                    <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <Maximize2 className="text-slate-800 bg-white/80 p-2 rounded-full" size={40} />
+                    </div>
                 </div>
             </div>
 
-            <button
-                onClick={handleDownloadQR}
-                className="flex items-center justify-center gap-2 bg-[#1e293b] text-white px-8 py-3.5 rounded-2xl font-bold text-[10px] uppercase tracking-wide hover:bg-slate-800 active:scale-95 transition-al -mt-4 relative z-20"
-            >
-                <Download size={12} />
-                Unduh QRIS
-            </button>
+            {isImageOpen && (
+                <div
+                    className="fixed h-full inset-0 z-[999] flex items-center justify-center bg-black"
+                    onClick={() => setIsImageOpen(false)}
+                >
+                    <button
+                        className="absolute top-6 right-6 text-white/70 hover:text-white transition-colors"
+                        onClick={() => setIsImageOpen(false)}
+                    >
+                        <X size={32} />
+                    </button>
+
+                    <div className="relative max-w-full max-h-[80vh] flex flex-col items-center gap-5">
+                        <img
+                            src={downloadFile}
+                            alt="QRIS HKBP Full"
+                            className="max-w-full max-h-[70vh] object-contain animate-in zoom-in-95 duration-300"
+                        />
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownloadQR();
+                            }}
+                            className="flex items-center justify-center gap-2 bg-white text-black px-8 py-3.5 rounded-2xl  font-bold text-[11px] uppercase z-20"
+                        >
+                            <Download size={16} />
+                            Unduh Qris
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <div className="w-full space-y-4 pt-4">
                 <div className="flex items-center justify-center gap-2">
