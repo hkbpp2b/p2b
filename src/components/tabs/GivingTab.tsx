@@ -79,16 +79,16 @@ const GivingTab = () => {
     };
 
     return (
-        <div className="pb-32 pt-8 px-5 space-y-8 flex flex-col items-center relative transition-all duration-300">
+        <div className="animate-in fade-in duration-700 pb-32 pt-8 space-y-10">
             <header className="text-center space-y-1 w-full">
                 <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Persembahan</h2>
                 <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">QRIS dan Rekening Gereja</p>
             </header>
 
-            <div className="relative z-10 flex flex-col items-center group p-5">
+            <div className="relative z-10  flex flex-col items-center group px-5">
                 <div
                     onClick={() => setIsImageOpen(true)}
-                    className="bg-white shadow-2xl rounded-[40px] shadow-slate-200 border-2 border-slate-100 overflow-hidden w-full max-w-sm relative cursor-pointer active:scale-95 transition-transform"
+                    className="bg-white shadow-sm rounded-[2.5rem] border border-slate-200 overflow-hidden w-full max-w-sm relative cursor-pointer active:scale-95 transition-transform"
                 >
                     <img
                         src={downloadFile}
@@ -96,7 +96,6 @@ const GivingTab = () => {
                         className="w-full h-full object-contain scale-100"
                     />
                     <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <Maximize2 className="text-slate-800 bg-white/80 p-2 rounded-full" size={40} />
                     </div>
                 </div>
             </div>
@@ -133,48 +132,50 @@ const GivingTab = () => {
                 </div>
             )}
 
-            <div className="w-full space-y-4 pt-4 p-5">
-                <div className="flex items-center justify-center gap-2">
-                    <div className="h-px w-8 bg-slate-200" />
-                    <span className="text-[15px] font-black text-slate-900 uppercase tracking-[0.1em]">Daftar Rekening</span>
-                    <div className="h-px w-8 bg-slate-200" />
-                </div>
+            <div className="px-4">
+                <div className="pt-4 rounded-[2.5rem] shadow-sm border border-slate-200  relative overflow-hidden">
+                    <div className="w-full p-5">
+                        <div className="mb-2 px-2 text-center pointer-events-none">
+                            <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Rekening Gereja</h3>
+                            <p className="text-[12px] text-slate-800 font-bold uppercase tracking-widest">HKBP Perumnas 2 Bekasi</p>
+                        </div>
 
-                <div className="space-y-3">
-                    {GIVING_DATA.map((item) => (
-                        <div key={item.id} className={`bg-white rounded-[1.5rem] border transition-all duration-300 ${expandedId === item.id ? 'border-slate-300 shadow-lg' : 'border-slate-100 shadow-sm'}`}>
-                            <div onClick={() => toggleExpand(item.id)} className="w-full flex items-center p-5 cursor-pointer">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${expandedId === item.id ? "bg-[#ea1c24] text-white" : "bg-slate-50 text-slate-400"}`}>
-                                    <Wallet size={18} />
-                                </div>
-                                <div className="ml-4 flex-grow">
-                                    <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-tight">{item.title}</h3>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{item.bank}</p>
-                                </div>
-                                <ChevronDown size={18} className={`text-slate-300 transition-transform duration-300 ${expandedId === item.id ? 'rotate-180' : ''}`} />
-                            </div>
-
-                            <div className={`transition-all duration-500 overflow-hidden ${expandedId === item.id ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                <div className="px-5 pb-5">
-                                    <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
-                                        <div className="space-y-1">
-                                            <p className="text-[13px] font-black text-slate-900 tracking-tight">{item.norek}</p>
-                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{item.an}</p>
+                        <div className="space-y-3 pt-4">
+                            {GIVING_DATA.map((item) => (
+                                <div key={item.id} className={`bg-white rounded-[1.5rem] border-2 transition-all duration-300 ${expandedId === item.id ? 'border-slate-300 shadow-lg' : 'border-slate-100'}`}>
+                                    <div onClick={() => toggleExpand(item.id)} className="w-full flex items-center px-4 py-3 cursor-pointer">
+                                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${expandedId === item.id ? "bg-blue-900 text-white" : "bg-slate-50 text-slate-400"}`}>
+                                            <Wallet size={18} />
                                         </div>
-                                        <button
-                                            onClick={(e) => handleCopy(item.norek, item.id, e)}
-                                            className={`p-2.5 rounded-xl transition-all ${copiedId === item.id ? 'bg-emerald-500 text-white' : 'bg-white border border-slate-200 text-slate-400 shadow-sm active:scale-90'}`}
-                                        >
-                                            {copiedId === item.id ? <Check size={16} /> : <Copy size={16} />}
-                                        </button>
+                                        <div className="ml-4 flex-grow">
+                                            <h3 className="text-[12px] font-black text-slate-900 uppercase tracking-tight">{item.title}</h3>
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{item.bank}</p>
+                                        </div>
+                                        <ChevronDown size={18} className={`text-slate-300 transition-transform duration-300 ${expandedId === item.id ? 'rotate-180' : ''}`} />
+                                    </div>
+
+                                    <div className={`transition-all duration-500 overflow-hidden ${expandedId === item.id ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                        <div className="px-5 pb-5">
+                                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                                                <div className="space-y-1">
+                                                    <p className="text-[13px] font-black text-slate-900 tracking-tight">{item.norek}</p>
+                                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">{item.an}</p>
+                                                </div>
+                                                <button
+                                                    onClick={(e) => handleCopy(item.norek, item.id, e)}
+                                                    className={`p-2.5 rounded-xl transition-all ${copiedId === item.id ? 'bg-blue-500 text-white' : 'bg-white border border-slate-200 text-slate-400 shadow-sm active:scale-90'}`}
+                                                >
+                                                    {copiedId === item.id ? <Check size={16} /> : <Copy size={16} />}
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-                    ))}
+                    </div>
                 </div>
             </div>
-
             <div className="mt-6 text-center space-y-2 w-full">
                 <div className="pt-2 px-4">
                     <p className="text-[11px] font-medium text-slate-400 leading-tight italic">

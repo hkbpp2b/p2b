@@ -342,7 +342,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                 </div>
 
                                 <div className="space-y-6 relative z-10">
-                                    <div className={`p-5 rounded-[2rem] border transition-colors ${isDarkMode ? 'bg-blue-800/10 border-slate-700/50' : 'bg-blue-50/70 border-slate-100'}`}>
+                                    <div className={`p-5 rounded-[2rem] border shadow-sm transition-colors ${isDarkMode ? 'bg-blue-800/10 border-slate-700/50' : 'bg-blue-50/70 border-slate-100'}`}>
                                         <p style={{ fontSize: `${textSize - 1}px` }} className={`font-black text-center uppercase mb-3 ${isDarkMode ? 'text-blue-400' : 'text-blue-800'}`}>
                                             {data.ayat}
                                         </p>
@@ -352,7 +352,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                     </div>
 
                                     {data.bukuEnde && (
-                                        <div className={`p-3 rounded-[2rem] border transition-colors ${isDarkMode ? 'bg-emerald-800/10 border-slate-700/30' : 'bg-emerald-50/70 border-slate-100'}`}>
+                                        <div className={`p-3 rounded-[2rem] border shadow-sm transition-colors ${isDarkMode ? 'bg-emerald-800/10 border-slate-700/30' : 'bg-emerald-50/70 border-slate-100'}`}>
                                             <div className="flex flex-col items-center gap-4 text-center">
                                                 <p style={{ fontSize: `${textSize}px` }} className={`font-black whitespace-pre-line leading-tight ${isDarkMode ? 'text-emerald-300' : 'text-emerald-800'}`}>
                                                     {data.bukuEnde}
@@ -364,7 +364,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                                         ? 'border-emerald-800/10 text-red-500 bg-red-500/10'
                                                         : isDarkMode
                                                             ? 'border-slate-600 text-emerald-400 bg-slate-800'
-                                                            : 'border-slate-200 text-emerald-600 bg-white shadow-sm'
+                                                            : 'border-slate-200 text-emerald-600 bg-white'
                                                         } disabled:opacity-50`}
                                                 >
                                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isPlaying
@@ -386,7 +386,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                                     </span>
                                                 </button>
                                             </div>
-                                            <div className="mt-5 space-y-2">
+                                            <div className="mt-5 mx-4 space-y-1">
                                                 {data.lirikEnde.split('\n').map((line, index) => (
                                                     <p key={index} style={{ fontSize: `${textSize - 1}px` }} className={`font-bold text-center ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
                                                         {line}
@@ -398,14 +398,20 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                 </div>
                             </div>
 
-                            <div className="p-1">
-                                <h4 style={{ fontSize: `${textSize + 10}px` }} className={`font-black text-center leading-tight tracking-tight uppercase p-2 mt-8 mb-4 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-                                    {data.topik}
-                                </h4>
-                                <p style={{ fontSize: `${textSize}px` }} className={`font-medium text-left p-4 leading-[1.7] whitespace-pre-line ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
-                                    {data.isi}
-                                </p>
+
+                            <div className={`p-6 rounded-[2.5rem] shadow-sm border relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
+                                <div className="p-1">
+                                    <h4 style={{ fontSize: `${textSize + 10}px` }} className={`font-black text-center leading-tight tracking-tight uppercase p-2 mb-6 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                                        {data.topik}
+                                    </h4>
+                                    <p style={{ fontSize: `${textSize}px` }} className={`font-medium text-left leading-[1.7] tracking-tight whitespace-pre-line ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
+                                        {data.isi}
+                                    </p>
+                                </div>
                             </div>
+
+
+
                         </div>
                     </div>
                 </div>
