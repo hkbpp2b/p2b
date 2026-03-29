@@ -133,7 +133,7 @@ const GivingTab = () => {
             )}
 
             <div className="px-4">
-                <div className="pt-4 rounded-[2.5rem] shadow-sm border border-slate-200  relative overflow-hidden">
+                <div className="pt-4 bg-white rounded-[2.5rem] shadow-sm border border-slate-200  relative overflow-hidden">
                     <div className="w-full p-5">
                         <div className="mb-2 px-2 text-center pointer-events-none">
                             <h3 className="text-xl font-black text-blue-900 tracking-tighter uppercase">Rekening Gereja</h3>
