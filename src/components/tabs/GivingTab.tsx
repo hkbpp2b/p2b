@@ -88,7 +88,7 @@ const GivingTab = () => {
             <div className="relative z-10  flex flex-col items-center group px-5">
                 <div
                     onClick={() => setIsImageOpen(true)}
-                    className="bg-white shadow-sm rounded-[2.5rem] border border-slate-200 overflow-hidden w-full max-w-sm relative cursor-pointer active:scale-95 transition-transform"
+                    className="bg-white shadow-sm rounded-[2.5rem] border border-slate-200 overflow-hidden w-full relative cursor-pointer active:scale-95 transition-transform"
                 >
                     <img
                         src={downloadFile}
