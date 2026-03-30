@@ -88,6 +88,7 @@ const PDFCover = ({ url }: { url: string }) => {
     }, [url]);
 
     return (
+
         <div className="relative w-full aspect-video flex items-center justify-center overflow-hidden sm:rounded-xl bg-slate-100 border border-slate-200">
             {loading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
@@ -229,63 +230,69 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
     );
 
     return (
-        <div className="w-full max-w-2xl mx-auto">
-            <div className="flex flex-col gap-y-10">
-                {visibleSlides.map((slide, index) => (
-                    <div key={index} className="flex flex-col group cursor-pointer" onClick={() => handleItemClick(slide)}>
-                        <div className="flex flex-col w-full">
-                            <PDFCover url={slide.linkPdf} />
-                            <div className="mt-4 px-4 sm:px-0 flex gap-4">
-                                <div className="flex-shrink-0 mt-0.5">
-                                    <GoogleDriveImage
-                                        url={slide.fotoPenulis}
-                                        name={slide.penulis}
-                                        className="w-10 h-10 rounded-full"
-                                    />
-                                </div>
-                                <div className="flex flex-col flex-grow pr-2 text-left">
-                                    <h3 className="text-[16px] font-bold leading-tight text-slate-900 line-clamp-2 mb-1">
-                                        {slide.judul}
-                                    </h3>
-                                    <div className="flex flex-wrap items-center text-[13px] text-slate-500 gap-1.5 font-medium">
-                                        <span>{slide.penulis}</span>
+        <div className="space-y-6 pt-12 scroll-mt-24">
+            <header className="text-center space-y-1">
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Pembinaan</h2>
+                <p className="text-[12px] font-bold text-slate-600 uppercase tracking-[0.2em]">Materi Pembinaan Warga Jemaat</p>
+            </header>
+            <div className="w-full max-w-2xl mx-auto">
+                <div className="flex flex-col gap-y-10">
+                    {visibleSlides.map((slide, index) => (
+                        <div key={index} className="flex flex-col group cursor-pointer" onClick={() => handleItemClick(slide)}>
+                            <div className="flex flex-col w-full">
+                                <PDFCover url={slide.linkPdf} />
+                                <div className="mt-4 px-4 sm:px-0 flex gap-4">
+                                    <div className="flex-shrink-0 mt-0.5">
+                                        <GoogleDriveImage
+                                            url={slide.fotoPenulis}
+                                            name={slide.penulis}
+                                            className="w-10 h-10 rounded-full"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col flex-grow pr-2 text-left">
+                                        <h3 className="text-[16px] font-bold leading-tight text-slate-900 line-clamp-2 mb-1">
+                                            {slide.judul}
+                                        </h3>
+                                        <div className="flex flex-wrap items-center text-[13px] text-slate-500 gap-1.5 font-medium">
+                                            <span>{slide.penulis}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    ))}
+                </div>
+
+                {hasMore && (
+                    <div className="flex justify-center mt-12 pb-12">
+                        <button
+                            onClick={handleLoadMore}
+                            className="flex items-center gap-2 px-10 py-3.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all text-xs font-bold uppercase tracking-widest text-slate-900 shadow-sm active:scale-95"
+                        >
+                            Liat lainnya
+                            <ChevronDown size={16} strokeWidth={3} />
+                        </button>
                     </div>
-                ))}
+                )}
+
+                {fullscreenFile && (
+                    <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
+                        <button
+                            onClick={closeFullscreen}
+                            className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
+                        >
+                            <X size={24} />
+                        </button>
+                        <div className="w-full h-full">
+                            <iframe
+                                src={`https://drive.google.com/file/d/${fullscreenFile}/preview`}
+                                className="w-full h-full border-none"
+                                allow="autoplay"
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
-
-            {hasMore && (
-                <div className="flex justify-center mt-12 pb-12">
-                    <button
-                        onClick={handleLoadMore}
-                        className="flex items-center gap-2 px-10 py-3.5 bg-white border border-slate-200 rounded-full hover:bg-slate-50 transition-all text-xs font-bold uppercase tracking-widest text-slate-900 shadow-sm active:scale-95"
-                    >
-                        Liat lainnya
-                        <ChevronDown size={16} strokeWidth={3} />
-                    </button>
-                </div>
-            )}
-
-            {fullscreenFile && (
-                <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
-                    <button
-                        onClick={closeFullscreen}
-                        className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
-                    >
-                        <X size={24} />
-                    </button>
-                    <div className="w-full h-full">
-                        <iframe
-                            src={`https://drive.google.com/file/d/${fullscreenFile}/preview`}
-                            className="w-full h-full border-none"
-                            allow="autoplay"
-                        />
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

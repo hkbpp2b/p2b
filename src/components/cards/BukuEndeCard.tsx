@@ -33,11 +33,9 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [isLoadingMidi, setIsLoadingMidi] = useState(false);
-
     const audioContextRef = useRef<AudioContext | null>(null);
     const playerRef = useRef<any>(null);
-    const pianoRef = useRef<Soundfont.Player | null>(null);
-    const percussionRef = useRef<Soundfont.Player | null>(null);
+    const instrumentRef = useRef<any>(null);
     const activeNotesRef = useRef<Map<string, any>>(new Map());
 
     const books: Record<BookType, { label: string; data: SongData[] }> = {
@@ -68,25 +66,14 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
         if (!audioContextRef.current) {
             audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
         }
-
-        // Memuat Piano dan Perkusi secara paralel
-        if (!pianoRef.current || !percussionRef.current) {
-            const [piano, percussion] = await Promise.all([
-                Soundfont.instrument(audioContextRef.current, 'acoustic_grand_piano'),
-                Soundfont.instrument(audioContextRef.current, 'marimba') // Marimba memberikan tekstur perkusi yang baik untuk MIDI gerejawi
-            ]);
-            pianoRef.current = piano;
-            percussionRef.current = percussion;
+        if (!instrumentRef.current) {
+            instrumentRef.current = await Soundfont.instrument(audioContextRef.current, 'acoustic_grand_piano');
         }
     };
 
     const stopMidi = () => {
-        if (playerRef.current) {
-            playerRef.current.stop();
-        }
-        activeNotesRef.current.forEach(node => {
-            try { node.stop(); } catch (e) { }
-        });
+        playerRef.current?.stop();
+        activeNotesRef.current.forEach(node => node.stop());
         activeNotesRef.current.clear();
         setIsPlaying(false);
     };
@@ -104,33 +91,26 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
             const songId = currentSong.id.padStart(3, '0');
             const bookPrefix = currentBook === 'BN' ? 'BE' : currentBook;
 
-            // Dynamic import file MIDI
             const midiModule = await import(`../../assets/music/${bookPrefix}${songId}.mid`);
             const midiUrl = midiModule.default;
 
             const response = await fetch(midiUrl);
-            if (!response.ok) throw new Error('MIDI file tidak ditemukan');
+            if (!response.ok) throw new Error('MIDI file not found');
             const arrayBuffer = await response.arrayBuffer();
 
             playerRef.current = new MidiPlayer.Player((event: any) => {
-                if (!audioContextRef.current || !pianoRef.current || !percussionRef.current) return;
+                if (!instrumentRef.current || !audioContextRef.current) return;
 
                 const key = `${event.noteName}_${event.channel}`;
 
                 if (event.name === 'Note on' && event.velocity > 0) {
                     activeNotesRef.current.get(key)?.stop();
 
-                    // Logic: Jika channel 10 atau velocity tertentu, gunakan perkusi, sisanya piano
-                    const instrument = (event.channel === 10) ? percussionRef.current : pianoRef.current;
-
-                    const node = instrument.play(
+                    const node = instrumentRef.current.play(
                         event.noteName,
                         audioContextRef.current.currentTime,
-                        {
-                            gain: (event.velocity / 128) * (event.channel === 10 ? 0.8 : 1.2)
-                        }
+                        { gain: (event.velocity / 128) * 5 }
                     );
-
                     if (node) activeNotesRef.current.set(key, node);
 
                 } else if (
@@ -147,12 +127,14 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
             setIsPlaying(true);
 
             playerRef.current.on('endOfFile', () => {
-                stopMidi();
+                activeNotesRef.current.forEach(node => node.stop());
+                activeNotesRef.current.clear();
+                setIsPlaying(false);
             });
 
         } catch (error) {
             console.error('Error playing MIDI:', error);
-            alert('Gagal memutar musik. Pastikan file MIDI tersedia.');
+            alert('Gagal memutar musik. Pastikan file MIDI tersedia di assets.');
         } finally {
             setIsLoadingMidi(false);
         }
@@ -197,7 +179,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                     <button onClick={onBack} className="p-2 -ml-2 rounded-full text-slate-600">
                         <ArrowLeft size={20} />
                     </button>
-                    <span className="ml-1 text-s font-bold uppercase text-slate-900">
+                    <span className="ml-1 text-s font-bold uppercase  text-slate-900">
                         Pilih Buku Lagu
                     </span>
                 </header>
@@ -332,7 +314,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                                     ) : (
                                         <Play size={18} fill="currentColor" />
                                     )}
-                                    {isLoadingMidi ? 'Memuat Instrumen...' : isPlaying ? 'Berhenti' : 'Putar Musik'}
+                                    {isLoadingMidi ? 'Memuat...' : isPlaying ? 'Berhenti' : 'Putar Musik'}
                                 </button>
                             </div>
                         )}
@@ -342,7 +324,7 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                         {currentSong.verses.length > 0 ? (
                             currentSong.verses.map((item, idx) => (
                                 <div key={idx} className="flex flex-col items-left text-left space-y-5">
-                                    <span className="w-9 h-2 flex items-center justify-center text-slate-900 text-[12px] font-bold">
+                                    <span className="w-9 h-2 flex items-center justify-center text-slate-900 text-[12px]">
                                         {item.bait}
                                     </span>
                                     <p className="text-[17px] leading-[1.8] text-slate-900 font-serif px-2 whitespace-pre-line">
@@ -365,16 +347,17 @@ const BukuEndeCard = ({ onBack }: BukuEndeCardProps) => {
                         <button
                             onClick={() => {
                                 setIsSongSelectOpen(false);
+                                if (!currentBook) setCurrentBook(null);
                             }}
                             className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600"
                         >
                             <ArrowLeft size={20} />
                         </button>
-                        <span className="ml-1 text-s font-bold uppercase text-slate-900">
+                        <span className="ml-1 text-s font-bold uppercase  text-slate-900">
                             Cari Nomor {currentBook}
                         </span>
                     </div>
-                    <div className="p-4 bg-white flex-none relative">
+                    <div className="p-4 bg-white  flex-none relative">
                         <Search size={18} className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-400" />
                         <input
                             type="text"

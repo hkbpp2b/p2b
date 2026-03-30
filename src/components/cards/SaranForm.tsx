@@ -118,11 +118,7 @@ const SaranForm = ({ onBack }: SaranFormProps) => {
                 </div>
             </form>
 
-            <div className="p-8 bg-slate-50 rounded-[3rem] border border-slate-100">
-                <p className="text-xs text-slate-900 font-bold leading-relaxed text-center tracking-tight">
-                    Setiap masukan yang Anda berikan sangat berharga bagi peningkatan pelayanan gereja. Terima kasih.
-                </p>
-            </div>
+
         </div>
     );
 };

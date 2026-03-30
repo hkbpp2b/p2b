@@ -212,13 +212,7 @@ const GivingTab = () => {
                 </div>
             </div>
 
-            <div className="mt-6 text-center space-y-2 w-full">
-                <div className="pt-2 px-4">
-                    <p className="text-[11px] font-medium text-slate-400 leading-tight italic">
-                        Persembahan sangat berarti bagi kemuliaan Tuhan dan pelayanan sesama. Terima kasih
-                    </p>
-                </div>
-            </div>
+
         </div>
     );
 };
