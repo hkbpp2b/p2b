@@ -45,6 +45,26 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
         }
     };
 
+    const getTikTokEmbedUrl = (url: string) => {
+        if (!url) return "";
+        const videoId = url.split('/').pop()?.split('?')[0];
+        return `https://www.tiktok.com/embed/v2/${videoId}`;
+    };
+
+    useEffect(() => {
+        if (isOpen) {
+            const script = document.createElement('script');
+            script.src = "https://www.tiktok.com/embed.js";
+            script.async = true;
+            document.body.appendChild(script);
+
+            return () => {
+                const existingScript = document.querySelector('script[src="https://www.tiktok.com/embed.js"]');
+                if (existingScript) existingScript.remove();
+            };
+        }
+    }, [isOpen]);
+
     useEffect(() => {
         if (cachedRenungan) return;
         const fetchRenungan = async () => {
@@ -67,7 +87,8 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                         isi: cols[4].replace(/\[br\]/g, '\n'),
                         nomorEnde: cols[5],
                         bukuEnde: cols[6].replace(/\[br\]/g, '\n'),
-                        lirikEnde: cols[7]
+                        lirikEnde: cols[7],
+                        tiktokUrl: cols[8]
                     };
 
                     setData(result);
@@ -330,7 +351,34 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                     </header>
 
                     <div ref={scrollRef} onScroll={handleScroll} className="flex-1 overflow-y-auto no-scrollbar">
-                        <div className="p-4 space-y-4 mb-40 mt-5">
+                        <div className="p-4 space-y-4 mb-40 mt-2">
+                            <div className={"pb-5 rounded-[2.5rem]  relative overflow-hidden transition-colors duration-300"}>
+                                <div className={"flex item-center justify-center transition-colors duration-300"}>
+                                    {data.tiktokUrl && (
+                                        <div className="h-[555px] w-[320px] rounded-[20px] shadow-sm overflow-hidden relative">
+                                            <iframe
+                                                src={`${getTikTokEmbedUrl(data.tiktokUrl)}?lang=id-ID&`}
+                                                className="absolute"
+                                                style={{
+                                                    border: 'none',
+                                                    height: '600px',
+                                                    width: '100%',
+                                                    top: '-5px',
+                                                    left: 0,
+
+                                                    transform: 'scale(1)',
+                                                    transformOrigin: 'top center',
+                                                }}
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                allowFullScreen
+                                                title="TikTok Video Player"
+                                            ></iframe>
+
+                                        </div>
+                                    )}
+                                </div>
+                            </div >
+
                             <div className={`p-6 rounded-[2.5rem] shadow-sm border relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
                                 <div className="mb-6 text-center relative z-10">
                                     <h3 className={`text-[24px] font-black tracking-tighter uppercase mb-1 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
@@ -399,6 +447,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             </div>
 
 
+
                             <div className={`p-6 rounded-[2.5rem] shadow-sm border relative overflow-hidden transition-colors duration-300 ${isDarkMode ? 'border-slate-800 bg-slate-900' : 'border-slate-200 bg-white'}`}>
                                 <div className="p-1">
                                     <h4 style={{ fontSize: `${textSize + 10}px` }} className={`font-black text-center leading-tight tracking-tight uppercase p-2 mb-6 ${isDarkMode ? 'text-slate-100' : 'text-slate-900'}`}>
@@ -412,9 +461,9 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
 
 
 
-                        </div>
-                    </div>
-                </div>
+                        </div >
+                    </div >
+                </div >
             )}
         </>
     );

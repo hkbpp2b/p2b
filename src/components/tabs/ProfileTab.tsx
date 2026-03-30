@@ -35,7 +35,6 @@ const ProfileTab = ({ onHeroSelect, onNavigateToIbadah }: ProfileTabProps) => {
                 isDesktop={isDesktop}
                 onSelectDetail={onHeroSelect}
             />
-
             <PendetaCard />
             <FungsionarisCard />
         </div>
