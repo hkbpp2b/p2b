@@ -66,7 +66,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                     >
                         <div className="relative w-40 h-48">
                             {/* Buku Belakang (Alkitab) */}
-                            <div className="absolute -left-5 top-4 w-32 h-44 bg-slate-900 rounded-sm border-l-4 border-slate-900 shadow-sm rotate-[-4deg] translate-x-[-8px]">
+                            <div className="absolute -left-5 top-4 w-32 h-44 bg-slate-900 rounded-sm border-l-4 border-slate-900 shadow-xl rotate-[-4deg] translate-x-[-8px]">
                                 <div className="absolute inset-0 bg-gradient-to-r from-red/20 via-transparent to-transparent"></div>
                                 <div className="absolute inset-x-0 top-6 flex flex-col items-center gap-1.5">
                                     <span className="text-yellow-300 text-[14px] font-bold tracking-[0.2em] font-serif border-b border-[#FFD700]/30 pb-1 px-2 uppercase">
@@ -82,7 +82,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             </div>
 
                             {/* Buku Depan (Bibel) */}
-                            <div className="absolute left-20 top-5 w-32 h-44 bg-slate-800 rounded-sm border-l-4 border-slate-900 shadow-sm rotate-[6deg] translate-x-[-8px]">
+                            <div className="absolute left-20 top-5 w-32 h-44 bg-slate-800 rounded-sm border-l-4 border-slate-900 shadow-xl rotate-[6deg] translate-x-[-8px]">
                                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent"></div>
                                 <div className="absolute inset-x-0 top-6 flex flex-col items-center gap-1.5">
                                     <span className="text-[#FFD700] text-[14px] font-bold tracking-[0.2em] font-serif border-b border-[#FFD700]/30 pb-1 px-2 uppercase">
@@ -108,7 +108,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                     >
                         <div className="relative w-56 h-48 flex justify-center items-end ">
                             {/* Buku 1: KJ (Kiri - Hijau) */}
-                            <div className="absolute -right-10 bottom-1 w-34 h-48 bg-[#15803d] rounded-sm border-l-[4px] border-[#14532d] shadow-lg rotate-[8deg] z-30">
+                            <div className="absolute -right-10 bottom-1 w-34 h-48 bg-[#15803d] rounded-sm border-l-[4px] border-[#14532d] shadow-xl rotate-[8deg] z-30">
                                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/5"></div>
                                 <div className="absolute inset-x-0 top-5 flex flex-col items-center px-1">
                                     <span className="text-[#fbbf24] text-[12px] font-bold tracking-[0.1em] font-serif text-center uppercase leading-tight">
@@ -121,7 +121,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             </div>
 
                             {/* Buku 2: BE (Tengah - Hitam - Paling Depan) */}
-                            <div className="absolute left-1/2 -translate-x-1/2 bottom-3 w-34 h-48 bg-blue-700 rounded-sm border-l-[4px] border-blue-900 shadow-2xl z-30">
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-3 w-34 h-48 bg-blue-700 rounded-sm border-l-[4px] border-blue-900 shadow-xl z-30">
                                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/5"></div>
                                 <div className="absolute inset-x-0 top-6 flex flex-col items-center px-1">
                                     <span className="text-slate-100 text-[12px] font-bold tracking-[0.15em] font-serif text-center uppercase leading-tight">
@@ -135,7 +135,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             </div>
 
                             {/* Buku 3: BN (Kanan - Biru) */}
-                            <div className="absolute -left-10 bottom-1 w-34 h-48 bg-slate-900 rounded-sm border-l-[4px] border-slate-900 shadow-lg rotate-[-2deg] z-30">
+                            <div className="absolute -left-10 bottom-1 w-34 h-48 bg-slate-900 rounded-sm border-l-[4px] border-slate-900 shadow-xl rotate-[-2deg] z-30">
                                 <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-white/5"></div>
                                 <div className="absolute inset-x-0 top-5 flex flex-col items-center px-1">
                                     <span className="text-slate-100 text-[13px] pt-2 font-bold tracking-[0.1em] font-serif text-center uppercase leading-tight">
@@ -161,7 +161,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             onClick={() => setActiveApp('2048')}
                             className="flex flex-col items-center gap-2 group active:scale-95 transition-transform"
                         >
-                            <div className="relative w-20 h-24 bg-blue-600 rounded-sm border-l-[5px] border-blue-600 shadow-lg rotate-[-2deg] flex flex-col items-center justify-center overflow-hidden">
+                            <div className="relative w-20 h-24 bg-blue-600 rounded-sm border-l-[5px] border-blue-600 shadow-xl rotate-[-2deg] flex flex-col items-center justify-center overflow-hidden">
                                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                                 <div className="z-10 flex flex-col items-center scale-90">
                                     <span className="text-white font-black text-base leading-none tracking-tighter">20</span>
@@ -177,7 +177,7 @@ const AplikasiTab = ({ activeTab }: AplikasiTabProps) => {
                             onClick={() => setActiveApp('kuis')}
                             className="flex flex-col items-center gap-2 group active:scale-95 transition-transform"
                         >
-                            <div className="relative w-20 h-24 bg-red-700 rounded-sm border-l-[5px] border-red-800 shadow-lg rotate-[2deg] flex items-center justify-center">
+                            <div className="relative w-20 h-24 bg-red-700 rounded-sm border-l-[5px] border-red-800 shadow-xl rotate-[2deg] flex items-center justify-center">
                                 <div className="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
 
                                 {/* Logo Hati & Salib */}

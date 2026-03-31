@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Copy, Wallet, Check, ChevronDown, Download, X } from 'lucide-react';
 import downloadFile from '../../assets/qris.png';
-// Asumsi asset tambahan untuk swipe, jika belum ada bisa disesuaikan link-nya
 import downloadFile2 from '../../assets/qrisGerakanAnakAsuh.png';
 import downloadFile3 from '../../assets/qrisRekPembangunganGereja.png';
 
@@ -101,57 +100,48 @@ const GivingTab = () => {
 
             {/* QRIS Swipe Section */}
             <div className="relative w-full overflow-hidden">
-                <div className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-4 pb-1 gap-2 items-center">
+                <div className="flex overflow-x-auto snap-x  p-4 snap-mandatory no-scrollbar px-8 gap-4 items-center">
                     {QRIS_LIST.map((qris, idx) => (
                         <div
                             key={idx}
-                            className="flex-none w-[95%] snap-center"
+                            className="flex-none w-[90%] snap-center"
                             onClick={() => setSelectedImage({ src: qris.src, filename: qris.filename })}
                         >
-                            <div className="bg-white shadow-sm rounded-[2.5rem] border border-slate-200 overflow-hidden w-full relative cursor-pointer active:scale-95 transition-transform group">
+                            <div className="shadow-sm rounded-[2.5rem] border border-slate-200 overflow-hidden w-full relative cursor-pointer active:scale-95 transition-transform group">
                                 <img
                                     src={qris.src}
                                     alt={qris.name}
+                                    loading="eager"
+                                    fetchPriority="high"
                                     className="w-full h-full object-contain scale-100"
                                 />
                             </div>
                         </div>
                     ))}
-                    {/* Spacer penyeimbang swipe */}
                     <div className="flex-none w-[2%]" />
                 </div>
             </div>
 
-            {/* Modal Viewer */}
             {selectedImage && (
                 <div
-                    className="fixed inset-0 z-[999] flex items-center justify-center bg-black animate-in fade-in duration-300"
-                    onClick={() => setSelectedImage(null)} // Klik di mana saja untuk tutup
+                    className="fixed inset-0 z-[999] flex items-center justify-center bg-black h-full animate-in fade-in duration-300"
+                    onClick={() => setSelectedImage(null)}
                 >
-
-
                     <button
                         onClick={() => setSelectedImage(null)}
                         className="absolute top-3 right-4 z-[999] p-2 text-white"
                     >
                         <X size={24} />
                     </button>
-
-                    {/* Container Konten - FULL SCREEN Tanpa Padding */}
                     <div
-                        className="relative w-full h-full flex items-center justify-center overflow-hidden"
-                        onClick={e => e.stopPropagation()} // Mencegah klik di gambar menutup modal
+                        className="relative w-full h-full flex items-center justify-center"
+                        onClick={e => e.stopPropagation()}
                     >
-                        {/* Gambar - Mengisi Penuh Layar (object-cover agar penuh, atau object-contain agar proporsional) */}
                         <img
                             src={selectedImage.src}
                             alt="QRIS Full"
-                            // Gunakan h-full w-full object-contain agar gambar utuh terlihat dan pas di layar
-                            // Gunakan h-full w-full object-cover jika ingin gambar memaksa memenuhi layar (terpotong dikit tidak apa-apa)
-                            className="absolute inset-0 w-full h-full object-contain animate-in zoom-in-100 duration-300"
+                            className="absolute inset-0 w-full h-full object-contain animate-in zoom-in-95 duration-300"
                         />
-
-                        {/* Tombol Unduh - Melayang di Bagian Bawah Gambar */}
                         <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center px-6">
                             <button
                                 onClick={() => handleDownloadQR(selectedImage.src, selectedImage.filename)}
@@ -160,11 +150,10 @@ const GivingTab = () => {
                                 <Download size={16} />
                                 Unduh Qris
                             </button>
-
-
                         </div>
                     </div>
                 </div>
+
             )}
 
             <div className="px-4">

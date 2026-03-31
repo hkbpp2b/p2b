@@ -273,7 +273,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
 
             {isOpen && (
                 <div className={`fixed inset-0 h-full z-[9999] flex flex-col animate-in slide-in-from-right duration-500 lg:hidden ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
-                    <header className={`flex-none border-b px-2 h-14 flex items-center transition-colors duration-300 relative ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
+                    <header className={`flex-none  px-2 h-14 flex items-center transition-colors duration-300 relative ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
                         <div className="flex-1 flex items-center">
                             <button onClick={closeRenungan} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-slate-800 text-white' : 'hover:bg-slate-100 text-slate-900'}`}>
                                 <ArrowLeft size={22} />
