@@ -65,19 +65,25 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
             const res = await fetch(`${CSV_URL}&t=${new Date().getTime()}`);
             const text = await res.text();
             const rows = text.split(/\r?\n/).filter(r => r.trim() !== "");
-            if (rows.length > 1) {
+            if (rows.length > 3) {
                 const headers = rows[0].split(',').map(v => v.replace(/^"|"$/g, '').trim());
                 const parseRow = (rowStr: string) => {
                     const cols = rowStr.split(',').map(v => v.replace(/^"|"$/g, '').trim());
                     return {
-                        minggu: cols[0], tanggal: cols[1], warta: extractId(cols[2]),
-                        umum: extractId(cols[3]), remaja: extractId(cols[4]), sm: extractId(cols[5]), sore: extractId(cols[6]),
+                        minggu: cols[0],
+                        tanggal: cols[1],
+                        warta: extractId(cols[2]),
+                        umum_subuh: extractId(cols[3]),
+                        umum_pagi: extractId(cols[4]),
+                        remaja: extractId(cols[5]),
+                        sm: extractId(cols[6]),
+                        sore: extractId(cols[7]),
                         lainnya: [
-                            { label: headers[7], id: extractId(cols[7]) },
                             { label: headers[8], id: extractId(cols[8]) },
                             { label: headers[9], id: extractId(cols[9]) },
                             { label: headers[10], id: extractId(cols[10]) },
                             { label: headers[11], id: extractId(cols[11]) },
+                            { label: headers[12], id: extractId(cols[12]) },
                         ].filter(item => item.id)
                     };
                 };
@@ -161,7 +167,8 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
         },
         {
             title: "", items: [
-                { label: "Tata Ibadah Umum", id: data?.umum, icon: <BookOpen size={18} /> },
+                { label: "Tata Ibadah 06.00", id: data?.umum_subuh, icon: <BookOpen size={18} /> },
+                { label: "Tata Ibadah 10.00", id: data?.umum_pagi, icon: <BookOpen size={18} /> },
                 { label: "Tata Ibadah Remaja", id: data?.remaja, icon: <Users size={18} /> },
                 { label: "Tata Ibadah Sekolah Minggu", id: data?.sm, icon: <Baby size={18} /> },
                 { label: "Tata Ibadah Sore", id: data?.sore, icon: <Moon size={18} /> },

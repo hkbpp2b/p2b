@@ -43,10 +43,10 @@ const LayoutMobile = ({ children, activeTab, setActiveTab, title, menus }: Layou
     };
 
     return (
-        <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col md:hidden no-scrollbar">
+        <div className="min-h-screen text-slate-900 font-sans flex flex-col md:hidden no-scrollbar">
             {/* Header dengan Tinggi Konsisten (h-40 = 160px) */}
             {isHomePage && (
-                <header className="w-full h-[130px] flex items-center justify-center bg-white overflow-hidden">
+                <header className="w-full h-[130px] flex items-center justify-center overflow-hidden">
                     {headerImage ? (
                         <div className="w-full h-full flex items-center justify-center">
                             <img
