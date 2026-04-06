@@ -15,7 +15,7 @@ interface LayoutProps {
 
 const Layout = ({ children, activeTab, setActiveTab, title, detailContent }: LayoutProps) => {
     const menus = [
-        { id: 'warta', label: 'Aplikasi', icon: <LayoutGrid size={22} /> },
+        { id: 'warta', label: 'Alkitab', icon: <LayoutGrid size={22} /> },
         { id: 'ibadah', label: 'Warta', icon: <Newspaper size={22} /> },
         { id: 'profil', label: 'Home', icon: <Home size={22} /> },
         { id: 'giving', label: 'Persembahan', icon: <QrCode size={22} /> },

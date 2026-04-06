@@ -29,7 +29,7 @@ const IbadahTab = ({ onSelectContent, scrollToWawasan, onScrollDone }: IbadahTab
 
 
     return (
-        <div className=" pb-32 pt-8 px-5 space-y-10">
+        <div className=" pb-32 pt-8 px-5 space-y-30">
             <WartaCard onSelectContent={onSelectContent} />
             <div ref={wawasanRef}>
                 <SlideCard onSelectContent={onSelectContent} />
