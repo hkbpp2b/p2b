@@ -167,8 +167,8 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
         },
         {
             title: "", items: [
-                { label: "Tata Ibadah 06.00", id: data?.umum_subuh, icon: <BookOpen size={18} /> },
-                { label: "Tata Ibadah 10.00", id: data?.umum_pagi, icon: <BookOpen size={18} /> },
+                { label: "Tata Ibadah Subuh", id: data?.umum_subuh, icon: <BookOpen size={18} /> },
+                { label: "Tata Ibadah Pagi", id: data?.umum_pagi, icon: <BookOpen size={18} /> },
                 { label: "Tata Ibadah Remaja", id: data?.remaja, icon: <Users size={18} /> },
                 { label: "Tata Ibadah Sekolah Minggu", id: data?.sm, icon: <Baby size={18} /> },
                 { label: "Tata Ibadah Sore", id: data?.sore, icon: <Moon size={18} /> },

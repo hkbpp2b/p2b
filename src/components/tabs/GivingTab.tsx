@@ -1,5 +1,5 @@
 // GivingTab.tsx
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Copy, Wallet, Check, ChevronDown, Download, X } from 'lucide-react';
 import downloadFile from '../../assets/qris.png';
 import downloadFile2 from '../../assets/qrisGerakanAnakAsuh.png';
@@ -46,6 +46,16 @@ const GivingTab = () => {
     const [expandedId, setExpandedId] = useState<string | null>(null);
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [selectedImage, setSelectedImage] = useState<{ src: string; filename: string } | null>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const scrollRef = useRef<HTMLDivElement>(null);
+
+    const handleScroll = () => {
+        if (scrollRef.current) {
+            const { scrollLeft, clientWidth } = scrollRef.current;
+            const index = Math.round(scrollLeft / clientWidth);
+            setActiveIndex(index);
+        }
+    };
 
     const handleCopy = (text: string, id: string, e: React.MouseEvent) => {
         e.stopPropagation();
@@ -100,14 +110,18 @@ const GivingTab = () => {
 
             {/* QRIS Swipe Section */}
             <div className="relative w-full overflow-hidden">
-                <div className="flex overflow-x-auto snap-x  p-4 snap-mandatory no-scrollbar px-8 gap-4 items-center">
+                <div
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    className="flex overflow-x-auto snap-x p-4 snap-mandatory no-scrollbar px-8 gap-4 items-center"
+                >
                     {QRIS_LIST.map((qris, idx) => (
                         <div
                             key={idx}
                             className="flex-none w-[90%] snap-center"
                             onClick={() => setSelectedImage({ src: qris.src, filename: qris.filename })}
                         >
-                            <div className="shadow-sm rounded-[2.5rem] border border-slate-200 overflow-hidden w-full relative cursor-pointer active:scale-95 transition-transform group">
+                            <div className="shadow-sm rounded-[1.5rem] border border-slate-200 overflow-hidden w-full relative cursor-pointer active:scale-95 transition-transform group">
                                 <img
                                     src={qris.src}
                                     alt={qris.name}
@@ -119,6 +133,18 @@ const GivingTab = () => {
                         </div>
                     ))}
                     <div className="flex-none w-[2%]" />
+                </div>
+
+                <div className="flex justify-center gap-2 mt-2">
+                    {QRIS_LIST.map((_, idx) => (
+                        <div
+                            key={idx}
+                            className={`h-2 rounded-full transition-all duration-300 ${activeIndex === idx
+                                ? "w-6 bg-slate-300"
+                                : "w-2 bg-slate-200"
+                                }`}
+                        />
+                    ))}
                 </div>
             </div>
 
@@ -166,7 +192,7 @@ const GivingTab = () => {
 
                         <div className="space-y-3 pt-4">
                             {GIVING_DATA.map((item) => (
-                                <div key={item.id} className={`bg-white rounded-[1.5rem] border-2 transition-all duration-300 ${expandedId === item.id ? 'border-slate-300 shadow-lg' : 'border-slate-100'}`}>
+                                <div key={item.id} className={`bg-white rounded-[1.5rem] border-2 transition-all duration-300 ${expandedId === item.id ? 'border-slate-300 ' : 'border-slate-100'}`}>
                                     <div onClick={() => toggleExpand(item.id)} className="w-full flex items-center px-4 py-3 cursor-pointer">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${expandedId === item.id ? "bg-blue-900 text-white" : "bg-slate-50 text-slate-400"}`}>
                                             <Wallet size={18} />
