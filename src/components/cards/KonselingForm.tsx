@@ -56,8 +56,8 @@ const LayananGerejaForm = ({ onBack }: KonselingFormProps) => {
             </button>
 
             <header className="space-y-2">
-                <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">
-                    Layanan Gereja
+                <h2 className="text-3xl font-black text-slate-900 tracking-tighter">
+                    LAYANAN GEREJA
                 </h2>
                 <p className="text-[12px] font-bold text-slate-900 uppercase tracking-[0.3em]">Permohonan Pelayanan Sakramen</p>
             </header>
