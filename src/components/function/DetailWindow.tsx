@@ -7,6 +7,7 @@ import DataJemaatForm from '../cards/DataJemaatForm';
 import DoaForm from '../cards/DoaForm';
 import SaranForm from '../cards/SaranForm';
 import KonselingForm from '../cards/KonselingForm';
+import { VideoRenungan } from '../cards/RenunganCard';
 
 interface DetailWindowProps {
     selectedDetail: any;
@@ -20,13 +21,6 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
     const playerRef = useRef<any>(null);
     const instrumentRef = useRef<any>(null);
     const activeNotesRef = useRef<Map<string, any>>(new Map());
-
-    const getTikTokEmbedUrl = (url: string) => {
-        if (!url) return "";
-        const videoId = url.split('/').pop()?.split('?')[0];
-        return `https://www.tiktok.com/embed/v2/${videoId}`;
-    };
-
 
     useEffect(() => {
         return () => {
@@ -230,109 +224,80 @@ const DetailWindow = ({ selectedDetail, onBack }: DetailWindowProps) => {
 
     if (selectedDetail.type === 'renungan') {
         return (
-            <div className="h-full bg-white overflow-hidden">
-                {/* Container Utama menggunakan Grid untuk Desktop */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
-                    <div className="h-full overflow-y-auto no-scrollbar p-2 md:p-4 lg:p-8">
-                        <div className="max-w-2xl mx-auto space-y-10">
-                            {/* Header & Ayat */}
-                            <div className="text-center">
-                                <h3 className="text-[32px] font-black text-slate-900 tracking-tighter uppercase mb-1">
-                                    Renungan Harian
-                                </h3>
-                                <p className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                                    {selectedDetail.tanggal}
-                                </p>
-                            </div>
+            <div className="h-full bg-white overflow-y-auto no-scrollbar p-4 lg:p-8">
+                <div className="max-w-2xl mx-auto space-y-6">
+                    {/* Judul + tanggal */}
+                    <div className="text-center">
+                        <h3 className="text-[32px] font-black text-slate-900 tracking-tighter uppercase mb-1">
+                            Renungan Harian
+                        </h3>
+                        <p className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">
+                            {selectedDetail.tanggal}
+                        </p>
+                    </div>
 
-                            <div className="space-y-6">
-                                {/* Box Ayat */}
-                                <div className="p-8 rounded-[2.5rem] bg-blue-800/10 shadow-sm border border-blue-100">
-                                    <p className="text-[22px] font-black text-center text-blue-900 uppercase mb-4 leading-tight">
-                                        {selectedDetail.ayat}
-                                    </p>
-                                    <p className="text-[18px] font-bold text-center text-slate-800 leading-relaxed italic">
-                                        "{selectedDetail.kutipan}"
-                                    </p>
-                                </div>
+                    {/* Video */}
+                    <VideoRenungan url={selectedDetail.tiktokUrl} ukuran={selectedDetail.ukuranVideo} />
 
-                                {/* Buku Ende & MIDI */}
-                                {selectedDetail.bukuEnde && (
-                                    <div className="p-8 rounded-[2.5rem] bg-emerald-800/5 border border-emerald-100 shadow-sm">
-                                        <div className="flex flex-col items-center gap-6 text-center">
-                                            <p className="text-[20px] font-black text-emerald-800 whitespace-pre-line leading-tight">
-                                                {selectedDetail.bukuEnde}
-                                            </p>
+                    {/* Ayat + isi ayat */}
+                    <div className="p-8 rounded-[2.5rem] bg-blue-800/10 shadow-sm border border-blue-100">
+                        <p className="text-[22px] font-black text-center text-blue-900 uppercase mb-4 leading-tight">
+                            {selectedDetail.ayat}
+                        </p>
+                        <p className="text-[18px] font-bold text-center text-slate-800 leading-relaxed">
+                            {selectedDetail.kutipan}
+                        </p>
+                    </div>
 
-                                            <button
-                                                onClick={playMidi}
-                                                disabled={isLoadingMidi}
-                                                className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full transition-all border shadow-sm active:scale-95 disabled:opacity-50 ${isPlaying
-                                                    ? 'border-red-100 text-red-500 bg-red-50/50'
-                                                    : 'border-slate-200 text-emerald-600 bg-white hover:bg-emerald-50'
-                                                    }`}
-                                            >
-                                                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isPlaying ? 'bg-red-500 text-white' : 'bg-emerald-600 text-white'
-                                                    }`}>
-                                                    {isLoadingMidi ? (
-                                                        <Loader2 size={14} className="animate-spin" />
-                                                    ) : isPlaying ? (
-                                                        <Square size={12} fill="currentColor" />
-                                                    ) : (
-                                                        <Play size={12} fill="currentColor" className="ml-0.5" />
-                                                    )}
-                                                </div>
-                                                <span className="text-[12px] font-black uppercase tracking-widest">
-                                                    BE NO.{selectedDetail.nomorEnde}
-                                                </span>
-                                            </button>
-                                        </div>
-
-                                        <div className="mt-8 space-y-4">
-                                            {selectedDetail.lirikEnde.split('\n').map((line, index) => (
-                                                <p key={index} className="text-[17px] font-bold text-center text-slate-900 leading-relaxed">
-                                                    {line}
-                                                </p>
-                                            ))}
-                                        </div>
+                    {/* Ende + lirik */}
+                    {selectedDetail.nomorEnde && (
+                        <div className="p-8 rounded-[2.5rem] bg-emerald-800/5 border border-emerald-100 shadow-sm">
+                            <div className="flex justify-center">
+                                <button
+                                    onClick={playMidi}
+                                    disabled={isLoadingMidi}
+                                    className={`flex items-center gap-3 pr-5 pl-2 py-1.5 rounded-full transition-all border shadow-sm active:scale-95 disabled:opacity-50 ${isPlaying
+                                        ? 'border-red-100 text-red-500 bg-red-50/50'
+                                        : 'border-slate-200 text-emerald-700 bg-white hover:bg-emerald-50'
+                                        }`}
+                                >
+                                    <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isPlaying ? 'bg-red-500 text-white' : 'bg-emerald-600 text-white'}`}>
+                                        {isLoadingMidi ? (
+                                            <Loader2 size={14} className="animate-spin" />
+                                        ) : isPlaying ? (
+                                            <Square size={12} fill="currentColor" />
+                                        ) : (
+                                            <Play size={12} fill="currentColor" className="ml-0.5" />
+                                        )}
                                     </div>
-                                )}
+                                    <span className="text-[14px] font-black uppercase tracking-widest">
+                                        Ende No.{selectedDetail.nomorEnde}
+                                    </span>
+                                </button>
+                            </div>
 
-                                {/* Isi Renungan */}
-                                <div className="pt-6 border-t border-slate-100">
-                                    <h4 className="text-[28px] font-black text-slate-900 text-center leading-tight tracking-tighter uppercase mb-8">
-                                        {selectedDetail.topik}
-                                    </h4>
-
-                                    <p className="text-[17px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
-                                        {selectedDetail.isi}
-                                    </p>
+                            {selectedDetail.lirikEnde && (
+                                <div className="mt-6 space-y-1">
+                                    {selectedDetail.lirikEnde.split('\n').map((line: string, index: number) => (
+                                        line.trim() === ''
+                                            ? <div key={index} className="h-4" />
+                                            : <p key={index} className="text-[17px] font-bold text-center text-slate-900 leading-relaxed">
+                                                {line}
+                                            </p>
+                                    ))}
                                 </div>
-                            </div>
+                            )}
                         </div>
-                    </div>
+                    )}
 
-                    <div className="h-full flex flex-col items-center justify-center border-r border-slate-100 overflow-y-auto no-scrollbar">
-                        {selectedDetail.tiktokUrl ? (
-                            <div className="w-full max-w-[400px] pt-8">
-                                <iframe
-                                    src={`${getTikTokEmbedUrl(selectedDetail.tiktokUrl)}?lang=id-ID&`}
-                                    style={{
-                                        border: 'none',
-                                        height: '600px',
-                                        width: '100%',
-                                    }}
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                    allowFullScreen
-                                    title="TikTok Video Player"
-                                ></iframe>
-                            </div>
-                        ) : (
-                            <div className="text-slate-300 font-bold uppercase tracking-widest">
-                                No Video Available
-                            </div>
-                        )}
-                    </div>
+                    {/* Isi renungan */}
+                    {selectedDetail.isi && (
+                        <div className="p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
+                            <p className="text-[17px] font-medium text-slate-800 leading-[1.8] whitespace-pre-line">
+                                {selectedDetail.isi}
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         );
