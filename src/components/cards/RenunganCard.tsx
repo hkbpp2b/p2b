@@ -1,5 +1,6 @@
 // RenunganCard.tsx
 import { useState, useEffect, useRef, type CSSProperties } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronRight, ArrowLeft, Play, Square, Loader2, Sun, Moon, Settings } from 'lucide-react';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
@@ -28,10 +29,10 @@ let cachedRenungan: RenunganData | null = null;
 interface SongVerse { bait: string; teks: string }
 interface SongData { id: string; title: string; verses: SongVerse[] }
 
-/** "3-4" -> [3,4]; "1,3,5" -> [1,3,5]; "2-4" -> [2,3,4] */
+/** "5+7" -> [5,7]; "3-4" -> [3,4]; "1,3,5" -> [1,3,5]; "2-4+6" -> [2,3,4,6] */
 const daftarAyat = (s: string): number[] => {
     const out: number[] = [];
-    (s || '').replace(/[–—]/g, '-').replace(/\s+/g, '').split(',').forEach(p => {
+    (s || '').replace(/[–—]/g, '-').replace(/\s+/g, '').split(/[,;+&]/).forEach(p => {
         const [a, b] = p.split('-').map(Number);
         if (a && b) for (let i = a; i <= b; i++) out.push(i);
         else if (a) out.push(a);
@@ -39,19 +40,23 @@ const daftarAyat = (s: string): number[] => {
     return out;
 };
 
+/** Ambil angka pertama: "5" -> "5", "5 : 5+7" -> "5", "BE 102" -> "102" */
+const angkaPertama = (s: string) => ((s || '').match(/\d+/) || [''])[0];
+
 /**
- * Cari lagu di bev2.json berdasarkan nomor ende, ambil ayat sesuai "BE. No. 102 : 3-4".
+ * Cari lagu di bev2.json berdasarkan nomor ende, ambil ayat sesuai "BE. No. 102 : 3-4" atau "BE. No. 5 : 5+7".
  * Kalau ayat tidak tertulis atau tidak ketemu, semua ayat ditampilkan.
  * Hasil lirik: "3. baris\nbaris\n\n4. baris\nbaris"
  */
 const cariLaguEnde = (nomor: string, bukuEnde: string): { judul: string; lirik: string } | null => {
-    const n = Number((nomor || '').replace(/\D/g, ''));
+    const n = Number(angkaPertama(nomor));
     if (!n) return null;
     const lagu = (BUKU_ENDE_DATA as SongData[]).find(s => Number(String(s.id).replace(/\D/g, '')) === n);
     if (!lagu) return null;
 
     const nomorBait = (v: SongVerse) => Number((String(v.bait).match(/\d+/) || [])[0]);
-    const m = (bukuEnde || '').match(/No\.?\s*\d+\s*:\s*([\d\s,\-–—]+)/i);
+    // Hanya spasi/tab yang ikut dibaca, jadi baris berikutnya ([br] "JUDUL") tidak terbawa
+    const m = (bukuEnde || '').match(/No\.?\s*\d+\s*:\s*([\d \t,;+&\-–—]+)/i);
     const diminta = daftarAyat(m ? m[1] : '');
     let bait = diminta.length ? lagu.verses.filter(v => diminta.includes(nomorBait(v))) : lagu.verses;
     if (!bait.length) bait = lagu.verses;
@@ -181,16 +186,48 @@ const bingkaiVideo = (rasio: number): CSSProperties => ({
     transform: 'translateZ(0)',
 });
 
+/** HP dalam posisi miring (landscape): tinggi layar kecil, jadi tablet/laptop tidak ikut. */
+const QUERY_HP_LANDSCAPE = '(orientation: landscape) and (max-height: 500px)';
+
+const useHpLandscape = () => {
+    const [cocok, setCocok] = useState(
+        () => typeof window !== 'undefined' && window.matchMedia(QUERY_HP_LANDSCAPE).matches
+    );
+    useEffect(() => {
+        const mq = window.matchMedia(QUERY_HP_LANDSCAPE);
+        const ubah = () => setCocok(mq.matches);
+        ubah();
+        if (mq.addEventListener) mq.addEventListener('change', ubah);
+        else mq.addListener(ubah); // Safari lama
+        return () => {
+            if (mq.removeEventListener) mq.removeEventListener('change', ubah);
+            else mq.removeListener(ubah);
+        };
+    }, []);
+    return cocok;
+};
+
 /* ======================= KOMPONEN ======================= */
 
-/** Player video renungan (dipakai di HP dan di panel desktop). Bingkai = rasio video, player YouTube mengisi penuh. */
-export const VideoRenungan = ({ url, ukuran }: { url: string; ukuran: string }) => {
+/**
+ * Player video renungan (dipakai di HP dan di panel desktop). Bingkai = rasio video, player YouTube mengisi penuh.
+ * layarPenuh = true: video menutupi seluruh layar (dipakai saat HP dimiringkan).
+ * Struktur elemen sengaja sama di kedua mode, hanya class/style yang berubah,
+ * supaya iframe tidak dimuat ulang dan video tetap jalan saat HP diputar.
+ */
+export const VideoRenungan = ({ url, ukuran, layarPenuh = false }: { url: string; ukuran: string; layarPenuh?: boolean }) => {
     const video = getVideoEmbed(url);
     if (!video) return null;
 
     return (
-        <div className="flex justify-center">
-            <div className="relative bg-black shadow-sm" style={bingkaiVideo(rasioVideo(ukuran, video.shorts))}>
+        <div
+            className={layarPenuh ? 'fixed inset-0 z-[100] flex bg-black' : 'flex justify-center'}
+            style={layarPenuh ? { paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' } : undefined}
+        >
+            <div
+                className="relative bg-black shadow-sm"
+                style={layarPenuh ? { width: '100%', height: '100%' } : bingkaiVideo(rasioVideo(ukuran, video.shorts))}
+            >
                 <iframe
                     src={video.preview}
                     className="absolute inset-0 w-full h-full"
@@ -226,6 +263,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
     const activeNotesRef = useRef<Map<string, any>>(new Map());
 
     const scrollRef = useRef<HTMLDivElement>(null);
+    const hpLandscape = useHpLandscape();
 
     const TSV_URL = import.meta.env.VITE_TSV_RENUNGAN_URL;
 
@@ -266,7 +304,7 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                     kutipan: col(2),
                     topik: col(3),
                     isi: col(4),
-                    nomorEnde: col(5).replace(/\D/g, ''),
+                    nomorEnde: angkaPertama(col(5)), // "5" atau "5 : 5+7" -> "5" (nomor lagu saja)
                     bukuEnde: col(6),
                     lirikEnde: col(7) || lagu?.lirik || '', // kolom lirik sheet kosong -> pakai bev2.json
                     judulLagu: lagu?.judul || '',
@@ -468,8 +506,13 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
             </div>
 
             {/* ===================== HALAMAN DETAIL (setelah diklik) ===================== */}
-            {isOpen && (
-                <div className={`fixed inset-0 h-full z-[9999] flex flex-col animate-in slide-in-from-right duration-500 lg:hidden ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
+            {/*
+              Dirender ke <body> lewat portal. Kalau tetap di dalam LayoutMobile (md:hidden),
+              halaman ini ikut tersembunyi begitu HP dimiringkan (lebar > 768px)
+              dan yang tampil malah ProfileTab versi desktop.
+            */}
+            {isOpen && createPortal(
+                <div className={`fixed inset-0 h-full z-[9999] flex flex-col animate-in slide-in-from-right duration-500 ${isDarkMode ? 'bg-slate-950' : 'bg-slate-50'}`}>
                     <header className={`flex-none px-2 h-14 flex items-center transition-colors duration-300 relative ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}>
                         <div className="flex-1 flex items-center">
                             <button onClick={closeRenungan} className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-slate-800 text-white' : 'hover:bg-slate-100 text-slate-900'}`}>
@@ -554,8 +597,8 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                                 </p>
                             </div>
 
-                            {/* Video */}
-                            <VideoRenungan url={data.tiktokUrl} ukuran={data.ukuranVideo} />
+                            {/* Video (layar penuh saat HP dimiringkan) */}
+                            <VideoRenungan url={data.tiktokUrl} ukuran={data.ukuranVideo} layarPenuh={hpLandscape} />
 
                             {/* Ayat + isi ayat */}
                             <div className={`p-5 rounded-[2rem] border shadow-sm transition-colors ${isDarkMode ? 'bg-blue-800/10 border-slate-700/50' : 'bg-blue-50/70 border-slate-100'}`}>
@@ -637,7 +680,8 @@ const RenunganCard = ({ onSelect }: RenunganCardProps) => {
                             )}
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </>
     );
