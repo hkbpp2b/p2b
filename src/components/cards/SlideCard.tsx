@@ -1,5 +1,6 @@
 // SlideCard.tsx
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Loader2, ChevronDown, X } from 'lucide-react';
 
 let cachedSlideData: any[] | null = null;
@@ -275,8 +276,12 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
                     </div>
                 )}
 
-                {fullscreenFile && (
-                    <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
+                {/*
+                  Dirender ke <body> lewat portal. Kalau tetap di dalam LayoutMobile (md:hidden),
+                  slide ini ikut tersembunyi begitu HP dimiringkan (lebar > 768px).
+                */}
+                {fullscreenFile && createPortal(
+                    <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
                         <button
                             onClick={closeFullscreen}
                             className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
@@ -290,7 +295,8 @@ const SlideCard = ({ onSelectContent }: SlideCardProps) => {
                                 allow="autoplay"
                             />
                         </div>
-                    </div>
+                    </div>,
+                    document.body
                 )}
             </div>
         </div>

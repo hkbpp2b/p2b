@@ -1,9 +1,61 @@
 // WartaCard.tsx
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Download, Loader2, BookOpen, Users, Baby, Moon, Newspaper, FileText, ChevronDown, X } from 'lucide-react';
 
 let cachedIbadahData: any = null;
 let cachedArsipData: any[] = [];
+
+/* ---------- Arsip per bulan ---------- */
+
+const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+/** 3 huruf pertama nama bulan (Indonesia/Inggris) -> nomor bulan */
+const BULAN_SINGKAT: Record<string, number> = {
+    jan: 1, feb: 2, mar: 3, apr: 4, mei: 5, may: 5, jun: 6, jul: 7, agu: 8, agt: 8, aug: 8,
+    sep: 9, okt: 10, oct: 10, nov: 11, nop: 11, des: 12, dec: 12,
+};
+
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** "12 Oktober 2026" / "12 Okt 2026" / "2026-10-12" / "12/10/2026" -> "2026-10-12"; tidak terbaca -> "" */
+const tanggalKeIso = (s: string): string => {
+    const t = (s || '').trim();
+    const a = t.match(/(\d{1,2})\s+([A-Za-z]+)\.?\s+(\d{4})/);
+    if (a) {
+        const b = BULAN_SINGKAT[a[2].slice(0, 3).toLowerCase()];
+        if (b) return `${a[3]}-${pad(b)}-${pad(+a[1])}`;
+    }
+    const iso = t.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (iso && +iso[2] >= 1 && +iso[2] <= 12) return `${iso[1]}-${pad(+iso[2])}-${pad(+iso[3])}`;
+    const dmy = t.match(/(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})/);
+    if (dmy && +dmy[2] >= 1 && +dmy[2] <= 12) return `${dmy[3]}-${pad(+dmy[2])}-${pad(+dmy[1])}`;
+    return '';
+};
+
+/**
+ * Kelompokkan arsip per bulan, bulan terbaru di atas, dan di dalam bulan tanggal terbaru di atas.
+ * Baris yang tanggalnya tidak terbaca masuk grup "Lainnya" di paling bawah.
+ */
+const kelompokkanPerBulan = (items: any[]) => {
+    const grup = new Map<string, { label: string; items: any[] }>();
+    for (const item of items) {
+        const iso = tanggalKeIso(item.tanggal);
+        const key = iso ? iso.slice(0, 7) : 'lainnya';
+        if (!grup.has(key)) {
+            const label = iso ? `${NAMA_BULAN[+iso.slice(5, 7) - 1]} ${iso.slice(0, 4)}` : 'Lainnya';
+            grup.set(key, { label, items: [] });
+        }
+        grup.get(key)!.items.push({ ...item, iso });
+    }
+    return [...grup.entries()]
+        .sort(([a], [b]) => (a === 'lainnya' ? 1 : b === 'lainnya' ? -1 : b.localeCompare(a)))
+        .map(([key, g]) => ({
+            key,
+            label: g.label,
+            items: g.items.sort((x, y) => (y.iso || '').localeCompare(x.iso || '')),
+        }));
+};
 
 const PDFCover = ({ id }: { id: string }) => {
     const [imgSrc, setImgSrc] = useState<string | null>(null);
@@ -49,6 +101,8 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
     const [showArsip, setShowArsip] = useState(false);
     const [openViewerId, setOpenViewerId] = useState<string | null>(null);
     const [fullscreenFile, setFullscreenFile] = useState<string | null>(null);
+    // Bulan arsip yang sedang terbuka. undefined = belum dipilih (bulan terbaru terbuka), null = semua tertutup.
+    const [bulanTerbuka, setBulanTerbuka] = useState<string | null | undefined>(undefined);
 
     const CSV_URL = import.meta.env.VITE_IBADAH_CSV_URL;
 
@@ -160,6 +214,9 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
         </div>
     );
 
+    const arsipPerBulan = kelompokkanPerBulan(arsip);
+    const bulanAktif = bulanTerbuka === undefined ? (arsipPerBulan[0]?.key ?? null) : bulanTerbuka;
+
     const sections = [
         {
             title: "",
@@ -249,26 +306,56 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                                                                 <Loader2 className="animate-spin text-slate-300" size={20} />
                                                             </div>
                                                         ) : (
-                                                            <div className="grid gap-2">
-                                                                {arsip.map((archiveItem, idx) => (
-                                                                    <button
-                                                                        key={idx}
-                                                                        onClick={() => {
-                                                                            if (window.innerWidth < 1024) {
-                                                                                setFullscreenFile(archiveItem.warta);
-                                                                            } else if (onSelectContent) {
-                                                                                onSelectContent({ id: archiveItem.warta, type: 'pdf', label: archiveItem.minggu });
-                                                                            }
-                                                                        }}
-                                                                        className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 hover:bg-white transition-all text-left"
-                                                                    >
-                                                                        <div className="flex flex-col">
-                                                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{archiveItem.tanggal}</span>
-                                                                            <span className="text-[11px] font-black text-slate-800 uppercase">{archiveItem.minggu}</span>
+                                                            <div className="space-y-2">
+                                                                {arsipPerBulan.map(bulan => {
+                                                                    const terbuka = bulanAktif === bulan.key;
+                                                                    return (
+                                                                        <div key={bulan.key}>
+                                                                            {/* Dropdown bulan: satu bulan terbuka sekaligus */}
+                                                                            <button
+                                                                                onClick={() => setBulanTerbuka(terbuka ? null : bulan.key)}
+                                                                                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl border transition-colors ${terbuka
+                                                                                    ? 'bg-white border-slate-200 text-slate-900 shadow-sm'
+                                                                                    : 'bg-transparent border-slate-100 text-slate-500 hover:border-slate-200'
+                                                                                    }`}
+                                                                            >
+                                                                                <span className="text-[10px] font-black uppercase tracking-[0.15em]">
+                                                                                    {bulan.label}
+                                                                                </span>
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <span className="text-[10px] font-bold text-slate-400">
+                                                                                        {bulan.items.length} warta
+                                                                                    </span>
+                                                                                    <ChevronDown size={14} className={`transition-transform ${terbuka ? 'rotate-180' : ''}`} />
+                                                                                </div>
+                                                                            </button>
+
+                                                                            {terbuka && (
+                                                                                <div className="mt-2 mb-3 grid gap-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                                                                    {bulan.items.map((archiveItem, idx) => (
+                                                                                        <button
+                                                                                            key={idx}
+                                                                                            onClick={() => {
+                                                                                                if (window.innerWidth < 1024) {
+                                                                                                    setFullscreenFile(archiveItem.warta);
+                                                                                                } else if (onSelectContent) {
+                                                                                                    onSelectContent({ id: archiveItem.warta, type: 'pdf', label: archiveItem.minggu });
+                                                                                                }
+                                                                                            }}
+                                                                                            className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-slate-200 hover:bg-white transition-all text-left"
+                                                                                        >
+                                                                                            <div className="flex flex-col">
+                                                                                                <span className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">{archiveItem.tanggal}</span>
+                                                                                                <span className="text-[11px] font-black text-slate-800 uppercase">{archiveItem.minggu}</span>
+                                                                                            </div>
+                                                                                            <Download size={14} className="text-slate-400" />
+                                                                                        </button>
+                                                                                    ))}
+                                                                                </div>
+                                                                            )}
                                                                         </div>
-                                                                        <Download size={14} className="text-slate-400" />
-                                                                    </button>
-                                                                ))}
+                                                                    );
+                                                                })}
                                                             </div>
                                                         )}
                                                     </div>
@@ -283,8 +370,12 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                 ))}
             </div>
 
-            {fullscreenFile && (
-                <div className="fixed inset-0 z-[999] bg-white flex flex-col lg:hidden">
+            {/*
+              Dirender ke <body> lewat portal. Kalau tetap di dalam LayoutMobile (md:hidden),
+              PDF ini ikut tersembunyi begitu HP dimiringkan (lebar > 768px).
+            */}
+            {fullscreenFile && createPortal(
+                <div className="fixed inset-0 z-[9999] bg-white flex flex-col">
                     <button
                         onClick={closeFullscreen}
                         className="absolute top-3 left-4 z-[999] p-2 bg-red-900/85 text-white"
@@ -297,7 +388,8 @@ const WartaCard = ({ onSelectContent }: WartaCardProps) => {
                             className="w-full h-full border-none"
                         />
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
